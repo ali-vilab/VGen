@@ -9,16 +9,20 @@ Please see [Project Page](https://i2vgen-xl.github.io/index.html) for more examp
 ![figure1](source/fig_01.jpg "figure1")
 
 
+
 I2VGen-XL is capable of generating high-quality, realistically animated, and temporally coherent high-definition videos from a single input static image, based on user input.
 
-*Our initial version has already been open-sourced on [Modelscope](https://modelscope.cn/models/damo/Image-to-Video/summary). This project focuses on improving the version, especially in terms of motions and semantics*
+
+
+*Our initial version has already been open-sourced on [Modelscope](https://modelscope.cn/models/damo/Image-to-Video/summary). This project focuses on improving the version, especially in terms of motions and semantics.*
+
 
 
 ## TODO
-- [x] Release the technical papers and webpage.
-- [ ] Release code and pretrained models that can generate 1280x720 videos.
+- [x] Release the technical papers and webpage
+- [ ] Release the code and pretrained models that can generate 1280x720 videos
 - [ ] Release models optimized specifically for human body and faces
-- [ ] Upgrade to a better version
+- [ ] Updated version can fully maintain the ID and capture large and accurate motions simultaneously
 
 
 
@@ -32,6 +36,11 @@ I2VGen-XL is capable of generating high-quality, realistically animated, and tem
 ## Examples
 
 ![figure2](source/fig_04.png "figure2")
+
+
+## Running by Yourself
+
+
 
 
 

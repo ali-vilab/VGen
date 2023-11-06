@@ -1,0 +1,16 @@
+*.pkl
+*.pt
+*.mov
+*.pth
+*.json
+*.mov
+*.npz
+*.npy
+*.boj
+*.onnx
+*.tar
+*.bin
+cache*
+.DS_Store
+*DS_Store
+outputs/
