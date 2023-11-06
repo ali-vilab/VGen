@@ -1,32 +1,33 @@
 # I2VGen-XL
 
-Official repo for [I2VGen-XL: High-Quality Image-to-Video Synthesis Via Cascaded Diffusion Models]()
+Official repo for [I2VGen-XL: High-Quality Image-to-Video Synthesis Via Cascaded Diffusion Models]().
 
 
-Please see [Project Page](https://i2vgen-xl.github.io/index.html) for more examples.
+Please visit the [Project Page](https://i2vgen-xl.github.io/index.html) for more examples.
+
 
 
 ![figure1](source/fig_01.jpg "figure1")
 
 
 
-I2VGen-XL is capable of generating high-quality, realistically animated, and temporally coherent high-definition videos from a single input static image, based on user input.
+I2VGen-XL is capable of generating high-quality, realistically animated, and temporally coherent high-definition videos from a single static image based on user input.
 
 
+*The initial version of our model has been open-sourced at [ModelScope](https://modelscope.cn/models/damo/Image-to-Video/summary). We are now enhancing this version, with a particular focus on improving capabilities for modeling motion and semantic.*
 
-*Our initial version has already been open-sourced on [Modelscope](https://modelscope.cn/models/damo/Image-to-Video/summary). This project focuses on improving the version, especially in terms of motions and semantics.*
 
 
 
 ## TODO
-- [x] Release the technical papers and webpage
-- [ ] Release the code and pretrained models that can generate 1280x720 videos
-- [ ] Release models optimized specifically for human body and faces
-- [ ] Updated version can fully maintain the ID and capture large and accurate motions simultaneously
+- [x] Release the technical paper and the webpage.
+- [ ] Release the code and pre-trained models that can generate 1280x720 videos.
+- [ ] Release models optimized specifically for human bodies and faces.
+- [ ] Release a version that can fully maintain the ID and capture large and accurate motions simultaneously.
 
 
+*We are committed to continuously enhancing the model's performance and will keep open-sourcing our updates. Your support and interest are greatly appreciated.*
 
-*In the future, we will continue to enhance the model's performance and open-source it here. Your support and attention are welcome.*
 
 ## Method
 
@@ -38,9 +39,7 @@ I2VGen-XL is capable of generating high-quality, realistically animated, and tem
 ![figure2](source/fig_04.png "figure2")
 
 
-## Running by Yourself
-
-
+## Running the Model
 
 
 
