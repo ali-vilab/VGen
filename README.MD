@@ -42,14 +42,18 @@ I2VGen-XL is capable of generating high-quality, realistically animated, and tem
 
 
 
-
-
 ## BibTeX
 
 If this repo is useful to you, please cite our technical paper.
 
 
 ```bibtex
+@article{2023i2vgenxl,
+  title={I2VGen-XL: High-Quality Image-to-Video Synthesis via Cascaded Diffusion Models},
+  author={Zhang, Shiwei*  and Wang, Jiayu* and Zhang, Yingya* and Zhao, Kang and Yuan, Hangjie and Qing, Zhiwu and Wang, Xiang  and Zhao, Deli and Zhou, Jingren},
+  booktitle={arXiv preprint arXiv:2311.04145},
+  year={2023}
+}
 @article{2023videocomposer,
   title={VideoComposer: Compositional Video Synthesis with Motion Controllability},
   author={Wang, Xiang* and Yuan, Hangjie* and Zhang, Shiwei* and Chen, Dayou* and Wang, Jiuniu, and Zhang, Yingya, and Shen, Yujun, and Zhao, Deli and Zhou, Jingren},
