@@ -65,13 +65,13 @@ If this repo is useful to you, please cite our technical paper.
 ```bibtex
 @article{2023i2vgenxl,
   title={I2VGen-XL: High-Quality Image-to-Video Synthesis via Cascaded Diffusion Models},
-  author={Zhang, Shiwei* and Wang, Jiayu* and Zhang, Yingya* and Zhao, Kang and Yuan, Hangjie and Qing, Zhiwu and Wang, Xiang  and Zhao, Deli and Zhou, Jingren},
+  author={Zhang, Shiwei and Wang, Jiayu and Zhang, Yingya and Zhao, Kang and Yuan, Hangjie and Qing, Zhiwu and Wang, Xiang  and Zhao, Deli and Zhou, Jingren},
   booktitle={arXiv preprint arXiv:2311.04145},
   year={2023}
 }
 @article{2023videocomposer,
   title={VideoComposer: Compositional Video Synthesis with Motion Controllability},
-  author={Wang, Xiang* and Yuan, Hangjie* and Zhang, Shiwei* and Chen, Dayou* and Wang, Jiuniu, and Zhang, Yingya, and Shen, Yujun, and Zhao, Deli and Zhou, Jingren},
+  author={Wang, Xiang and Yuan, Hangjie and Zhang, Shiwei and Chen, Dayou and Wang, Jiuniu, and Zhang, Yingya, and Shen, Yujun, and Zhao, Deli and Zhou, Jingren},
   booktitle={arXiv preprint arXiv:2306.02018},
   year={2023}
 }
@@ -79,6 +79,18 @@ If this repo is useful to you, please cite our technical paper.
   title={Modelscope text-to-video technical report},
   author={Wang, Jiuniu and Yuan, Hangjie and Chen, Dayou and Zhang, Yingya and Wang, Xiang and Zhang, Shiwei},
   journal={arXiv preprint arXiv:2308.06571},
+  year={2023}
+}
+@article{dreamvideo,
+	title={DreamVideo: Composing Your Dream Videos with Customized Subject and Motion},
+	author={Wei, Yujie and Zhang, Shiwei and Qing, Zhiwu and Yuan, Hangjie and Liu, Zhiheng and Liu, Yu and Zhang, Yingya and Zhou, Jingren and Shan, Hongming},
+	journal={arXiv preprint arXiv:2312.04433},
+	year={2023}
+}
+@article{qing2023higen,
+  title={Hierarchical Spatio-temporal Decoupling for Text-to-Video Generation},
+  author={Qing, Zhiwu and Zhang, Shiwei and Wang, Jiayu and Wang, Xiang and Wei, Yujie and Zhang, Yingya and Gao, Changxin and Sang, Nong },
+  journal={arXiv preprint arXiv:2312.04483},
   year={2023}
 }
 ```
