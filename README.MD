@@ -10,7 +10,7 @@ VGen is an open-source video synthesis codebase developed by the Tongyi Lab of A
 - [Hierarchical Spatio-temporal Decoupling for Text-to-Video Generation](https://higen-t2v.github.io/)
 - [A Recipe for Scaling up Text-to-Video Generation with Text-free Videos]()
 - [InstructVideo: Instructing Video Diffusion Models with Human Feedback]()
-- [DreamVideo: Composing Your Dream Videos with Customized Subject and Motion](https://higen-t2v.github.io/)
+- [DreamVideo: Composing Your Dream Videos with Customized Subject and Motion](https://dreamvideo-t2v.github.io/)
 - [VideoLCM: Video Latent Consistency Model]()
 - [Modelscope text-to-video technical report](https://arxiv.org/abs/2308.06571)
 
@@ -29,7 +29,7 @@ VGen can produce high-quality videos from the input text, images, desired motion
 ## TODO
 - [x] Release the technical papers and webpage of [I2VGen-XL](doc/i2vgen-xl.md)
 - [ ] Release the code and pretrained models that can generate 1280x720 videos
-- [ ] Release models optimized specifically for human body and faces
+- [ ] Release models optimized specifically for the human body and faces
 - [ ] Updated version can fully maintain the ID and capture large and accurate motions simultaneously
 - [ ] Release other methods and the corresponding models
 
