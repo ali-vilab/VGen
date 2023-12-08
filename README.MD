@@ -82,10 +82,10 @@ If this repo is useful to you, please cite our technical paper.
   year={2023}
 }
 @article{dreamvideo,
-	title={DreamVideo: Composing Your Dream Videos with Customized Subject and Motion},
-	author={Wei, Yujie and Zhang, Shiwei and Qing, Zhiwu and Yuan, Hangjie and Liu, Zhiheng and Liu, Yu and Zhang, Yingya and Zhou, Jingren and Shan, Hongming},
-	journal={arXiv preprint arXiv:2312.04433},
-	year={2023}
+  title={DreamVideo: Composing Your Dream Videos with Customized Subject and Motion},
+  author={Wei, Yujie and Zhang, Shiwei and Qing, Zhiwu and Yuan, Hangjie and Liu, Zhiheng and Liu, Yu and Zhang, Yingya and Zhou, Jingren and Shan, Hongming},
+  journal={arXiv preprint arXiv:2312.04433},
+  year={2023}
 }
 @article{qing2023higen,
   title={Hierarchical Spatio-temporal Decoupling for Text-to-Video Generation},
