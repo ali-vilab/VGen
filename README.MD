@@ -136,7 +136,8 @@ In a few minutes, you can retrieve the high-definition video you wish to create 
       <image muted="true" height="260" src="https://gw.alicdn.com/imgextra/i4/O1CN01ZXY7UN23K8q4oQ3uG_!!6000000007236-2-tps-1280-720.png"></image>	
     </center></td>
     <td ><center>
-      <video muted="true" autoplay="true" loop="true" height="260" src="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/441385957074.mp4"></video>	
+      <!-- <video muted="true" autoplay="true" loop="true" height="260" src="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/441385957074.mp4"></video>	 -->
+      <video loop="true" height="260" controls preload src="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/441385957074.mp4"></video>
     </center></td>
   </tr>
   <tr>
