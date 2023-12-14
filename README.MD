@@ -128,7 +128,8 @@ In a few minutes, you can retrieve the high-definition video you wish to create 
       <image muted="true" height="260" src="https://img.alicdn.com/imgextra/i1/O1CN01CCEq7K1ZeLpNQqrWu_!!6000000003219-0-tps-1280-720.jpg"></image>	
     </center></td>
     <td ><center>
-      <video muted="true" autoplay="true" loop="true" height="260" src="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/442125067544.mp4"></video>	
+      <!-- <video muted="true" autoplay="true" loop="true" height="260" src="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/442125067544.mp4"></video>	 -->
+      <image muted="true" height="260" src="https://img.alicdn.com/imgextra/i4/O1CN01hIQcvG1spmQMLqBo0_!!6000000005816-1-tps-1280-704.gif" href='"https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/442125067544.mp4'></image>	
     </center></td>
   </tr> 
   <tr>
@@ -137,7 +138,8 @@ In a few minutes, you can retrieve the high-definition video you wish to create 
     </center></td>
     <td ><center>
       <!-- <video muted="true" autoplay="true" loop="true" height="260" src="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/441385957074.mp4"></video>	 -->
-      <video loop="true" height="260" controls preload src="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/441385957074.mp4"></video>
+      <!-- <video loop="true" height="260" controls preload src="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/441385957074.mp4"></video> -->
+      <image muted="true" height="260" src="https://img.alicdn.com/imgextra/i1/O1CN01iaSiiv1aJZURUEY53_!!6000000003309-1-tps-1280-704.gif"></image>	
     </center></td>
   </tr>
   <tr>
@@ -145,7 +147,8 @@ In a few minutes, you can retrieve the high-definition video you wish to create 
       <image muted="true" height="260" src="https://img.alicdn.com/imgextra/i3/O1CN01NHpVGl1oat4H54Hjf_!!6000000005242-2-tps-1280-720.png"></image>	
     </center></td>
     <td ><center>
-      <video muted="true" autoplay="true" loop="true" height="260" src="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/442102706767.mp4"></video>	
+      <!-- <video muted="true" autoplay="true" loop="true" height="260" src="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/442102706767.mp4"></video>	 -->
+      <image muted="true" height="260" src="https://img.alicdn.com/imgextra/i4/O1CN01DgLj1T240jfpzKoaQ_!!6000000007329-1-tps-1280-704.gif"></image>	
     </center></td>
   </tr> 
   <tr>
@@ -153,7 +156,8 @@ In a few minutes, you can retrieve the high-definition video you wish to create 
       <image muted="true" height="260" src="https://img.alicdn.com/imgextra/i1/O1CN01odS61s1WW9tXen21S_!!6000000002795-0-tps-1280-720.jpg"></image>	
     </center></td>
     <td ><center>
-      <video muted="true" autoplay="true" loop="true" height="260" src="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/442163934688.mp4"></video>	
+      <!-- <video muted="true" autoplay="true" loop="true" height="260" src="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/442163934688.mp4"></video>	 -->
+      <image muted="true" height="260" src="https://img.alicdn.com/imgextra/i3/O1CN01Jyk1HT28JkZtpAtY6_!!6000000007912-1-tps-1280-704.gif"></image>	
     </center></td>
   </tr>
 </center>
