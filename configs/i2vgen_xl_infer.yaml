@@ -1,0 +1,17 @@
+TASK_TYPE: inference_i2vgen_entrance
+use_fp16: True
+guide_scale: 9.0
+use_fp16: True
+chunk_size: 2
+decoder_bs: 2
+max_frames: 16
+target_fps: 16      # FPS Conditions, not the encoding fps
+scale: 8
+seed: 8888
+round: 4
+batch_size: 1
+use_zero_infer: True 
+# For important input
+vldm_cfg: configs/i2vgen_xl_train.yaml
+test_list_path: data/test_list_for_i2vgen.txt
+test_model: models/i2vgen_xl_00854500.pth

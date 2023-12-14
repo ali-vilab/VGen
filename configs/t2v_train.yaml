@@ -1,0 +1,107 @@
+TASK_TYPE: train_t2v_entrance
+ENABLE: true
+use_ema: false
+num_workers: 6
+frame_lens: [1, 16, 16, 16, 16, 32, 32, 32]
+sample_fps: [1,  8,  16, 16, 16, 8,  16, 16]
+resolution: [448, 256]
+vit_resolution: [224, 224]
+vid_dataset: {
+    'type': 'VideoDataset',
+    'data_list': ['data/vid_list.txt', ],
+    'data_dir_list': ['data/videos/', ],
+    'vit_resolution': [224, 224],
+    'resolution': [448, 256],
+    'get_first_frame': True,
+    'max_words': 1000,
+}
+img_dataset: {
+    'type': 'ImageDataset',
+    'data_list': ['data/img_list.txt', ],
+    'data_dir_list': ['data/images', ],
+    'vit_resolution': [224, 224],
+    'resolution': [448, 256],
+    'max_words': 1000
+}
+embedder: {
+    'type': 'FrozenOpenCLIPTtxtVisualEmbedder',
+    'layer': 'penultimate',
+    'vit_resolution': [224, 224],
+    'pretrained': 'models/open_clip_pytorch_model.bin'
+}
+UNet: {
+    'type': 'UNetSD_T2VBase',
+    'in_dim': 4,
+    'y_dim': 1024,
+    'upper_len': 128,
+    'context_dim': 1024,
+    'out_dim': 4,
+    'dim_mult': [1, 2, 4, 4],
+    'num_heads': 8,
+    'default_fps': 8,
+    'head_dim': 64,
+    'num_res_blocks': 2,
+    'dropout': 0.1,
+    'misc_dropout': 0.4,
+    'temporal_attention': True,
+    'temporal_attn_times': 1,
+    'use_checkpoint': True,
+    'use_fps_condition': False,
+    'use_sim_mask': False
+}
+Diffusion: {
+    'type': 'DiffusionDDIM',
+    'schedule': 'cosine', # cosine
+    'schedule_param': {
+        'num_timesteps': 1000,
+        'cosine_s': 0.008,
+        'zero_terminal_snr': True,
+    },
+    'mean_type': 'v',
+    'loss_type': 'mse',
+    'var_type': 'fixed_small',
+    'rescale_timesteps': False,
+    'noise_strength': 0.1
+}
+batch_sizes: {
+    "1": 32,
+    "4": 8,
+    "8": 4,
+    "16": 4,
+    "32": 2
+}
+visual_train: {
+    'type': 'VisualTrainTextImageToVideo',
+    'partial_keys': [
+        ['y', 'fps'],
+    ],
+    'use_offset_noise': False,
+    'guide_scale': 9.0, 
+}
+
+Pretrain: {
+    'type': pretrain_specific_strategies,
+    'fix_weight': False,
+    'grad_scale': 0.5,
+    'resume_checkpoint': 'workspace/model_bk/model_scope_0267000.pth',
+    'sd_keys_path': 'models/stable_diffusion_image_key_temporal_attention_x1.json',
+}
+
+chunk_size: 4
+decoder_bs: 4
+lr: 0.00003
+
+noise_strength: 0.1
+# classifier-free guidance
+p_zero: 0.1
+guide_scale: 3.0
+num_steps: 1000000
+
+use_zero_infer: True
+viz_interval: 5        # 200
+save_ckp_interval: 50   # 500
+
+# Log
+log_dir: "workspace/experiments"
+log_interval: 1
+seed: 8888

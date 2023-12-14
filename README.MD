@@ -5,6 +5,7 @@
 
 VGen is an open-source video synthesis codebase developed by the Tongyi Lab of Alibaba Group, featuring state-of-the-art video generative models. This repository includes implementations of the following methods:
 
+
 - [I2VGen-xl: High-quality image-to-video synthesis via cascaded diffusion models](https://i2vgen-xl.github.io/)
 - [VideoComposer: Compositional Video Synthesis with Motion Controllability](https://videocomposer.github.io/)
 - [Hierarchical Spatio-temporal Decoupling for Text-to-Video Generation](https://higen-t2v.github.io/)
@@ -17,49 +18,161 @@ VGen is an open-source video synthesis codebase developed by the Tongyi Lab of A
 
 VGen can produce high-quality videos from the input text, images, desired motion, desired subjects, and even the feedback signals provided.  It also offers a variety of commonly used video generation tools such as visualization, sampling, training, inference, join training using images and videos, acceleration, and more. 
 
+
 <a href='https://i2vgen-xl.github.io/'><img src='https://img.shields.io/badge/Project-Page-Green'></a> <a href='https://arxiv.org/abs/2311.04145'><img src='https://img.shields.io/badge/Paper-Arxiv-red'></a> [![YouTube](https://badges.aleen42.com/src/youtube.svg)](https://youtu.be/XUi0y7dxqEQ) <a href='https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/441039979087.mp4'><img src='source/logo.png'></a>
 
 
 ## 🔥News!!!
-- __[2023.12]__ We release the code and model of I2VGen-XL (Soon)
-- __[2023.12]__ We write an [introduction docment](doc/introuctions.pdf) for VGen and compare I2VGen-XL with SVD.
+- __[2023.12]__ We release the code and model of I2VGen-XL and the ModelScope T2V
+- __[2023.12]__ We release the T2V method [HiGen](https://higen-t2v.github.io) and customizing T2V method [DreamVideo](https://dreamvideo-t2v.github.io).
+- __[2023.12]__ We write an [introduction docment](doc/introduction.pdf) for VGen and compare I2VGen-XL with SVD.
 - __[2023.11]__ We release a high-quality I2VGen-XL model, please refer to the [Webpage](https://i2vgen-xl.github.io)
 
 
 ## TODO
 - [x] Release the technical papers and webpage of [I2VGen-XL](doc/i2vgen-xl.md)
-- [ ] Release the code and pretrained models that can generate 1280x720 videos
+- [x] Release the code and pretrained models that can generate 1280x720 videos
 - [ ] Release models optimized specifically for the human body and faces
 - [ ] Updated version can fully maintain the ID and capture large and accurate motions simultaneously
 - [ ] Release other methods and the corresponding models
 
 
-## Installation:
+## Preparation
 
-Requirements:
-- Python==3.8
-- ffmpeg (for motion vector extraction)
-- torch==1.12.0+cu113
-- torchvision==0.13.0+cu113
-- open-clip-torch==2.0.2
-- transformers==4.18.0
-- flash-attn==0.2 
-- xformers==0.0.13
-- motion-vector-extractor==1.0.6 (for motion vector extraction)
+The main features of VGen are as follows:
+- Expandability, allowing for easy management of your own experiments.
+- Completeness, encompassing all common components for video generation.
+- Excellent performance, featuring powerful pre-trained models in multiple tasks.
 
-You also can create the same environment as ours with the following command:
+
+### Installation
+
 ```
-conda env create -f environment.yaml
+conda create -n vgen python=3.8
+conda activate vgen
+pip install torch==1.12.0+cu113 torchvision==0.13.0+cu113 torchaudio==0.12.0 --extra-index-url https://download.pytorch.org/whl/cu113
+pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 ```
+
+### Datasets
+
+We have provided a **demo dataset** that includes images and videos, along with their lists in ``data``. 
+
+*Please note that the demo images used here are for testing purposes and were not included in the training.*
+
+
+### Clone codeb
+
+```
+git clone https://github.com/damo-vilab/i2vgen-xl.git
+cd i2vgen-xl
+```
+
 
 ## Getting Started with VGen
 
-Come soon.
+### (1) Train your text-to-video model
+
+
+Executing the following command to enable distributed training is as easy as that.
+```
+python train_net.py --cfg configs/t2v_train.yaml
+```
+
+In the `t2v_train.yaml` configuration file, you can specify the data, adjust the video-to-image ratio using `frame_lens`, and validate your ideas with different Diffusion settings, and so on.
+
+- Before the training, you can download any of our open-source models for initialization. Our codebase supports custom initialization and `grad_scale` settings, all of which are included in the `Pretrain` item in yaml file.
+- During the training, you can view the saved models and intermediate inference results in the `workspace/experiments/t2v_train`directory.
+
+After the training is completed, you can perform inference on the model using the following command.
+```
+python inference.py --cfg configs/t2v_infer.yaml
+```
+Then you can find the videos you generated in the `workspace/experiments/test_img_01` directory. For specific configurations such as data, models, seed, etc., please refer to the `t2v_infer.yaml` file.
+
+<table>
+<center>
+  <tr>
+    <td ><center>
+      <video muted="true" autoplay="true" loop="true" height="260" src="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/441754174077.mp4"></video>	
+    </center></td>
+    <td ><center>
+      <video muted="true" autoplay="true" loop="true" height="260" src="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/441138824052.mp4"></video>	
+    </center></td>
+  </tr>
+</center>
+</table>
+</center>
+
+
+### (2) Run the I2VGen-XL model
+
+(i) Download model and test data:
+```
+!pip install modelscope
+from modelscope.hub.snapshot_download import snapshot_download
+model_dir = snapshot_download('damo/I2VGen-XL', cache_dir='models/', revision='v1.0.0')
+```
+
+(ii) Run the following command:
+```
+python inference.py --cfg configs/i2vgen_xl_train.yaml
+```
+In a few minutes, you can retrieve the high-definition video you wish to create from the `workspace/experiments/test_img_01` directory. At present, we find that the current model performs inadequately on **anime images** and **images with a black background** due to the lack of relevant training data. We are consistently working to optimize it.
+
+<center>
+<table>
+<center>
+  <tr>
+    <td ><center>
+      <image muted="true" height="260" src="https://img.alicdn.com/imgextra/i1/O1CN01CCEq7K1ZeLpNQqrWu_!!6000000003219-0-tps-1280-720.jpg"></image>	
+    </center></td>
+    <td ><center>
+      <video muted="true" autoplay="true" loop="true" height="260" src="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/442125067544.mp4"></video>	
+    </center></td>
+  </tr> 
+  <tr>
+    <td ><center>
+      <image muted="true" height="260" src="https://gw.alicdn.com/imgextra/i4/O1CN01ZXY7UN23K8q4oQ3uG_!!6000000007236-2-tps-1280-720.png"></image>	
+    </center></td>
+    <td ><center>
+      <video muted="true" autoplay="true" loop="true" height="260" src="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/441385957074.mp4"></video>	
+    </center></td>
+  </tr>
+  <tr>
+    <td ><center>
+      <image muted="true" height="260" src="https://img.alicdn.com/imgextra/i3/O1CN01NHpVGl1oat4H54Hjf_!!6000000005242-2-tps-1280-720.png"></image>	
+    </center></td>
+    <td ><center>
+      <video muted="true" autoplay="true" loop="true" height="260" src="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/442102706767.mp4"></video>	
+    </center></td>
+  </tr> 
+  <tr>
+    <td ><center>
+      <image muted="true" height="260" src="https://img.alicdn.com/imgextra/i1/O1CN01odS61s1WW9tXen21S_!!6000000002795-0-tps-1280-720.jpg"></image>	
+    </center></td>
+    <td ><center>
+      <video muted="true" autoplay="true" loop="true" height="260" src="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/442163934688.mp4"></video>	
+    </center></td>
+  </tr>
+</center>
+</table>
+</center>
+
+### (3) Other methods
+
+In preparation.
+
+
+## Customize your own approach
+
+Our codebase essentially supports all the commonly used components in video generation. You can manage your experiments flexibly by adding corresponding registration classes, including `ENGINE, MODEL, DATASETS, EMBEDDER, AUTO_ENCODER, DISTRIBUTION, VISUAL, DIFFUSION, PRETRAIN`, and can be compatible with all our open-source algorithms according to your own needs. If you have any questions, feel free to give us your feedback at any time.
+
 
 
 ## BibTeX
 
-If this repo is useful to you, please cite our technical paper.
+If this repo is useful to you, please cite our corresponding technical paper.
 
 
 ```bibtex

@@ -1,0 +1,12 @@
+## To test our images, it is recommended to run one data point at a time (i.e., uncommenting only one line at a time), which should reproduce our results.
+data/test_images/img_0001.jpg|||A green frog floats on the surface of the water on green lotus leaves, with several pink lotus flowers, in a Chinese painting style.
+# data/test_images/img_0002.png|||A blonde girl in jeans
+# data/test_images/img_0003.jpg|||Evening waterfall
+# data/test_images/img_0004.png|||A girl with yellow hair and black clothes stood in front of the camera
+# data/test_images/img_0005.png|||A girl with yellow hair was wearing a yellow ball suit in front of the cage
+# data/test_images/img_0006.png|||A red woodcut bird
+# data/test_images/img_0007.jpg|||Chinese ink painting, two boats and two coconut trees by the sea
+# data/test_images/img_0008.png|||A dog in a suit and tie faces the camera
+# data/test_images/img_0009.png|||Papers were floating in the air on a table in the library
+# data/test_images/img_0012.jpg|||A close-up of a parrot
+# data/test_images/img_0013.png|||Five goldfish in the style of Chinese painting are swimming

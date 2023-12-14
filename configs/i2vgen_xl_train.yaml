@@ -1,0 +1,109 @@
+TASK_TYPE: train_i2v_vs_img_text_entrance
+ENABLE: true
+use_ema: true
+num_workers: 6
+frame_lens: [16, 16, 16, 16, 16, 32, 32, 32]
+sample_fps: [8,  8,  16, 16, 16, 8,  16, 16]
+resolution: [1280, 704]
+vit_resolution: [224, 224]
+vid_dataset: {
+    'type': 'VideoDataset',
+    'data_list': ['data/vid_list.txt', ],
+    'data_dir_list': ['data/videos/', ],
+    'vit_resolution': [224, 224],
+    'resolution': [1280, 704],
+    'get_first_frame': True,
+    'max_words': 1000,
+}
+img_dataset: {
+    'type': 'ImageDataset',
+    'data_list': ['data/img_list.txt', ],
+    'data_dir_list': ['data/images', ],
+    'vit_resolution': [224, 224],
+    'resolution': [1280, 704],
+    'max_words': 1000
+}
+embedder: {
+    'type': 'FrozenOpenCLIPTtxtVisualEmbedder',
+    'layer': 'penultimate',
+    'vit_resolution': [224, 224],
+    'pretrained': 'models/open_clip_pytorch_model.bin'
+}
+UNet: {
+    'type': 'UNetSD_I2VGen',
+    'in_dim': 4,
+    'y_dim': 1024,
+    'upper_len': 128,
+    'context_dim': 1024,
+    'concat_dim': 4,
+    'out_dim': 4,
+    'dim_mult': [1, 2, 4, 4],
+    'num_heads': 8,
+    'default_fps': 8,
+    'head_dim': 64,
+    'num_res_blocks': 2,
+    'dropout': 0.1,
+    'temporal_attention': True,
+    'temporal_attn_times': 1,
+    'use_checkpoint': True,
+    'use_fps_condition': False,
+    'use_sim_mask': False
+}
+Diffusion: {
+    'type': 'DiffusionDDIM',
+    'schedule': 'cosine', # cosine
+    'schedule_param': {
+        'num_timesteps': 1000,
+        'cosine_s': 0.008,
+        'zero_terminal_snr': True,
+    },
+    'mean_type': 'v',
+    'loss_type': 'mse',
+    'var_type': 'fixed_small',
+    'rescale_timesteps': False,
+    'noise_strength': 0.1
+}
+batch_sizes: {
+    "1": 32,
+    "4": 8,
+    "8": 4,
+    "16": 2,
+    "32": 1,
+}
+visual_train: {
+    'type': 'VisualTrainTextImageToVideo',
+    'partial_keys': [
+        # ['y', 'local_image', 'fps'],
+        # ['image', 'local_image', 'fps'],
+        ['y', 'image', 'local_image', 'fps']
+    ],
+    'use_offset_noise': True,
+    'guide_scale': 9.0, 
+}
+
+Pretrain: {
+    'type': pretrain_specific_strategies,
+    'fix_weight': False,
+    'grad_scale': 0.5,
+    'resume_checkpoint': 'models/i2vgen_xl_00854500.pth',
+    'sd_keys_path': 'models/stable_diffusion_image_key_temporal_attention_x1.json',
+}
+
+chunk_size: 4
+decoder_bs: 4
+lr: 0.00003
+
+noise_strength: 0.1
+# classifier-free guidance
+p_zero: 0.0
+guide_scale: 3.0
+num_steps: 1000000
+
+use_zero_infer: True
+viz_interval: 50        # 200
+save_ckp_interval: 50   # 500
+
+# Log
+log_dir: "workspace/experiments"
+log_interval: 1
+seed: 6666

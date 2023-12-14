@@ -5,7 +5,7 @@ Official repo for [I2vgen-xl: High-quality image-to-video synthesis via cascaded
 Please see [Project Page](https://i2vgen-xl.github.io) for more examples.
 
 
-![method](../source/fig_02.jpg "method")
+![method](../source/i2vgen_fig_02.jpg "method")
 
 
 I2VGen-XL is capable of generating high-quality, realistically animated, and temporally coherent high-definition videos from a single input static image, based on user input.
@@ -15,5 +15,5 @@ I2VGen-XL is capable of generating high-quality, realistically animated, and tem
 
 ## Examples
 
-![figure2](../source/fig_04.png "figure2")
+![figure2](../source/i2vgen_fig_04.png "figure2")
 
