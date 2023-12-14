@@ -90,7 +90,7 @@ python inference.py --cfg configs/t2v_infer.yaml
 ```
 Then you can find the videos you generated in the `workspace/experiments/test_img_01` directory. For specific configurations such as data, models, seed, etc., please refer to the `t2v_infer.yaml` file.
 
-<table>
+<!-- <table>
 <center>
   <tr>
     <td ><center>
@@ -98,6 +98,28 @@ Then you can find the videos you generated in the `workspace/experiments/test_im
     </center></td>
     <td ><center>
       <video muted="true" autoplay="true" loop="true" height="260" src="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/441138824052.mp4"></video>	
+    </center></td>
+  </tr>
+</center>
+</table>
+</center> -->
+
+<table>
+<center>
+  <tr>
+    <td ><center>
+      <image muted="true" height="260" src="https://img.alicdn.com/imgextra/i4/O1CN01Ya2I5I25utrJwJ9Jf_!!6000000007587-2-tps-1280-720.png"></image>	
+    </center></td>
+    <td ><center>
+      <image muted="true" height="260" src="https://img.alicdn.com/imgextra/i3/O1CN01CrmYaz1zXBetmg3dd_!!6000000006723-2-tps-1280-720.png"></image>	
+    </center></td>
+  </tr>
+  <tr>
+    <td ><center>
+      <p>Clike <a href="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/441754174077.mp4">HRER</a> to view the generated video.</p>
+    </center></td>
+    <td ><center>
+      <p>Clike <a href="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/441138824052.mp4">HRER</a> to view the generated video.</p>
     </center></td>
   </tr>
 </center>
@@ -120,6 +142,9 @@ python inference.py --cfg configs/i2vgen_xl_train.yaml
 ```
 In a few minutes, you can retrieve the high-definition video you wish to create from the `workspace/experiments/test_img_01` directory. At present, we find that the current model performs inadequately on **anime images** and **images with a black background** due to the lack of relevant training data. We are consistently working to optimize it.
 
+
+<span style="color:red">Due to the compression of our video quality in GIF format, please click 'HRER' below to view the original video.</span>
+
 <center>
 <table>
 <center>
@@ -129,7 +154,15 @@ In a few minutes, you can retrieve the high-definition video you wish to create 
     </center></td>
     <td ><center>
       <!-- <video muted="true" autoplay="true" loop="true" height="260" src="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/442125067544.mp4"></video>	 -->
-      <image muted="true" height="260" src="https://img.alicdn.com/imgextra/i4/O1CN01hIQcvG1spmQMLqBo0_!!6000000005816-1-tps-1280-704.gif" href='"https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/442125067544.mp4'></image>	
+      <image muted="true" height="260" src="https://img.alicdn.com/imgextra/i4/O1CN01hIQcvG1spmQMLqBo0_!!6000000005816-1-tps-1280-704.gif"></image>	
+    </center></td>
+  </tr> 
+  <tr>
+    <td ><center>
+      <p>Input Image</p>
+    </center></td>
+    <td ><center>
+      <p>Clike <a href="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/442125067544.mp4">HRER</a> to view the generated video.</p>
     </center></td>
   </tr> 
   <tr>
@@ -138,17 +171,34 @@ In a few minutes, you can retrieve the high-definition video you wish to create 
     </center></td>
     <td ><center>
       <!-- <video muted="true" autoplay="true" loop="true" height="260" src="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/441385957074.mp4"></video>	 -->
-      <!-- <video loop="true" height="260" controls preload src="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/441385957074.mp4"></video> -->
       <image muted="true" height="260" src="https://img.alicdn.com/imgextra/i1/O1CN01iaSiiv1aJZURUEY53_!!6000000003309-1-tps-1280-704.gif"></image>	
     </center></td>
   </tr>
+  <tr>
+    <td ><center>
+      <p>Input Image</p>
+    </center></td>
+    <td ><center>
+      <p>Clike <a href="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/441385957074.mp4">HRER</a> to view the generated video.</p>
+    </center></td>
+  </tr> 
   <tr>
     <td ><center>
       <image muted="true" height="260" src="https://img.alicdn.com/imgextra/i3/O1CN01NHpVGl1oat4H54Hjf_!!6000000005242-2-tps-1280-720.png"></image>	
     </center></td>
     <td ><center>
       <!-- <video muted="true" autoplay="true" loop="true" height="260" src="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/442102706767.mp4"></video>	 -->
-      <image muted="true" height="260" src="https://img.alicdn.com/imgextra/i4/O1CN01DgLj1T240jfpzKoaQ_!!6000000007329-1-tps-1280-704.gif"></image>	
+      <!-- <image muted="true" height="260" src="https://img.alicdn.com/imgextra/i4/O1CN01DgLj1T240jfpzKoaQ_!!6000000007329-1-tps-1280-704.gif"></image>	
+       -->
+      <image muted="true" height="260" src="https://img.alicdn.com/imgextra/i4/O1CN01DgLj1T240jfpzKoaQ_!!6000000007329-1-tps-1280-704.gif"></image>
+    </center></td>
+  </tr> 
+  <tr>
+    <td ><center>
+      <p>Input Image</p>
+    </center></td>
+    <td ><center>
+      <p>Clike <a href="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/442102706767.mp4">HRER</a> to view the generated video.</p>
     </center></td>
   </tr> 
   <tr>
@@ -160,6 +210,14 @@ In a few minutes, you can retrieve the high-definition video you wish to create 
       <image muted="true" height="260" src="https://img.alicdn.com/imgextra/i3/O1CN01Jyk1HT28JkZtpAtY6_!!6000000007912-1-tps-1280-704.gif"></image>	
     </center></td>
   </tr>
+  <tr>
+    <td ><center>
+      <p>Input Image</p>
+    </center></td>
+    <td ><center>
+      <p>Clike <a href="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/442163934688.mp4">HRER</a> to view the generated video.</p>
+    </center></td>
+  </tr> 
 </center>
 </table>
 </center>
