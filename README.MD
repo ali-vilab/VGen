@@ -117,10 +117,10 @@ Then you can find the videos you generated in the `workspace/experiments/test_im
   </tr>
   <tr>
     <td ><center>
-      <p>Clike <a href="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/441754174077.mp4">HRER</a> to view the generated video.</p>
+      <p>Clike <a href="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/441754174077.mp4">HERE</a> to view the generated video.</p>
     </center></td>
     <td ><center>
-      <p>Clike <a href="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/441138824052.mp4">HRER</a> to view the generated video.</p>
+      <p>Clike <a href="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/441138824052.mp4">HERE</a> to view the generated video.</p>
     </center></td>
   </tr>
 </center>
@@ -148,7 +148,7 @@ python inference.py --cfg configs/i2vgen_xl_infer.yaml  test_list_path data/test
 The `test_list_path` represents the input image path and its corresponding caption. Please refer to the specific format and suggestions within demo file `data/test_list_for_i2vgen.txt`. `test_model` is the path for loading the model. In a few minutes, you can retrieve the high-definition video you wish to create from the `workspace/experiments/test_list_for_i2vgen` directory. At present, we find that the current model performs inadequately on **anime images** and **images with a black background** due to the lack of relevant training data. We are consistently working to optimize it.
 
 
-<span style="color:red">Due to the compression of our video quality in GIF format, please click 'HRER' below to view the original video.</span>
+<span style="color:red">Due to the compression of our video quality in GIF format, please click 'HERE' below to view the original video.</span>
 
 <center>
 <table>
@@ -167,7 +167,7 @@ The `test_list_path` represents the input image path and its corresponding capti
       <p>Input Image</p>
     </center></td>
     <td ><center>
-      <p>Clike <a href="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/442125067544.mp4">HRER</a> to view the generated video.</p>
+      <p>Clike <a href="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/442125067544.mp4">HERE</a> to view the generated video.</p>
     </center></td>
   </tr> 
   <tr>
@@ -184,7 +184,7 @@ The `test_list_path` represents the input image path and its corresponding capti
       <p>Input Image</p>
     </center></td>
     <td ><center>
-      <p>Clike <a href="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/441385957074.mp4">HRER</a> to view the generated video.</p>
+      <p>Clike <a href="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/441385957074.mp4">HERE</a> to view the generated video.</p>
     </center></td>
   </tr> 
   <tr>
@@ -203,7 +203,7 @@ The `test_list_path` represents the input image path and its corresponding capti
       <p>Input Image</p>
     </center></td>
     <td ><center>
-      <p>Clike <a href="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/442102706767.mp4">HRER</a> to view the generated video.</p>
+      <p>Clike <a href="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/442102706767.mp4">HERE</a> to view the generated video.</p>
     </center></td>
   </tr> 
   <tr>
@@ -220,7 +220,7 @@ The `test_list_path` represents the input image path and its corresponding capti
       <p>Input Image</p>
     </center></td>
     <td ><center>
-      <p>Clike <a href="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/442163934688.mp4">HRER</a> to view the generated video.</p>
+      <p>Clike <a href="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/442163934688.mp4">HERE</a> to view the generated video.</p>
     </center></td>
   </tr> 
 </center>
@@ -281,6 +281,13 @@ If this repo is useful to you, please cite our corresponding technical paper.
   year={2023}
 }
 ```
+
+
+## Acknowledgement
+
+We would like to express our gratitude for the contributions of several previous works to the development of VideoComposer. This includes, but is not limited to [Composer](https://arxiv.org/abs/2302.09778), [ModelScopeT2V](https://modelscope.cn/models/damo/text-to-video-synthesis/summary), [Stable Diffusion](https://github.com/Stability-AI/stablediffusion), [OpenCLIP](https://github.com/mlfoundations/open_clip), [WebVid-10M](https://m-bain.github.io/webvid-dataset/), [LAION-400M](https://laion.ai/blog/laion-400-open-dataset/), [Pidinet](https://github.com/zhuoinoulu/pidinet) and [MiDaS](https://github.com/isl-org/MiDaS). We are committed to building upon these foundations in a way that respects their original contributions.
+
+
 
 ## Disclaimer
 
