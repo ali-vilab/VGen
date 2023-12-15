@@ -6,10 +6,18 @@ from .schedules import beta_schedule
 from .losses import kl_divergence, discretized_gaussian_log_likelihood
 # from .dpm_solver import NoiseScheduleVP, model_wrapper_guided_diffusion, model_wrapper, DPM_Solver
 
+# def _i(tensor, t, x):
+#     r"""Index tensor using t and format the output according to x.
+#     """
+#     shape = (x.size(0), ) + (1, ) * (x.ndim - 1)
+#     return tensor[t].view(shape).to(x)
+
 def _i(tensor, t, x):
     r"""Index tensor using t and format the output according to x.
     """
     shape = (x.size(0), ) + (1, ) * (x.ndim - 1)
+    if tensor.device != x.device:
+        tensor = tensor.to(x.device)
     return tensor[t].view(shape).to(x)
 
 
