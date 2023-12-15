@@ -141,7 +141,11 @@ model_dir = snapshot_download('damo/I2VGen-XL', cache_dir='models/', revision='v
 ```
 python inference.py --cfg configs/i2vgen_xl_infer.yaml
 ```
-In a few minutes, you can retrieve the high-definition video you wish to create from the `workspace/experiments/test_img_01` directory. At present, we find that the current model performs inadequately on **anime images** and **images with a black background** due to the lack of relevant training data. We are consistently working to optimize it.
+or you can run:
+```
+python inference.py --cfg configs/i2vgen_xl_infer.yaml  test_list_path data/test_list_for_i2vgen.txt test_model models/i2vgen_xl_00854500.pth
+```
+The `test_list_path` represents the input image path and its corresponding caption. Please refer to the specific format and suggestions within demo file `data/test_list_for_i2vgen.txt`. `test_model` is the path for loading the model. In a few minutes, you can retrieve the high-definition video you wish to create from the `workspace/experiments/test_list_for_i2vgen` directory. At present, we find that the current model performs inadequately on **anime images** and **images with a black background** due to the lack of relevant training data. We are consistently working to optimize it.
 
 
 <span style="color:red">Due to the compression of our video quality in GIF format, please click 'HRER' below to view the original video.</span>
