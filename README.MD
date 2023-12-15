@@ -12,7 +12,7 @@ VGen is an open-source video synthesis codebase developed by the Tongyi Lab of A
 - [A Recipe for Scaling up Text-to-Video Generation with Text-free Videos]()
 - [InstructVideo: Instructing Video Diffusion Models with Human Feedback]()
 - [DreamVideo: Composing Your Dream Videos with Customized Subject and Motion](https://dreamvideo-t2v.github.io/)
-- [VideoLCM: Video Latent Consistency Model]()
+- [VideoLCM: Video Latent Consistency Model](https://arxiv.org/abs/2312.09109)
 - [Modelscope text-to-video technical report](https://arxiv.org/abs/2308.06571)
 
 
@@ -23,6 +23,7 @@ VGen can produce high-quality videos from the input text, images, desired motion
 
 
 ## 🔥News!!!
+- __[2023.12]__ We release the high-efficiency video generation method [VideoLCM](https://arxiv.org/abs/2312.09109)
 - __[2023.12]__ We release the code and model of I2VGen-XL and the ModelScope T2V
 - __[2023.12]__ We release the T2V method [HiGen](https://higen-t2v.github.io) and customizing T2V method [DreamVideo](https://dreamvideo-t2v.github.io).
 - __[2023.12]__ We write an [introduction docment](doc/introduction.pdf) for VGen and compare I2VGen-XL with SVD.
@@ -138,7 +139,7 @@ model_dir = snapshot_download('damo/I2VGen-XL', cache_dir='models/', revision='v
 
 (ii) Run the following command:
 ```
-python inference.py --cfg configs/i2vgen_xl_train.yaml
+python inference.py --cfg configs/i2vgen_xl_infer.yaml
 ```
 In a few minutes, you can retrieve the high-definition video you wish to create from the `workspace/experiments/test_img_01` directory. At present, we find that the current model performs inadequately on **anime images** and **images with a black background** due to the lack of relevant training data. We are consistently working to optimize it.
 
@@ -269,4 +270,14 @@ If this repo is useful to you, please cite our corresponding technical paper.
   journal={arXiv preprint arXiv:2312.04483},
   year={2023}
 }
+@article{wang2023videolcm,
+  title={VideoLCM: Video Latent Consistency Model},
+  author={Wang, Xiang and Zhang, Shiwei and Zhang, Han and Liu, Yu and Zhang, Yingya and Gao, Changxin and Sang, Nong },
+  journal={arXiv preprint arXiv:2312.09109},
+  year={2023}
+}
 ```
+
+## Disclaimer
+
+This open-source model is trained with using [WebVid-10M](https://m-bain.github.io/webvid-dataset/) and [LAION-400M](https://laion.ai/blog/laion-400-open-dataset/) datasets and is intended for <strong>RESEARCH/NON-COMMERCIAL USE ONLY</strong>. 
