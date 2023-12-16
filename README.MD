@@ -117,10 +117,10 @@ Then you can find the videos you generated in the `workspace/experiments/test_im
   </tr>
   <tr>
     <td ><center>
-      <p>Clike <a href="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/441754174077.mp4">HERE</a> to view the generated video.</p>
+      <p>Click <a href="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/441754174077.mp4">HERE</a> to view the generated video.</p>
     </center></td>
     <td ><center>
-      <p>Clike <a href="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/441138824052.mp4">HERE</a> to view the generated video.</p>
+      <p>Click <a href="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/441138824052.mp4">HERE</a> to view the generated video.</p>
     </center></td>
   </tr>
 </center>
@@ -167,7 +167,7 @@ The `test_list_path` represents the input image path and its corresponding capti
       <p>Input Image</p>
     </center></td>
     <td ><center>
-      <p>Clike <a href="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/442125067544.mp4">HERE</a> to view the generated video.</p>
+      <p>Click <a href="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/442125067544.mp4">HERE</a> to view the generated video.</p>
     </center></td>
   </tr> 
   <tr>
@@ -184,7 +184,7 @@ The `test_list_path` represents the input image path and its corresponding capti
       <p>Input Image</p>
     </center></td>
     <td ><center>
-      <p>Clike <a href="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/441385957074.mp4">HERE</a> to view the generated video.</p>
+      <p>Click <a href="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/441385957074.mp4">HERE</a> to view the generated video.</p>
     </center></td>
   </tr> 
   <tr>
@@ -203,7 +203,7 @@ The `test_list_path` represents the input image path and its corresponding capti
       <p>Input Image</p>
     </center></td>
     <td ><center>
-      <p>Clike <a href="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/442102706767.mp4">HERE</a> to view the generated video.</p>
+      <p>Click <a href="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/442102706767.mp4">HERE</a> to view the generated video.</p>
     </center></td>
   </tr> 
   <tr>
@@ -220,7 +220,7 @@ The `test_list_path` represents the input image path and its corresponding capti
       <p>Input Image</p>
     </center></td>
     <td ><center>
-      <p>Clike <a href="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/442163934688.mp4">HERE</a> to view the generated video.</p>
+      <p>Click <a href="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/442163934688.mp4">HERE</a> to view the generated video.</p>
     </center></td>
   </tr> 
 </center>
