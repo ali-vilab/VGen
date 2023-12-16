@@ -26,7 +26,7 @@ VGen can produce high-quality videos from the input text, images, desired motion
 - __[2023.12]__ We release the high-efficiency video generation method [VideoLCM](https://arxiv.org/abs/2312.09109)
 - __[2023.12]__ We release the code and model of I2VGen-XL and the ModelScope T2V
 - __[2023.12]__ We release the T2V method [HiGen](https://higen-t2v.github.io) and customizing T2V method [DreamVideo](https://dreamvideo-t2v.github.io).
-- __[2023.12]__ We write an [introduction docment](doc/introduction.pdf) for VGen and compare I2VGen-XL with SVD.
+- __[2023.12]__ We write an [introduction document](doc/introduction.pdf) for VGen and compare I2VGen-XL with SVD.
 - __[2023.11]__ We release a high-quality I2VGen-XL model, please refer to the [Webpage](https://i2vgen-xl.github.io)
 
 
