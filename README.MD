@@ -23,10 +23,11 @@ VGen can produce high-quality videos from the input text, images, desired motion
 
 
 ## 🔥News!!!
+- __[2023.12]__ We release the diffusion based expressive talking head generation [DreamTalk](https://dreamtalk-project.github.io)
 - __[2023.12]__ We release the high-efficiency video generation method [VideoLCM](https://arxiv.org/abs/2312.09109)
-- __[2023.12]__ We release the code and model of I2VGen-XL and the ModelScope T2V
+- __[2023.12]__ We release the code and model of [I2VGen-XL](https://i2vgen-xl.github.io) and the [ModelScope T2V](https://arxiv.org/abs/2308.06571)
 - __[2023.12]__ We release the T2V method [HiGen](https://higen-t2v.github.io) and customizing T2V method [DreamVideo](https://dreamvideo-t2v.github.io).
-- __[2023.12]__ We write an [introduction docment](doc/introduction.pdf) for VGen and compare I2VGen-XL with SVD.
+- __[2023.12]__ We write an [introduction document](doc/introduction.pdf) for VGen and compare I2VGen-XL with SVD.
 - __[2023.11]__ We release a high-quality I2VGen-XL model, please refer to the [Webpage](https://i2vgen-xl.github.io)
 
 
@@ -293,6 +294,12 @@ If this repo is useful to you, please cite our corresponding technical paper.
   title={VideoLCM: Video Latent Consistency Model},
   author={Wang, Xiang and Zhang, Shiwei and Zhang, Han and Liu, Yu and Zhang, Yingya and Gao, Changxin and Sang, Nong },
   journal={arXiv preprint arXiv:2312.09109},
+  year={2023}
+}
+@article{ma2023dreamtalk,
+  title={DreamTalk: When Expressive Talking Head Generation Meets Diffusion Probabilistic Models},
+  author={Ma, Yifeng and Zhang, Shiwei and Wang, Jiayu and Wang, Xiang and Zhang, Yingya and Deng Zhidong},
+  journal={arXiv preprint arXiv:2312.09767},
   year={2023}
 }
 ```
