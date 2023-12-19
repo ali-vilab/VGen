@@ -6,14 +6,14 @@
 VGen is an open-source video synthesis codebase developed by the Tongyi Lab of Alibaba Group, featuring state-of-the-art video generative models. This repository includes implementations of the following methods:
 
 
-- [I2VGen-xl: High-quality image-to-video synthesis via cascaded diffusion models](https://i2vgen-xl.github.io/)
-- [VideoComposer: Compositional Video Synthesis with Motion Controllability](https://videocomposer.github.io/)
-- [Hierarchical Spatio-temporal Decoupling for Text-to-Video Generation](https://higen-t2v.github.io/)
-- [A Recipe for Scaling up Text-to-Video Generation with Text-free Videos]()
-- [InstructVideo: Instructing Video Diffusion Models with Human Feedback]()
-- [DreamVideo: Composing Your Dream Videos with Customized Subject and Motion](https://dreamvideo-t2v.github.io/)
-- [VideoLCM: Video Latent Consistency Model](https://arxiv.org/abs/2312.09109)
-- [Modelscope text-to-video technical report](https://arxiv.org/abs/2308.06571)
+- [I2VGen-xl: High-quality image-to-video synthesis via cascaded diffusion models.](https://i2vgen-xl.github.io/)
+- [VideoComposer: Compositional Video Synthesis with Motion Controllability.](https://videocomposer.github.io/)
+- [Hierarchical Spatio-temporal Decoupling for Text-to-Video Generation.](https://higen-t2v.github.io/)
+- [A Recipe for Scaling up Text-to-Video Generation with Text-free Videos.]()
+- [InstructVideo: Instructing Video Diffusion Models with Human Feedback.]()
+- [DreamVideo: Composing Your Dream Videos with Customized Subject and Motion.](https://dreamvideo-t2v.github.io/)
+- [VideoLCM: Video Latent Consistency Model.](https://arxiv.org/abs/2312.09109)
+- [Modelscope text-to-video technical report.](https://arxiv.org/abs/2308.06571)
 
 
 VGen can produce high-quality videos from the input text, images, desired motion, desired subjects, and even the feedback signals provided.  It also offers a variety of commonly used video generation tools such as visualization, sampling, training, inference, join training using images and videos, acceleration, and more. 
@@ -23,20 +23,20 @@ VGen can produce high-quality videos from the input text, images, desired motion
 
 
 ## 🔥News!!!
-- __[2023.12]__ We release the diffusion based expressive talking head generation [DreamTalk](https://dreamtalk-project.github.io)
-- __[2023.12]__ We release the high-efficiency video generation method [VideoLCM](https://arxiv.org/abs/2312.09109)
-- __[2023.12]__ We release the code and model of [I2VGen-XL](https://i2vgen-xl.github.io) and the [ModelScope T2V](https://arxiv.org/abs/2308.06571)
+- __[2023.12]__ We release the diffusion based expressive talking head generation [DreamTalk.](https://dreamtalk-project.github.io)
+- __[2023.12]__ We release the high-efficiency video generation method [VideoLCM.](https://arxiv.org/abs/2312.09109)
+- __[2023.12]__ We release the code and model of [I2VGen-XL](https://i2vgen-xl.github.io) and the [ModelScope T2V.](https://arxiv.org/abs/2308.06571)
 - __[2023.12]__ We release the T2V method [HiGen](https://higen-t2v.github.io) and customizing T2V method [DreamVideo](https://dreamvideo-t2v.github.io).
 - __[2023.12]__ We write an [introduction document](doc/introduction.pdf) for VGen and compare I2VGen-XL with SVD.
-- __[2023.11]__ We release a high-quality I2VGen-XL model, please refer to the [Webpage](https://i2vgen-xl.github.io)
+- __[2023.11]__ We release a high-quality I2VGen-XL model, please refer to the [Webpage.](https://i2vgen-xl.github.io)
 
 
 ## TODO
-- [x] Release the technical papers and webpage of [I2VGen-XL](doc/i2vgen-xl.md)
-- [x] Release the code and pretrained models that can generate 1280x720 videos
-- [ ] Release models optimized specifically for the human body and faces
-- [ ] Updated version can fully maintain the ID and capture large and accurate motions simultaneously
-- [ ] Release other methods and the corresponding models
+- [x] Release the technical papers and webpage of [I2VGen-XL.](doc/i2vgen-xl.md)
+- [x] Release the code and pretrained models that can generate 1280x720 videos.
+- [ ] Release models optimized specifically for the human body and faces.
+- [ ] Updated version can fully maintain the ID and capture large and accurate motions simultaneously.
+- [ ] Release other methods and the corresponding models.
 
 
 
@@ -80,7 +80,7 @@ cd i2vgen-xl
 
 ## Getting Started with VGen
 
-### (1) Train your text-to-video model
+### 1. Train your text-to-video model
 
 
 Executing the following command to enable distributed training is as easy as that.
@@ -88,7 +88,7 @@ Executing the following command to enable distributed training is as easy as tha
 python train_net.py --cfg configs/t2v_train.yaml
 ```
 
-In the `t2v_train.yaml` configuration file, you can specify the data, adjust the video-to-image ratio using `frame_lens`, and validate your ideas with different Diffusion settings, and so on.
+In the `t2v_train.yaml` configuration file, you can specify the data, adjust the video-to-image ratio using `frame_lens`, and validate your ideas with different Diffusion settings and so on.
 
 - Before the training, you can download any of our open-source models for initialization. Our codebase supports custom initialization and `grad_scale` settings, all of which are included in the `Pretrain` item in yaml file.
 - During the training, you can view the saved models and intermediate inference results in the `workspace/experiments/t2v_train`directory.
@@ -136,9 +136,9 @@ Then you can find the videos you generated in the `workspace/experiments/test_im
 </center>
 
 
-### (2) Run the I2VGen-XL model
+### 2. Run the I2VGen-XL model
 
-(i) Download model and test data:
+i. Download model and test data:
 ```
 !pip install modelscope
 from modelscope.hub.snapshot_download import snapshot_download
@@ -153,7 +153,7 @@ git clone https://huggingface.co/damo-vilab/i2vgen-xl
 ```
 
 
-(ii) Run the following command:
+ii. Run the following command:
 ```
 python inference.py --cfg configs/i2vgen_xl_infer.yaml
 ```
@@ -243,14 +243,14 @@ The `test_list_path` represents the input image path and its corresponding capti
 </table>
 </center>
 
-### (3) Other methods
+### 3. Other methods
 
 In preparation.
 
 
 ## Customize your own approach
 
-Our codebase essentially supports all the commonly used components in video generation. You can manage your experiments flexibly by adding corresponding registration classes, including `ENGINE, MODEL, DATASETS, EMBEDDER, AUTO_ENCODER, VISUAL, DIFFUSION, PRETRAIN`, and can be compatible with all our open-source algorithms according to your own needs. If you have any questions, feel free to give us your feedback at any time.
+Our codebase essentially supports all the commonly used components in video generation. You can manage your experiments flexibly by adding corresponding registration classes, including `ENGINE, MODEL, DATASETS, EMBEDDER, AUTO_ENCODER, VISUAL, DIFFUSION, PRETRAIN` and can be compatible with all our open-source algorithms according to your own needs. If you have any questions, feel free to give us your feedback at any time.
 
 
 
