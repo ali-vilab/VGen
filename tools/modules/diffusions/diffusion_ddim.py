@@ -63,7 +63,8 @@ class DiffusionDDIM(object):
         # q(x_t | x_{t-1})
         self.sqrt_alphas_cumprod = torch.sqrt(self.alphas_cumprod)
         self.sqrt_one_minus_alphas_cumprod = torch.sqrt(1.0 - self.alphas_cumprod)
-        self.log_one_minus_alphas_cumprod = torch.log(1.0 - self.alphas_cumprod)
+        self.log_one_minus_alphas_cumprod = torch.log(torch.clamp(1.0 - self.alphas_cumprod,
+                                                                  torch.finfo(self.alphas_cumprod.dtype).tiny))
         self.sqrt_recip_alphas_cumprod = torch.sqrt(1.0 / self.alphas_cumprod)
         self.sqrt_recipm1_alphas_cumprod = torch.sqrt(1.0 / self.alphas_cumprod - 1)
 
@@ -164,13 +165,13 @@ class DiffusionDDIM(object):
         elif self.var_type == 'learned_range':
             out, fraction = out.chunk(2, dim=1)
             min_log_var = _i(self.posterior_log_variance_clipped, t, xt)
-            max_log_var = _i(torch.log(self.betas), t, xt)
+            max_log_var = _i(torch.log(torch.clamp(self.betas, torch.finfo(self.betas.dtype).tiny)), t, xt)
             fraction = (fraction + 1) / 2.0
             log_var = fraction * max_log_var + (1 - fraction) * min_log_var
             var = torch.exp(log_var)
         elif self.var_type == 'fixed_large':
             var = _i(torch.cat([self.posterior_variance[1:2], self.betas[1:]]), t, xt)
-            log_var = torch.log(var)
+            log_var = torch.log(torch.clamp(var, torch.finfo(var.dtype).tiny))
         elif self.var_type == 'fixed_small':
             var = _i(self.posterior_variance, t, xt)
             log_var = _i(self.posterior_log_variance_clipped, t, xt)

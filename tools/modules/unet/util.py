@@ -280,7 +280,8 @@ class RelativePositionBias(nn.Module):
         is_small = n < max_exact
 
         val_if_large = max_exact + (
-            torch.log(n.float() / max_exact) / math.log(max_distance / max_exact) * (num_buckets - max_exact)
+            torch.log(torch.clamp(n.float() / max_exact, torch.finfo(torch.float).tiny))
+            / math.log(max_distance / max_exact) * (num_buckets - max_exact)
         ).long()
         val_if_large = torch.min(val_if_large, torch.full_like(val_if_large, num_buckets - 1))
 
