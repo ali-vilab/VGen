@@ -23,6 +23,7 @@ VGen can produce high-quality videos from the input text, images, desired motion
 
 
 ## 🔥News!!!
+- __[2023.12]__ We updated the codebase to support higher versions of xformer (0.0.22), torch2.0+, and removed the dependency on flash_attn.
 - __[2023.12]__ We release [InstructVideo](https://instructvideo.github.io/) that can accept human feedback signals to improve VLDM
 - __[2023.12]__ We release the diffusion based expressive talking head generation [DreamTalk](https://dreamtalk-project.github.io)
 - __[2023.12]__ We release the high-efficiency video generation method [VideoLCM](https://arxiv.org/abs/2312.09109)
@@ -100,6 +101,10 @@ After the training is completed, you can perform inference on the model using th
 python inference.py --cfg configs/t2v_infer.yaml
 ```
 Then you can find the videos you generated in the `workspace/experiments/test_img_01` directory. For specific configurations such as data, models, seed, etc., please refer to the `t2v_infer.yaml` file.
+
+
+*If you want to directly load our previously open-sourced [Modelscope T2V model](https://huggingface.co/damo-vilab/modelscope-damo-text-to-video-synthesis/tree/main), please refer to [this link](https://github.com/damo-vilab/i2vgen-xl/issues/31).*
+
 
 <!-- <table>
 <center>

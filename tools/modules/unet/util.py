@@ -11,7 +11,7 @@ import torch.nn.functional as F
 from rotary_embedding_torch import RotaryEmbedding
 from fairscale.nn.checkpoint import checkpoint_wrapper
 
-from .mha_flash import FlashAttentionBlock
+# from .mha_flash import FlashAttentionBlock
 from utils.registry_class import MODEL
 
 
@@ -211,14 +211,15 @@ def prob_mask_like(shape, prob, device):
 
 class MemoryEfficientCrossAttention(nn.Module):
     # https://github.com/MatthieuTPHR/diffusers/blob/d80b531ff8060ec1ea982b65a1b8df70f73aa67c/src/diffusers/models/attention.py#L223
-    def __init__(self, query_dim, context_dim=None, heads=8, dim_head=64, dropout=0.0):
+    def __init__(self, query_dim, max_bs=4096, context_dim=None, heads=8, dim_head=64, dropout=0.0):
         super().__init__()
         inner_dim = dim_head * heads
         context_dim = default(context_dim, query_dim)
 
+        self.max_bs = max_bs
         self.heads = heads
         self.dim_head = dim_head
-
+        
         self.to_q = nn.Linear(query_dim, inner_dim, bias=False)
         self.to_k = nn.Linear(context_dim, inner_dim, bias=False)
         self.to_v = nn.Linear(context_dim, inner_dim, bias=False)
@@ -243,7 +244,18 @@ class MemoryEfficientCrossAttention(nn.Module):
         )
 
         # actually compute the attention, what we cannot get enough of
-        out = xformers.ops.memory_efficient_attention(q, k, v, attn_bias=None, op=self.attention_op)
+        if q.shape[0] > self.max_bs:
+            q_list = torch.chunk(q, q.shape[0] // self.max_bs, dim=0)
+            k_list = torch.chunk(k, k.shape[0] // self.max_bs, dim=0)
+            v_list = torch.chunk(v, v.shape[0] // self.max_bs, dim=0)
+            out_list = []
+            for q_1, k_1, v_1 in zip(q_list, k_list, v_list):
+                out = xformers.ops.memory_efficient_attention(
+                    q_1, k_1, v_1, attn_bias=None, op=self.attention_op)
+                out_list.append(out)
+            out = torch.cat(out_list, dim=0)
+        else:
+            out = xformers.ops.memory_efficient_attention(q, k, v, attn_bias=None, op=self.attention_op)
 
         if exists(mask):
             raise NotImplementedError
@@ -254,6 +266,7 @@ class MemoryEfficientCrossAttention(nn.Module):
             .reshape(b, out.shape[1], self.heads * self.dim_head)
         )
         return self.to_out(out)
+
 
 class RelativePositionBias(nn.Module):
     def __init__(

@@ -8,7 +8,7 @@ import time
 import numpy as np
 import random
 
-from flash_attn.flash_attention import FlashAttention
+# from flash_attn.flash_attention import FlashAttention
 
 class FlashAttentionBlock(nn.Module):
 
