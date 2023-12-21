@@ -47,8 +47,8 @@ Note that if you can not get access to the links provided below, try using anoth
 Please refer to the main [README](https://github.com/damo-vilab/i2vgen-xl/blob/main/README.MD) to configure the environment.
 
 
-## Pre-training and Fine-tuning
-Pre-trained models and details on InstrcutVideo fine-tuning and inference are comming soon.
+## Fine-tuning and Inference
+Pre-trained models and details on InstrcutVideo fine-tuning and inference are coming soon. Stay tuned!
 
 ## Citation
 ```bibtex
