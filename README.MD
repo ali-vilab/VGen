@@ -10,7 +10,7 @@ VGen is an open-source video synthesis codebase developed by the Tongyi Lab of A
 - [VideoComposer: Compositional Video Synthesis with Motion Controllability](https://videocomposer.github.io/)
 - [Hierarchical Spatio-temporal Decoupling for Text-to-Video Generation](https://higen-t2v.github.io/)
 - [A Recipe for Scaling up Text-to-Video Generation with Text-free Videos]()
-- [InstructVideo: Instructing Video Diffusion Models with Human Feedback]()
+- [InstructVideo: Instructing Video Diffusion Models with Human Feedback](https://instructvideo.github.io)
 - [DreamVideo: Composing Your Dream Videos with Customized Subject and Motion](https://dreamvideo-t2v.github.io/)
 - [VideoLCM: Video Latent Consistency Model](https://arxiv.org/abs/2312.09109)
 - [Modelscope text-to-video technical report](https://arxiv.org/abs/2308.06571)
@@ -23,6 +23,7 @@ VGen can produce high-quality videos from the input text, images, desired motion
 
 
 ## 🔥News!!!
+- __[2023.12]__ We release [InstructVideo](https://instructvideo.github.io/) that can accept human feedback signals to improve VLDM
 - __[2023.12]__ We release the diffusion based expressive talking head generation [DreamTalk](https://dreamtalk-project.github.io)
 - __[2023.12]__ We release the high-efficiency video generation method [VideoLCM](https://arxiv.org/abs/2312.09109)
 - __[2023.12]__ We release the code and model of [I2VGen-XL](https://i2vgen-xl.github.io) and the [ModelScope T2V](https://arxiv.org/abs/2308.06571)
@@ -34,6 +35,7 @@ VGen can produce high-quality videos from the input text, images, desired motion
 ## TODO
 - [x] Release the technical papers and webpage of [I2VGen-XL](doc/i2vgen-xl.md)
 - [x] Release the code and pretrained models that can generate 1280x720 videos
+- [ ] Release the code and pretrained models of [HumanDiff]()
 - [ ] Release models optimized specifically for the human body and faces
 - [ ] Updated version can fully maintain the ID and capture large and accurate motions simultaneously
 - [ ] Release other methods and the corresponding models
@@ -300,6 +302,12 @@ If this repo is useful to you, please cite our corresponding technical paper.
   title={DreamTalk: When Expressive Talking Head Generation Meets Diffusion Probabilistic Models},
   author={Ma, Yifeng and Zhang, Shiwei and Wang, Jiayu and Wang, Xiang and Zhang, Yingya and Deng Zhidong},
   journal={arXiv preprint arXiv:2312.09767},
+  year={2023}
+}
+@article{2023InstructVideo,
+  title={InstructVideo: Instructing Video Diffusion Models with Human Feedback},
+  author={Yuan, Hangjie and Zhang, Shiwei and Wang, Xiang and Wei, Yujie and Feng, Tao and Pan, Yining and Zhang, Yingya and Liu, Ziwei and Albanie, Samuel and Ni, Dong},
+  booktitle={arXiv preprint arXiv:2312.12490},
   year={2023}
 }
 ```
