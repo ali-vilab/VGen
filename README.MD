@@ -6,12 +6,12 @@
 VGen is an open-source video synthesis codebase developed by the Tongyi Lab of Alibaba Group, featuring state-of-the-art video generative models. This repository includes implementations of the following methods:
 
 
-- [I2VGen-xl: High-quality image-to-video synthesis via cascaded diffusion models](https://i2vgen-xl.github.io/)
-- [VideoComposer: Compositional Video Synthesis with Motion Controllability](https://videocomposer.github.io/)
-- [Hierarchical Spatio-temporal Decoupling for Text-to-Video Generation](https://higen-t2v.github.io/)
-- [A Recipe for Scaling up Text-to-Video Generation with Text-free Videos]()
+- [I2VGen-xl: High-quality image-to-video synthesis via cascaded diffusion models](https://i2vgen-xl.github.io)
+- [VideoComposer: Compositional Video Synthesis with Motion Controllability](https://videocomposer.github.io)
+- [Hierarchical Spatio-temporal Decoupling for Text-to-Video Generation](https://higen-t2v.github.io)
+- [A Recipe for Scaling up Text-to-Video Generation with Text-free Videos](https://tf-t2v.github.io)
 - [InstructVideo: Instructing Video Diffusion Models with Human Feedback](https://instructvideo.github.io)
-- [DreamVideo: Composing Your Dream Videos with Customized Subject and Motion](https://dreamvideo-t2v.github.io/)
+- [DreamVideo: Composing Your Dream Videos with Customized Subject and Motion](https://dreamvideo-t2v.github.io)
 - [VideoLCM: Video Latent Consistency Model](https://arxiv.org/abs/2312.09109)
 - [Modelscope text-to-video technical report](https://arxiv.org/abs/2308.06571)
 
@@ -23,6 +23,7 @@ VGen can produce high-quality videos from the input text, images, desired motion
 
 
 ## 🔥News!!!
+- __[2023.12]__ We release [TF-T2V](https://tf-t2v.github.io) that can scale up existing video generation techniques using text-free videos, significantly enhancing the performance of both [Modelscope-T2V](https://arxiv.org/abs/2308.06571) and [VideoComposer](https://videocomposer.github.io) at the same time.
 - __[2023.12]__ We updated the codebase to support higher versions of xformer (0.0.22), torch2.0+, and removed the dependency on flash_attn.
 - __[2023.12]__ We release [InstructVideo](https://instructvideo.github.io/) that can accept human feedback signals to improve VLDM
 - __[2023.12]__ We release the diffusion based expressive talking head generation [DreamTalk](https://dreamtalk-project.github.io)
@@ -267,16 +268,16 @@ If this repo is useful to you, please cite our corresponding technical paper.
 
 
 ```bibtex
-@article{2023i2vgenxl,
-  title={I2VGen-XL: High-Quality Image-to-Video Synthesis via Cascaded Diffusion Models},
-  author={Zhang, Shiwei and Wang, Jiayu and Zhang, Yingya and Zhao, Kang and Yuan, Hangjie and Qing, Zhiwu and Wang, Xiang  and Zhao, Deli and Zhou, Jingren},
-  booktitle={arXiv preprint arXiv:2311.04145},
-  year={2023}
-}
 @article{2023videocomposer,
   title={VideoComposer: Compositional Video Synthesis with Motion Controllability},
   author={Wang, Xiang and Yuan, Hangjie and Zhang, Shiwei and Chen, Dayou and Wang, Jiuniu, and Zhang, Yingya, and Shen, Yujun, and Zhao, Deli and Zhou, Jingren},
   booktitle={arXiv preprint arXiv:2306.02018},
+  year={2023}
+}
+@article{2023i2vgenxl,
+  title={I2VGen-XL: High-Quality Image-to-Video Synthesis via Cascaded Diffusion Models},
+  author={Zhang, Shiwei and Wang, Jiayu and Zhang, Yingya and Zhao, Kang and Yuan, Hangjie and Qing, Zhiwu and Wang, Xiang  and Zhao, Deli and Zhou, Jingren},
+  booktitle={arXiv preprint arXiv:2311.04145},
   year={2023}
 }
 @article{wang2023modelscope,
@@ -314,6 +315,12 @@ If this repo is useful to you, please cite our corresponding technical paper.
   author={Yuan, Hangjie and Zhang, Shiwei and Wang, Xiang and Wei, Yujie and Feng, Tao and Pan, Yining and Zhang, Yingya and Liu, Ziwei and Albanie, Samuel and Ni, Dong},
   booktitle={arXiv preprint arXiv:2312.12490},
   year={2023}
+}
+@article{TFT2V,
+ title={A Recipe for Scaling up Text-to-Video Generation with Text-free Videos},
+ author={Wang, Xiang and Zhang, Shiwei and Yuan, Hangjie and Qing, Zhiwu and Gong, Biao and Zhang, Yingya and Shen, Yujun and Gao, Changxin and Sang, Nong},
+ journal={arXiv preprint arXiv:2312.15770},
+ year={2023}
 }
 ```
 
