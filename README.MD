@@ -38,6 +38,7 @@ VGen can produce high-quality videos from the input text, images, desired motion
 ## TODO
 - [x] Release the technical papers and webpage of [I2VGen-XL](doc/i2vgen-xl.md)
 - [x] Release the code and pretrained models that can generate 1280x720 videos
+- [x] Release the code and  models of [DreamTalk](https://github.com/ali-vilab/dreamtalk) that can generate expressive talking head
 - [ ] Release the code and pretrained models of [HumanDiff]()
 - [ ] Release models optimized specifically for the human body and faces
 - [ ] Updated version can fully maintain the ID and capture large and accurate motions simultaneously
