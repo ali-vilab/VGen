@@ -23,6 +23,7 @@ VGen can produce high-quality videos from the input text, images, desired motion
 
 
 ## 🔥News!!!
+- __[2023.12]__ We have open-sourced the code and models for [DreamTalk](https://github.com/ali-vilab/dreamtalk), which can produce high-quality talking head videos across diverse speaking styles using diffusion models.
 - __[2023.12]__ We release [TF-T2V](https://tf-t2v.github.io) that can scale up existing video generation techniques using text-free videos, significantly enhancing the performance of both [Modelscope-T2V](https://arxiv.org/abs/2308.06571) and [VideoComposer](https://videocomposer.github.io) at the same time.
 - __[2023.12]__ We updated the codebase to support higher versions of xformer (0.0.22), torch2.0+, and removed the dependency on flash_attn.
 - __[2023.12]__ We release [InstructVideo](https://instructvideo.github.io/) that can accept human feedback signals to improve VLDM
