@@ -1,0 +1,37 @@
+# Configuration for Cog ⚙️
+# Reference: https://github.com/replicate/cog/blob/main/docs/yaml.md
+
+build:
+  gpu: true
+  system_packages:
+    - libgl1-mesa-glx
+    - libglib2.0-0
+    - ffmpeg
+  python_version: "3.11"
+  python_packages:
+    - torch==2.0.1
+    - torchvision==0.15.2
+    - easydict==1.10
+    - tokenizers==0.15.0
+    - ftfy==6.1.1
+    - transformers==4.36.2
+    - imageio==2.33.1
+    - fairscale==0.4.13
+    - open-clip-torch==2.23.0
+    - chardet==5.2.0
+    - torchdiffeq==0.2.3
+    - opencv-python==4.9.0.80
+    - opencv-python-headless==4.9.0.80
+    - torchsde==0.2.6
+    - simplejson==3.19.2
+    - scikit-learn==1.3.2
+    - scikit-image==0.22.0
+    - rotary-embedding-torch==0.5.3
+    - pynvml==11.5.0
+    - triton==2.0.0
+    - pytorch-lightning==2.1.3
+    - torchmetrics==1.2.1
+    - PyYAML==6.0.1
+  run:
+    - pip install -U xformers --index-url https://download.pytorch.org/whl/cu118
+predict: "predict.py:Predictor"

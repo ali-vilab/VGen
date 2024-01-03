@@ -20,7 +20,7 @@ VGen can produce high-quality videos from the input text, images, desired motion
 
 
 <a href='https://i2vgen-xl.github.io/'><img src='https://img.shields.io/badge/Project-Page-Green'></a> <a href='https://arxiv.org/abs/2311.04145'><img src='https://img.shields.io/badge/Paper-Arxiv-red'></a> [![YouTube](https://badges.aleen42.com/src/youtube.svg)](https://youtu.be/XUi0y7dxqEQ) <a href='https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/441039979087.mp4'><img src='source/logo.png'></a>
-
+[![Replicate](https://replicate.com/cjwbw/i2vgen_xl/badge)](https://replicate.com/cjwbw/i2vgen_xl/)
 
 ## 🔥News!!!
 - __[2023.12]__ We have open-sourced the code and models for [DreamTalk](https://github.com/ali-vilab/dreamtalk), which can produce high-quality talking head videos across diverse speaking styles using diffusion models.
