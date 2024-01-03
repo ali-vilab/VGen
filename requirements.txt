@@ -7,7 +7,6 @@ imageio==2.15.0
 fairscale==0.4.6
 ipdb
 open-clip-torch==2.0.2
-flash-attn==0.2.0
 xformers==0.0.13
 chardet==5.1.0
 torchdiffeq==0.2.3

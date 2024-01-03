@@ -9,7 +9,7 @@ from rotary_embedding_torch import RotaryEmbedding
 from fairscale.nn.checkpoint import checkpoint_wrapper
 
 from .util import *
-from .mha_flash import FlashAttentionBlock
+# from .mha_flash import FlashAttentionBlock
 from utils.registry_class import MODEL
 
 

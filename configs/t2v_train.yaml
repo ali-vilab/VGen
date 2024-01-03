@@ -84,7 +84,7 @@ Pretrain: {
     'fix_weight': False,
     'grad_scale': 0.5,
     'resume_checkpoint': 'workspace/model_bk/model_scope_0267000.pth',
-    'sd_keys_path': 'models/stable_diffusion_image_key_temporal_attention_x1.json',
+    'sd_keys_path': 'data/stable_diffusion_image_key_temporal_attention_x1.json',
 }
 
 chunk_size: 4

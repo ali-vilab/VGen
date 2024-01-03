@@ -2,7 +2,6 @@
 *.pt
 *.mov
 *.pth
-*.json
 *.mov
 *.npz
 *.npy
