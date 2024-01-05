@@ -23,6 +23,8 @@ VGen can produce high-quality videos from the input text, images, desired motion
 [![Replicate](https://replicate.com/cjwbw/i2vgen-xl/badge)](https://replicate.com/cjwbw/i2vgen-xl/)
 
 ## 🔥News!!!
+- __[2024.01]__ Thanks @[Chenxi](https://chenxwh.github.io) for supporting the running of i2vgen-xl on [![Replicate](https://replicate.com/cjwbw/i2vgen-xl/badge)](https://replicate.com/cjwbw/i2vgen-xl/). Feel free to give it a try. 
+- __[2024.01]__ The gradio demo of I2VGen-XL has been completed in [Modelscope](https://modelscope.cn/studios/damo/I2VGen-XL/summary), and welcome to try it out.
 - __[2023.12]__ We have open-sourced the code and models for [DreamTalk](https://github.com/ali-vilab/dreamtalk), which can produce high-quality talking head videos across diverse speaking styles using diffusion models.
 - __[2023.12]__ We release [TF-T2V](https://tf-t2v.github.io) that can scale up existing video generation techniques using text-free videos, significantly enhancing the performance of both [Modelscope-T2V](https://arxiv.org/abs/2308.06571) and [VideoComposer](https://videocomposer.github.io) at the same time.
 - __[2023.12]__ We updated the codebase to support higher versions of xformer (0.0.22), torch2.0+, and removed the dependency on flash_attn.
@@ -76,7 +78,7 @@ We have provided a **demo dataset** that includes images and videos, along with 
 *Please note that the demo images used here are for testing purposes and were not included in the training.*
 
 
-### Clone codeb
+### Clone the code
 
 ```
 git clone https://github.com/damo-vilab/i2vgen-xl.git
