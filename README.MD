@@ -23,6 +23,7 @@ VGen can produce high-quality videos from the input text, images, desired motion
 [![Replicate](https://replicate.com/cjwbw/i2vgen-xl/badge)](https://replicate.com/cjwbw/i2vgen-xl/)
 
 ## 🔥News!!!
+- __[2024.01]__ We support running the gradio UI locally, thanks to our colleague [Wenmeng Zhou](https://github.com/wenmengzhou) for the support and [AK](https://twitter.com/_akhaliq) for the suggestion, and welcome to have a try.
 - __[2024.01]__ Thanks @[Chenxi](https://chenxwh.github.io) for supporting the running of i2vgen-xl on [![Replicate](https://replicate.com/cjwbw/i2vgen-xl/badge)](https://replicate.com/cjwbw/i2vgen-xl/). Feel free to give it a try. 
 - __[2024.01]__ The gradio demo of I2VGen-XL has been completed in [Modelscope](https://modelscope.cn/studios/damo/I2VGen-XL/summary), and welcome to try it out.
 - __[2023.12]__ We have open-sourced the code and models for [DreamTalk](https://github.com/ali-vilab/dreamtalk), which can produce high-quality talking head videos across diverse speaking styles using diffusion models.
@@ -174,6 +175,12 @@ or you can run:
 python inference.py --cfg configs/i2vgen_xl_infer.yaml  test_list_path data/test_list_for_i2vgen.txt test_model models/i2vgen_xl_00854500.pth
 ```
 The `test_list_path` represents the input image path and its corresponding caption. Please refer to the specific format and suggestions within demo file `data/test_list_for_i2vgen.txt`. `test_model` is the path for loading the model. In a few minutes, you can retrieve the high-definition video you wish to create from the `workspace/experiments/test_list_for_i2vgen` directory. At present, we find that the current model performs inadequately on **anime images** and **images with a black background** due to the lack of relevant training data. We are consistently working to optimize it.
+
+
+(iii) Run the gradio app local:
+```
+python gradio_app.py
+```
 
 
 <span style="color:red">Due to the compression of our video quality in GIF format, please click 'HERE' below to view the original video.</span>
