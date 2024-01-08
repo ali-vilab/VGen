@@ -22,3 +22,4 @@ pynvml==11.5.0
 triton==2.0.0.dev20221120
 pytorch-lightning==1.4.2
 torchmetrics==0.6.0
+gradio==3.39.0

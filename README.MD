@@ -23,7 +23,7 @@ VGen can produce high-quality videos from the input text, images, desired motion
 [![Replicate](https://replicate.com/cjwbw/i2vgen-xl/badge)](https://replicate.com/cjwbw/i2vgen-xl/)
 
 ## 🔥News!!!
-- __[2024.01]__ We support running the gradio UI locally, thanks to our colleague [Wenmeng Zhou](https://github.com/wenmengzhou) for the support and [AK](https://twitter.com/_akhaliq) for the suggestion, and welcome to have a try.
+- __[2024.01]__ We support running the gradio app locally, thanks to our colleague [Wenmeng Zhou](https://github.com/wenmengzhou) for the support and [AK](https://twitter.com/_akhaliq) for the suggestion, and welcome to have a try.
 - __[2024.01]__ Thanks @[Chenxi](https://chenxwh.github.io) for supporting the running of i2vgen-xl on [![Replicate](https://replicate.com/cjwbw/i2vgen-xl/badge)](https://replicate.com/cjwbw/i2vgen-xl/). Feel free to give it a try. 
 - __[2024.01]__ The gradio demo of I2VGen-XL has been completed in [Modelscope](https://modelscope.cn/studios/damo/I2VGen-XL/summary), and welcome to try it out.
 - __[2023.12]__ We have open-sourced the code and models for [DreamTalk](https://github.com/ali-vilab/dreamtalk), which can produce high-quality talking head videos across diverse speaking styles using diffusion models.
