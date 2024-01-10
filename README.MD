@@ -19,11 +19,13 @@ VGen is an open-source video synthesis codebase developed by the Tongyi Lab of A
 VGen can produce high-quality videos from the input text, images, desired motion, desired subjects, and even the feedback signals provided.  It also offers a variety of commonly used video generation tools such as visualization, sampling, training, inference, join training using images and videos, acceleration, and more. 
 
 
-<a href='https://i2vgen-xl.github.io/'><img src='https://img.shields.io/badge/Project-Page-Green'></a> <a href='https://arxiv.org/abs/2311.04145'><img src='https://img.shields.io/badge/Paper-Arxiv-red'></a> [![YouTube](https://badges.aleen42.com/src/youtube.svg)](https://youtu.be/XUi0y7dxqEQ) <a href='https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/441039979087.mp4'><img src='source/logo.png'></a>
+<a href='https://i2vgen-xl.github.io/'><img src='https://img.shields.io/badge/Project-Page-Green'></a> <a href='https://arxiv.org/abs/2311.04145'><img src='https://img.shields.io/badge/Paper-Arxiv-red'></a> [![Open in Spaces](https://huggingface.co/datasets/huggingface/badges/resolve/main/open-in-hf-spaces-sm-dark.svg)](https://huggingface.co/spaces/damo-vilab/I2VGen-XL) [![Paper page](https://huggingface.co/datasets/huggingface/badges/resolve/main/paper-page-sm-dark.svg)](https://huggingface.co/papers/2311.04145) 
+[![Open in Spaces](https://huggingface.co/datasets/huggingface/badges/resolve/main/open-a-discussion-sm-dark.svg)](https://huggingface.co/spaces/damo-vilab/I2VGen-XL/discussions) [![YouTube](https://badges.aleen42.com/src/youtube.svg)](https://youtu.be/XUi0y7dxqEQ)  <a href='https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/441039979087.mp4'><img src='source/logo.png'></a>
 [![Replicate](https://replicate.com/cjwbw/i2vgen-xl/badge)](https://replicate.com/cjwbw/i2vgen-xl/)
 
+
 ## 🔥News!!!
-- __[2024.01]__ The gradio demo of I2VGen-XL has been completed in [HuggingFace](https://huggingface.co/spaces/damo-vilab/I2VGen-XL), thanks to our colleague @[Wenmeng Zhou](https://github.com/wenmengzhou) for the support, and welcome to try it out.
+- __[2024.01]__ The gradio demo of I2VGen-XL has been completed in [HuggingFace](https://huggingface.co/spaces/damo-vilab/I2VGen-XL), thanks to our colleague @[Wenmeng Zhou](https://github.com/wenmengzhou) and @[AK](https://twitter.com/_akhaliq) for the support, and welcome to try it out.
 - __[2024.01]__ We support running the gradio app locally, thanks to our colleague @[Wenmeng Zhou](https://github.com/wenmengzhou) for the support and @[AK](https://twitter.com/_akhaliq) for the suggestion, and welcome to have a try.
 - __[2024.01]__ Thanks @[Chenxi](https://chenxwh.github.io) for supporting the running of i2vgen-xl on [![Replicate](https://replicate.com/cjwbw/i2vgen-xl/badge)](https://replicate.com/cjwbw/i2vgen-xl/). Feel free to give it a try. 
 - __[2024.01]__ The gradio demo of I2VGen-XL has been completed in [Modelscope](https://modelscope.cn/studios/damo/I2VGen-XL/summary), and welcome to try it out.
@@ -182,6 +184,12 @@ The `test_list_path` represents the input image path and its corresponding capti
 ```
 python gradio_app.py
 ```
+
+(iv) Run the model on ModelScope and HuggingFace:
+- [Modelscope](https://modelscope.cn/studios/damo/I2VGen-XL/summary)
+- [HuggingFace](https://huggingface.co/spaces/damo-vilab/I2VGen-XL)
+
+
 
 
 <span style="color:red">Due to the compression of our video quality in GIF format, please click 'HERE' below to view the original video.</span>
