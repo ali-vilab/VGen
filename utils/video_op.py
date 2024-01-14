@@ -194,17 +194,13 @@ def save_i2vgen_video_safe(
                 local_path = local_path + '.png'
                 cv2.imwrite(local_path, images[0][:,:,::-1], [int(cv2.IMWRITE_JPEG_QUALITY), 100])
             else:
-                frame_dir = os.path.join(os.path.dirname(local_path), '%s_frames' % (os.path.basename(local_path)))
-                os.system(f'rm -rf {frame_dir}'); os.makedirs(frame_dir, exist_ok=True)
+                writer = imageio.get_writer(local_path, fps=save_fps, codec='libx264', quality=8)
                 for fid, frame in enumerate(images):
                     if fid == num_image-1: # Fix known bugs.
                         ratio = (np.sum((frame >= 117) & (frame <= 137)))/(frame.size)
                         if ratio > 0.4: continue
-                    tpth = os.path.join(frame_dir, '%04d.png' % (fid+1))
-                    cv2.imwrite(tpth, frame[:,:,::-1], [int(cv2.IMWRITE_JPEG_QUALITY), 100])
-                cmd = f'ffmpeg -y -f image2 -loglevel quiet -framerate {save_fps} -i {frame_dir}/%04d.png -vcodec libx264 -crf 17  -pix_fmt yuv420p {local_path}'
-                os.system(cmd) 
-                os.system(f'rm -rf {frame_dir}')
+                    writer.append_data(frame)
+                writer.close()
             break
         except Exception as e:
             exception = e
