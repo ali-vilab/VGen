@@ -78,14 +78,14 @@ def sigmas_to_betas(sigmas):
 
 def sigmas_to_logsnrs(sigmas):
     square_sigmas = sigmas**2
-    return torch.log(square_sigmas / (1 - square_sigmas))
+    return torch.log(torch.clamp(square_sigmas / (1 - square_sigmas), torch.finfo(square_sigmas.dtype).tiny))
 
 
 def _logsnr_cosine(n, logsnr_min=-15, logsnr_max=15):
     t_min = math.atan(math.exp(-0.5 * logsnr_min))
     t_max = math.atan(math.exp(-0.5 * logsnr_max))
     t = torch.linspace(1, 0, n)
-    logsnrs = -2 * torch.log(torch.tan(t_min + t * (t_max - t_min)))
+    logsnrs = -2 * torch.log(torch.clamp(torch.tan(t_min + t * (t_max - t_min)), torch.finfo(torch.float).tiny))
     return logsnrs
 
 
