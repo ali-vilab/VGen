@@ -6,7 +6,7 @@ import gradio as gr
 from modelscope.pipelines import pipeline
 from modelscope.outputs import OutputKeys
 
-image_to_video_pipe = pipeline(task="image-to-video", model='damo/i2vgen-xl', revision='v1.1.3', device='cuda:0')
+image_to_video_pipe = pipeline(task="image-to-video", model='damo/i2vgen-xl', model_revision='v1.1.3', device='cuda:0')
 
 def upload_file(file):
     return file.name
