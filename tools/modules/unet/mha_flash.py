@@ -8,8 +8,8 @@ import time
 import numpy as np
 import random
 
-from flash_attn.flash_attention import FlashAttention
-
+# from flash_attn.flash_attention import FlashAttention
+import flash_attn
 class FlashAttentionBlock(nn.Module):
 
     def __init__(self, dim, context_dim=None, num_heads=None, head_dim=None, batch_size=4):
@@ -31,9 +31,9 @@ class FlashAttentionBlock(nn.Module):
             self.context_kv = nn.Linear(context_dim, dim * 2)
         self.proj = nn.Conv2d(dim, dim, 1)
 
-        if self.head_dim <= 128 and (self.head_dim % 8) == 0:
-            new_scale = math.pow(head_dim, -0.5)
-            self.flash_attn = FlashAttention(softmax_scale=None, attention_dropout=0.0)
+        # if self.head_dim <= 128 and (self.head_dim % 8) == 0:
+        #     new_scale = math.pow(head_dim, -0.5)
+        #     self.flash_attn = FlashAttention(softmax_scale=None, attention_dropout=0.0)
         
         # zero out the last layer params
         nn.init.zeros_(self.proj.weight)
