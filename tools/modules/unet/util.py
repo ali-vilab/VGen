@@ -241,9 +241,16 @@ class MemoryEfficientCrossAttention(nn.Module):
             .contiguous(),
             (q, k, v),
         )
-
-        # actually compute the attention, what we cannot get enough of
-        out = xformers.ops.memory_efficient_attention(q, k, v, attn_bias=None, op=self.attention_op)
+        if q.size(0) > 14400:
+            chunk_size = 14400
+            q, k, v = map(lambda t: t.chunk(t.size(0)//chunk_size, dim=0), (q, k, v))
+            _out = []
+            for _q, _k, _v in zip(q, k, v):
+                _out.append(xformers.ops.memory_efficient_attention(_q, _k, _v, attn_bias=None, op=self.attention_op))
+            out = torch.cat(_out, dim=0)
+        else:
+            # actually compute the attention, what we cannot get enough of
+            out = xformers.ops.memory_efficient_attention(q, k, v, attn_bias=None, op=self.attention_op)
 
         if exists(mask):
             raise NotImplementedError
@@ -594,6 +601,39 @@ class Upsample(nn.Module):
         return x
 
 
+class UpsampleSR600(nn.Module):
+    """
+    An upsampling layer with an optional convolution.
+    :param channels: channels in the inputs and outputs.
+    :param use_conv: a bool determining if a convolution is applied.
+    :param dims: determines if the signal is 1D, 2D, or 3D. If 3D, then
+                 upsampling occurs in the inner-two dimensions.
+    """
+
+    def __init__(self, channels, use_conv, dims=2, out_channels=None, padding=1):
+        super().__init__()
+        self.channels = channels
+        self.out_channels = out_channels or channels
+        self.use_conv = use_conv
+        self.dims = dims
+        if use_conv:
+            self.conv = nn.Conv2d(self.channels, self.out_channels, 3, padding=padding)
+
+    def forward(self, x):
+        assert x.shape[1] == self.channels
+        if self.dims == 3:
+            x = F.interpolate(
+                x, (x.shape[2], x.shape[3] * 2, x.shape[4] * 2), mode="nearest"
+            )
+        else:
+            x = F.interpolate(x, scale_factor=2, mode="nearest")
+            # TODO: to match input_blocks, remove elements of two sides
+            x = x[..., 1:-1, :]
+        if self.use_conv:
+            x = self.conv(x)
+        return x
+
+
 class ResBlock(nn.Module):
     """
     A residual block that can optionally change the number of channels.
@@ -741,6 +781,7 @@ class Downsample(nn.Module):
     def forward(self, x):
         assert x.shape[1] == self.channels
         return self.op(x)
+
 
 class Resample(nn.Module):
 

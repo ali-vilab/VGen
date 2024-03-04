@@ -1,4 +1,4 @@
-import yaml
+import os, yaml
 from copy import deepcopy, copy
 
 
@@ -65,13 +65,14 @@ def assign_signle_cfg(cfg, _cfg_update, tname):
     '''
     '''
     # 
-    vldm_cfg = deepcopy(cfg)    
-    with open(_cfg_update[tname], 'r') as f:
-        _cfg_update = yaml.load(f.read(), Loader=yaml.SafeLoader)
-        # _cfg_update = _cfg_update.cfg_dict
-        for k, v in _cfg_update.items():
-            if isinstance(v, dict) and k in cfg:
-                vldm_cfg[k].update(v)
-            else:
-                vldm_cfg[k] = v
+    vldm_cfg = deepcopy(cfg)
+    if os.path.exists(_cfg_update[tname]):
+        with open(_cfg_update[tname], 'r') as f:
+            _cfg_update = yaml.load(f.read(), Loader=yaml.SafeLoader)
+            # _cfg_update = _cfg_update.cfg_dict
+            for k, v in _cfg_update.items():
+                if isinstance(v, dict) and k in cfg:
+                    vldm_cfg[k].update(v)
+                else:
+                    vldm_cfg[k] = v
     return vldm_cfg

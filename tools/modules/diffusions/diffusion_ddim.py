@@ -2,7 +2,7 @@ import torch
 import math
 
 from utils.registry_class import DIFFUSION
-from .schedules import beta_schedule
+from .schedules import beta_schedule, sigma_schedule
 from .losses import kl_divergence, discretized_gaussian_log_likelihood
 # from .dpm_solver import NoiseScheduleVP, model_wrapper_guided_diffusion, model_wrapper, DPM_Solver
 
@@ -11,6 +11,15 @@ def _i(tensor, t, x):
     """
     shape = (x.size(0), ) + (1, ) * (x.ndim - 1)
     return tensor[t].view(shape).to(x)
+
+@DIFFUSION.register_class()
+class DiffusionDDIMSR(object):
+    def __init__(self, reverse_diffusion, forward_diffusion, **kwargs):
+        from .diffusion_gauss import GaussianDiffusion
+        self.reverse_diffusion = GaussianDiffusion(sigmas=sigma_schedule(reverse_diffusion.schedule, **reverse_diffusion.schedule_param), 
+                                                   prediction_type=reverse_diffusion.mean_type)
+        self.forward_diffusion = GaussianDiffusion(sigmas=sigma_schedule(forward_diffusion.schedule, **forward_diffusion.schedule_param), 
+                                                   prediction_type=forward_diffusion.mean_type)
 
 
 @DIFFUSION.register_class()
@@ -145,6 +154,9 @@ class DiffusionDDIM(object):
             y_out = model(xt, self._scale_timesteps(t), **model_kwargs[0])
             u_out = model(xt, self._scale_timesteps(t), **model_kwargs[1])
             dim = y_out.size(1) if self.var_type.startswith('fixed') else y_out.size(1) // 2
+            # num_frames = y_out.size(2)
+            # if num_frames > 1:
+            #     guide_scale = torch.linspace(9, 12, num_frames)[None, None, :, None, None].to(u_out.device)
             out = torch.cat([
                 u_out[:, :dim] + guide_scale * (y_out[:, :dim] - u_out[:, :dim]),
                 y_out[:, dim:]], dim=1) # guide_scale=9.0

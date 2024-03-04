@@ -15,4 +15,8 @@ cache*
 .DS_Store
 *DS_Store
 outputs/
-workspace/
+./temp
+# temp*
+workspace*
+__pycache__*
+*pycache*

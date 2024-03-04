@@ -24,7 +24,7 @@ img_dataset: {
     'max_words': 1000
 }
 embedder: {
-    'type': 'FrozenOpenCLIPTtxtVisualEmbedder',
+    'type': 'FrozenOpenCLIPTextVisualEmbedder',
     'layer': 'penultimate',
     'vit_resolution': [224, 224],
     'pretrained': 'models/open_clip_pytorch_model.bin'

@@ -1,3 +1,20 @@
+'''
+/* 
+*Copyright (c) 2021, Alibaba Group;
+*Licensed under the Apache License, Version 2.0 (the "License");
+*you may not use this file except in compliance with the License.
+*You may obtain a copy of the License at
+
+*   http://www.apache.org/licenses/LICENSE-2.0
+
+*Unless required by applicable law or agreed to in writing, software
+*distributed under the License is distributed on an "AS IS" BASIS,
+*WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+*See the License for the specific language governing permissions and
+*limitations under the License.
+*/
+'''
+
 import os
 import re
 import os.path as osp
@@ -162,7 +179,6 @@ def worker(gpu, cfg, cfg_update):
         captions = [caption]
         with torch.no_grad():
             _, y_text, y_words = clip_encoder(text=captions) # bs * 1 *1024 [B, 1, 1024]
-        fps_tensor =  torch.tensor([cfg.target_fps], dtype=torch.long, device=gpu)
 
         with torch.no_grad():
             pynvml.nvmlInit()
@@ -205,7 +221,9 @@ def worker(gpu, cfg, cfg_update):
                 motion_cond = torch.tensor([[cfg.motion_factor] * (cfg.max_frames-1)], dtype=torch.long, device=gpu)
 
                 sim_list = torch.cat([torch.linspace(1.0-cfg.appearance_factor, 1.0, cfg.max_frames)[:-1], torch.linspace(1.0, 1.0-cfg.appearance_factor, cfg.max_frames)])
+                # sim_list = (torch.cos(sim_list * 3.1415926 + 3.1415926) + 1) / 2 # consine
                 appearance_cond = torch.stack([sim_list[i:i+cfg.max_frames] for i in range(len(sim_list)-cfg.max_frames, -1, -1)]).to(gpu)
+                # appearance_cond = CLIPSim().load_vid_sim('/mnt/data-nas-workspace/qingzhiwu/code/video_generation/workspace/temp_dir/cvpr2024_1.vidldm_15_pub_midj_unclip_basemodel_img_text_e003_eval_725000_pikachu_turn_back_g12/sample_000001/cvpr2024_1.vidldm_15_pub_midj_unclip_basemodel_img_text_e003_eval_725000_pikachu_turn_back_g12_s01_diff_0.0_500_.mp4')
                 model_kwargs=[
                     {'y': y_words, 'spat_prior': spat_data, 'motion_cond': motion_cond, 'appearance_cond': appearance_cond[None, :]},
                     {'y': zero_y, 'spat_prior': spat_data, 'motion_cond': motion_cond, 'appearance_cond': appearance_cond[None, :]}]
@@ -234,6 +252,11 @@ def worker(gpu, cfg, cfg_update):
         file_name = f'rank_{cfg.world_size:02d}_{cfg.rank:02d}_{idx:04d}_{cap_name}.mp4'
         local_path = os.path.join(cfg.log_dir, f'{file_name}')
         os.makedirs(os.path.dirname(local_path), exist_ok=True)
+        clip_model = CLIPSim()
+        sim_list = clip_model(cfg, video_data)
+        with open("./workspace/linear_0_0.5_appearance.csv", 'w') as f:
+            for sim, tsim in zip(sim_list.tolist(), appearance_cond[0].tolist()):
+                f.write(f"{sim},{tsim}\n")
         try:
             save_i2vgen_video_safe(local_path, video_data.cpu(), captions, cfg.mean, cfg.std, text_size)
             logging.info('Save video to dir %s:' % (local_path))
@@ -246,3 +269,38 @@ def worker(gpu, cfg, cfg_update):
         torch.cuda.synchronize()
         dist.barrier()
 
+
+
+class CLIPSim(object):
+    def __init__(self):
+        import clip
+        device = 'cuda'
+        self.model, self.preprocess = clip.load("ViT-L/14", device=device)
+    
+    def load_vid_sim(self, vid_path):
+        from decord import VideoReader
+        import torch.utils.dlpack as dlpack
+        vr = VideoReader(vid_path)
+        frames = dlpack.from_dlpack(vr.get_batch([i for i in range(32)]).to_dlpack())
+        frames = [self.preprocess(Image.fromarray(frames[i].numpy())) for i in range(frames.shape[0])]
+        frames = torch.stack(frames, dim=0)
+        frame_feats = self.model.encode_image(frames.cuda())
+        frame_feats = torch.nn.functional.normalize(frame_feats, dim=-1, p=2)
+        return torch.mm(frame_feats, frame_feats.t())
+
+    def __call__(self, cfg, video_frames):
+        from PIL import Image
+        vid_mean = torch.tensor(cfg.mean, device=video_frames.device).view(1, -1, 1, 1, 1)
+        vid_std = torch.tensor(cfg.std, device=video_frames.device).view(1, -1, 1, 1, 1)
+        gen_video = video_frames.mul_(vid_std).add_(vid_mean)  # 8x3x16x256x384
+        gen_video.clamp_(0, 1)
+        gen_video = gen_video * 255.0
+
+        from PIL import Image
+        frames = gen_video[0].permute(1, 2, 3, 0).cpu().numpy().astype('uint8')
+        frames = [self.preprocess(Image.fromarray(frames[i])) for i in range(frames.shape[0])]
+        frames = torch.stack(frames, dim=0)
+        frame_feats = self.model.encode_image(frames.cuda())
+        frame_feats = torch.nn.functional.normalize(frame_feats, dim=-1, p=2)
+        sim_list = (frame_feats[:1] * frame_feats).sum(dim=-1)
+        return sim_list
