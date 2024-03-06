@@ -273,7 +273,7 @@ python gradio_app.py
 
 ### (3) Other methods
 
-In preparation.
+In preparation!!
 
 
 ## Customize your own approach
