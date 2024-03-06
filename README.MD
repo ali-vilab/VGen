@@ -143,6 +143,21 @@ python inference.py --cfg configs/i2vgen_xl_train.yaml
 In a few minutes, you can retrieve the high-definition video you wish to create from the `workspace/experiments/test_img_01` directory. At present, we find that the current model performs inadequately on **anime images** and **images with a black background** due to the lack of relevant training data. We are consistently working to optimize it.
 
 
+### (3) Run the HiGen model
+
+(i) Download model and test data:
+```
+!pip install modelscope
+from modelscope.hub.snapshot_download import snapshot_download
+model_dir = snapshot_download('damo/HiGen', cache_dir='models/', revision='v1.0.0')
+```
+
+(ii) Run the following command:
+```
+python inference.py --cfg configs/higen_infer.yaml
+```
+In a few minutes, you can retrieve the high-definition video you wish to create from the `workspace/experiments/text_list_for_t2v_share` directory.
+
 <span style="color:red">Due to the compression of our video quality in GIF format, please click 'HRER' below to view the original video.</span>
 
 <center>

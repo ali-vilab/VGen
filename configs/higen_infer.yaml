@@ -13,6 +13,6 @@ batch_size: 1
 # For important input
 vldm_cfg: configs/higen_train.yaml
 test_list_path: data/text_list_for_t2v_share.txt
-test_model: models/cvpr2024.t2v.e003_8card_ema.ema_0725000.pth
+test_model: models/cvpr2024.t2v.e003.non_ema_0725000.pth
 motion_factor: 500
 appearance_factor: 1.0
