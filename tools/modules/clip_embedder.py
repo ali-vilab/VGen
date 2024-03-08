@@ -142,7 +142,7 @@ class FrozenOpenCLIPVisualEmbedder(nn.Module):
 
 
 @EMBEDDER.register_class()
-class FrozenOpenCLIPTtxtVisualEmbedder(nn.Module):
+class FrozenOpenCLIPTextVisualEmbedder(nn.Module):
     """
     Uses the OpenCLIP transformer encoder for text
     """

@@ -9,7 +9,6 @@ import numpy as np
 import random
 
 # from flash_attn.flash_attention import FlashAttention
-
 class FlashAttentionBlock(nn.Module):
 
     def __init__(self, dim, context_dim=None, num_heads=None, head_dim=None, batch_size=4):

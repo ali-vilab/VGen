@@ -2,23 +2,26 @@ import torch
 import math
 
 from utils.registry_class import DIFFUSION
-from .schedules import beta_schedule
+from .schedules import beta_schedule, sigma_schedule
 from .losses import kl_divergence, discretized_gaussian_log_likelihood
 # from .dpm_solver import NoiseScheduleVP, model_wrapper_guided_diffusion, model_wrapper, DPM_Solver
-
-# def _i(tensor, t, x):
-#     r"""Index tensor using t and format the output according to x.
-#     """
-#     shape = (x.size(0), ) + (1, ) * (x.ndim - 1)
-#     return tensor[t].view(shape).to(x)
 
 def _i(tensor, t, x):
     r"""Index tensor using t and format the output according to x.
     """
-    shape = (x.size(0), ) + (1, ) * (x.ndim - 1)
     if tensor.device != x.device:
         tensor = tensor.to(x.device)
+    shape = (x.size(0), ) + (1, ) * (x.ndim - 1)
     return tensor[t].view(shape).to(x)
+
+@DIFFUSION.register_class()
+class DiffusionDDIMSR(object):
+    def __init__(self, reverse_diffusion, forward_diffusion, **kwargs):
+        from .diffusion_gauss import GaussianDiffusion
+        self.reverse_diffusion = GaussianDiffusion(sigmas=sigma_schedule(reverse_diffusion.schedule, **reverse_diffusion.schedule_param), 
+                                                   prediction_type=reverse_diffusion.mean_type)
+        self.forward_diffusion = GaussianDiffusion(sigmas=sigma_schedule(forward_diffusion.schedule, **forward_diffusion.schedule_param), 
+                                                   prediction_type=forward_diffusion.mean_type)
 
 
 @DIFFUSION.register_class()

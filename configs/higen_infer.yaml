@@ -1,0 +1,18 @@
+TASK_TYPE: inference_higen_entrance
+use_fp16: True
+guide_scale: 12.0
+use_fp16: True
+chunk_size: 2
+decoder_bs: 2
+max_frames: 32
+target_fps: 16      # FPS Conditions, not the encoding fps
+scale: 8
+seed: 0
+round: 1
+batch_size: 1
+# For important input
+vldm_cfg: configs/higen_train.yaml
+test_list_path: data/text_list_for_t2v_share.txt
+test_model: models/cvpr2024.t2v.e003.non_ema_0725000.pth
+motion_factor: 500
+appearance_factor: 1.0

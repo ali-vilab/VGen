@@ -44,12 +44,12 @@ from utils.seed import setup_seed
 from utils.multi_port import find_free_port
 from utils.assign_cfg import assign_signle_cfg
 from utils.distributed import generalized_all_gather, all_reduce
-from utils.video_op import save_i2vgen_video, save_i2vgen_video_safe
+from utils.video_op import save_i2vgen_video, save_t2vhigen_video_safe
 from utils.registry_class import INFER_ENGINE, MODEL, EMBEDDER, AUTO_ENCODER, DIFFUSION
 
 
 @INFER_ENGINE.register_function()
-def inference_text2video_entrance(cfg_update,  **kwargs):
+def inference_higen_entrance(cfg_update,  **kwargs):
     for k, v in cfg_update.items():
         if isinstance(v, dict) and k in cfg:
             cfg[k].update(v)
@@ -125,19 +125,12 @@ def worker(gpu, cfg, cfg_update):
         data.CenterCropWide(size=cfg.resolution),
         data.ToTensor(),
         data.Normalize(mean=cfg.mean, std=cfg.std)])
-    
-    vit_trans = data.Compose([
-        data.CenterCropWide(size=(cfg.resolution[0], cfg.resolution[0])),
-        data.Resize(cfg.vit_resolution),
-        data.ToTensor(),
-        data.Normalize(mean=cfg.vit_mean, std=cfg.vit_std)])
 
     # [Model] embedder
     clip_encoder = EMBEDDER.build(cfg.embedder)
     clip_encoder.model.to(gpu)
     _, _, zero_y = clip_encoder(text="")
-    _, _, zero_y_negative = clip_encoder(text=cfg.negative_prompt)
-    zero_y, zero_y_negative = zero_y.detach(), zero_y_negative.detach()
+    zero_y = zero_y.detach()
 
     # [Model] auotoencoder 
     autoencoder = AUTO_ENCODER.build(cfg.auto_encoder)
@@ -150,8 +143,9 @@ def worker(gpu, cfg, cfg_update):
     model = MODEL.build(cfg.UNet)
     state_dict = torch.load(cfg.test_model, map_location='cpu')
     if 'state_dict' in state_dict:
-        resume_step = state_dict['step']
         state_dict = state_dict['state_dict']
+    if 'step' in state_dict:
+        resume_step = state_dict['step']
     else:
         resume_step = 0
     status = model.load_state_dict(state_dict, strict=True)
@@ -172,6 +166,11 @@ def worker(gpu, cfg, cfg_update):
         if caption.startswith('#'):
             logging.info(f'Skip {caption}')
             continue
+        if '|' in caption:
+            caption, manual_seed = caption.split('|')
+            manual_seed = int(manual_seed)
+        else:
+            manual_seed = 0
         logging.info(f"[{idx}]/[{num_videos}] Begin to sample {caption} ...")
         if caption == "": 
             logging.info(f'Caption is null of {caption}, skip..')
@@ -180,7 +179,6 @@ def worker(gpu, cfg, cfg_update):
         captions = [caption]
         with torch.no_grad():
             _, y_text, y_words = clip_encoder(text=captions) # bs * 1 *1024 [B, 1, 1024]
-        fps_tensor =  torch.tensor([cfg.target_fps], dtype=torch.long, device=gpu)
 
         with torch.no_grad():
             pynvml.nvmlInit()
@@ -189,16 +187,48 @@ def worker(gpu, cfg, cfg_update):
             logging.info(f'GPU Memory used {meminfo.used / (1024 ** 3):.2f} GB')
             # sample images (DDIM)
             with amp.autocast(enabled=cfg.use_fp16):
+                setup_seed(cfg.seed + cfg.rank + idx % cfg.round + manual_seed)
+                logging.info(f"Setup seed to {cfg.seed + cfg.rank + idx % cfg.round + manual_seed} ...")
+                # setup_seed(cfg.seed + cfg.rank + idx + manual_seed)
+                # logging.info(f"Setup seed to {cfg.seed + cfg.rank + idx} ...")
                 cur_seed = torch.initial_seed()
                 logging.info(f"Current seed {cur_seed} ...")
-                noise = torch.randn([1, 4, cfg.max_frames, int(cfg.resolution[1]/cfg.scale), int(cfg.resolution[0]/cfg.scale)])
-                noise = noise.to(gpu)
 
+                spat_noise = torch.randn([1, 4, 1, int(cfg.resolution[1]/cfg.scale), int(cfg.resolution[0]/cfg.scale)]).to(gpu)
+                spat_prior = torch.zeros_like(spat_noise).squeeze(2)
+                motion_cond = torch.tensor([0],dtype=torch.long, device=gpu)
+                appearance_cond = torch.Tensor([[[1.0]]]).repeat(1, 1, max(cfg.frame_lens)).to(gpu)
                 model_kwargs=[
-                    {'y': y_words, 'fps': fps_tensor},
-                    {'y': zero_y_negative, 'fps': fps_tensor}]
+                    {'y': y_words, 'spat_prior': spat_prior, 'motion_cond': motion_cond, "appearance_cond": appearance_cond},
+                    {'y': zero_y, 'spat_prior': spat_prior, 'motion_cond': motion_cond, "appearance_cond": appearance_cond}]
+                
+                spat_data = diffusion.ddim_sample_loop(
+                    noise=spat_noise,
+                    model=model.eval(),
+                    model_kwargs=model_kwargs,
+                    guide_scale=cfg.guide_scale,
+                    ddim_timesteps=cfg.ddim_timesteps,
+                    eta=0.0)
+                
+                spat_key_frames = autoencoder.decode(1. / cfg.scale_factor * spat_data.squeeze(2))
+                spat_data = spat_data.squeeze(2)
+
+                temp_noise = torch.randn([1, 4, cfg.max_frames, int(cfg.resolution[1]/cfg.scale), int(cfg.resolution[0]/cfg.scale)]).to(gpu)
+                b, c, f, h, w= temp_noise.shape
+                offset_noise = torch.randn(b, c, f, 1, 1, device=gpu)
+                temp_noise = temp_noise + cfg.noise_strength * offset_noise
+                
+                motion_cond = torch.tensor([[cfg.motion_factor] * (cfg.max_frames-1)], dtype=torch.long, device=gpu)
+
+                sim_list = torch.cat([torch.linspace(1.0-cfg.appearance_factor, 1.0, cfg.max_frames)[:-1], torch.linspace(1.0, 1.0-cfg.appearance_factor, cfg.max_frames)])
+                # sim_list = (torch.cos(sim_list * 3.1415926 + 3.1415926) + 1) / 2 # consine
+                appearance_cond = torch.stack([sim_list[i:i+cfg.max_frames] for i in range(len(sim_list)-cfg.max_frames, -1, -1)]).to(gpu)
+                # appearance_cond = CLIPSim().load_vid_sim('/mnt/data-nas-workspace/qingzhiwu/code/video_generation/workspace/temp_dir/cvpr2024_1.vidldm_15_pub_midj_unclip_basemodel_img_text_e003_eval_725000_pikachu_turn_back_g12/sample_000001/cvpr2024_1.vidldm_15_pub_midj_unclip_basemodel_img_text_e003_eval_725000_pikachu_turn_back_g12_s01_diff_0.0_500_.mp4')
+                model_kwargs=[
+                    {'y': y_words, 'spat_prior': spat_data, 'motion_cond': motion_cond, 'appearance_cond': appearance_cond[None, :]},
+                    {'y': zero_y, 'spat_prior': spat_data, 'motion_cond': motion_cond, 'appearance_cond': appearance_cond[None, :]}]
                 video_data = diffusion.ddim_sample_loop(
-                    noise=noise,
+                    noise=temp_noise,
                     model=model.eval(),
                     model_kwargs=model_kwargs,
                     guide_scale=cfg.guide_scale,
@@ -215,6 +245,7 @@ def worker(gpu, cfg, cfg_update):
             decode_data.append(gen_frames)
         video_data = torch.cat(decode_data, dim=0)
         video_data = rearrange(video_data, '(b f) c h w -> b c f h w', b = cfg.batch_size)
+        # video_data = torch.cat([spat_key_frames[:, :, None, :, :], video_data], dim=2)
         
         text_size = cfg.resolution[-1]
         cap_name = re.sub(r'[^\w\s]', '', caption).replace(' ', '_')
@@ -222,7 +253,7 @@ def worker(gpu, cfg, cfg_update):
         local_path = os.path.join(cfg.log_dir, f'{file_name}')
         os.makedirs(os.path.dirname(local_path), exist_ok=True)
         try:
-            save_i2vgen_video_safe(local_path, video_data.cpu(), captions, cfg.mean, cfg.std, text_size)
+            save_t2vhigen_video_safe(local_path, video_data.cpu(), captions, cfg.mean, cfg.std, text_size)
             logging.info('Save video to dir %s:' % (local_path))
         except Exception as e:
             logging.info(f'Step: save text or video error with {e}')
@@ -232,4 +263,3 @@ def worker(gpu, cfg, cfg_update):
     if not cfg.debug:
         torch.cuda.synchronize()
         dist.barrier()
-
