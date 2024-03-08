@@ -109,10 +109,10 @@ Then you can find the videos you generated in the `workspace/experiments/test_im
 <center>
   <tr>
     <td ><center>
-      <video  height="260" src="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/452227605224.mp4"></video>	
+      <image  height="260" src="source/duck.png"></image>	
     </center></td>
     <td ><center>
-      <video height="260" src="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/452015792863.mp4"></video>	
+      <image height="260" src="source/bat_man.png"></image>	
     </center></td>
   </tr>
   <tr>
