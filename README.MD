@@ -62,11 +62,11 @@ We have provided a **demo dataset** that includes images and videos, along with 
 *Please note that the demo images used here are for testing purposes and were not included in the training.*
 
 
-### Clone codeb
+### Clone code
 
 ```
-git clone https://github.com/damo-vilab/i2vgen-xl.git
-cd i2vgen-xl
+git clone https://github.com/ali-vilab/VGen.git
+cd VGen
 ```
 
 
