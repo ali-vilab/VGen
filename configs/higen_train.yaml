@@ -1,17 +1,17 @@
-TASK_TYPE: train_i2v_vs_img_text_entrance
+TASK_TYPE: train_t2v_higen_entrance
 ENABLE: true
 use_ema: true
 num_workers: 6
-frame_lens: [16, 16, 16, 16, 16, 32, 32, 32]
-sample_fps: [8,  8,  16, 16, 16, 8,  16, 16]
-resolution: [1280, 704]
+frame_lens: [32, 32, 32, 32, 32, 32, 32, 32]
+sample_fps: [8,  8,  8, 8, 8, 8,  8, 8]
+resolution: [448, 256]
 vit_resolution: [224, 224]
 vid_dataset: {
     'type': 'VideoDataset',
     'data_list': ['data/vid_list.txt', ],
     'data_dir_list': ['data/videos/', ],
     'vit_resolution': [224, 224],
-    'resolution': [1280, 704],
+    'resolution': [448, 256],
     'get_first_frame': True,
     'max_words': 1000,
 }
@@ -20,7 +20,7 @@ img_dataset: {
     'data_list': ['data/img_list.txt', ],
     'data_dir_list': ['data/images', ],
     'vit_resolution': [224, 224],
-    'resolution': [1280, 704],
+    'resolution': [448, 256],
     'max_words': 1000
 }
 embedder: {
@@ -30,7 +30,7 @@ embedder: {
     'pretrained': 'models/open_clip_pytorch_model.bin'
 }
 UNet: {
-    'type': 'UNetSD_I2VGen',
+    'type': 'UNetSD_HiGen',
     'in_dim': 4,
     'y_dim': 1024,
     'upper_len': 128,
@@ -47,15 +47,18 @@ UNet: {
     'temporal_attn_times': 1,
     'use_checkpoint': True,
     'use_fps_condition': False,
-    'use_sim_mask': False
+    'use_sim_mask': False,
+    'context_embedding_depth': 2,
+    'num_tokens': 16
 }
 Diffusion: {
     'type': 'DiffusionDDIM',
-    'schedule': 'cosine', # cosine
+    'schedule': 'linear_sd', # linear_sd
     'schedule_param': {
         'num_timesteps': 1000,
-        'cosine_s': 0.008,
         'zero_terminal_snr': True,
+        'init_beta': 0.00085,
+        'last_beta': 0.0120
     },
     'mean_type': 'v',
     'loss_type': 'mse',
@@ -64,11 +67,12 @@ Diffusion: {
     'noise_strength': 0.1
 }
 batch_sizes: {
-    "1": 32,
-    "4": 8,
-    "8": 4,
-    "16": 2,
-    "32": 1,
+    "1": 256,
+    "4": 96,
+    "8": 48,
+    "16": 32,
+    "24": 24,
+    "32": 10
 }
 visual_train: {
     'type': 'VisualTrainTextImageToVideo',

@@ -25,6 +25,7 @@ VGen can produce high-quality videos from the input text, images, desired motion
 
 
 ## 🔥News!!!
+- __[2024.03]__ We release the code and model of HiGen!!
 - __[2024.01]__ The gradio demo of I2VGen-XL has been completed in [HuggingFace](https://huggingface.co/spaces/damo-vilab/I2VGen-XL), thanks to our colleague @[Wenmeng Zhou](https://github.com/wenmengzhou) and @[AK](https://twitter.com/_akhaliq) for the support, and welcome to try it out.
 - __[2024.01]__ We support running the gradio app locally, thanks to our colleague @[Wenmeng Zhou](https://github.com/wenmengzhou) for the support and @[AK](https://twitter.com/_akhaliq) for the suggestion, and welcome to have a try.
 - __[2024.01]__ Thanks @[Chenxi](https://chenxwh.github.io) for supporting the running of i2vgen-xl on [![Replicate](https://replicate.com/cjwbw/i2vgen-xl/badge)](https://replicate.com/cjwbw/i2vgen-xl/). Feel free to give it a try. 
@@ -49,7 +50,6 @@ VGen can produce high-quality videos from the input text, images, desired motion
 - [ ] Release models optimized specifically for the human body and faces
 - [ ] Updated version can fully maintain the ID and capture large and accurate motions simultaneously
 - [ ] Release other methods and the corresponding models
-
 
 
 ## Preparation
@@ -82,11 +82,11 @@ We have provided a **demo dataset** that includes images and videos, along with 
 *Please note that the demo images used here are for testing purposes and were not included in the training.*
 
 
-### Clone the code
+### Clone code
 
 ```
-git clone https://github.com/damo-vilab/i2vgen-xl.git
-cd i2vgen-xl
+git clone https://github.com/ali-vilab/VGen.git
+cd VGen
 ```
 
 
@@ -133,18 +133,18 @@ Then you can find the videos you generated in the `workspace/experiments/test_im
 <center>
   <tr>
     <td ><center>
-      <image  height="260" src="https://img.alicdn.com/imgextra/i4/O1CN01Ya2I5I25utrJwJ9Jf_!!6000000007587-2-tps-1280-720.png"></image>	
+      <image  height="260" src="source/duck.png"></image>	
     </center></td>
     <td ><center>
-      <image height="260" src="https://img.alicdn.com/imgextra/i3/O1CN01CrmYaz1zXBetmg3dd_!!6000000006723-2-tps-1280-720.png"></image>	
+      <image height="260" src="source/bat_man.png"></image>	
     </center></td>
   </tr>
   <tr>
     <td ><center>
-      <p>Click <a href="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/441754174077.mp4">HERE</a> to view the generated video.</p>
+      <p>Click <a href="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/452227605224.mp4">HERE</a> to view the generated video.</p>
     </center></td>
     <td ><center>
-      <p>Click <a href="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/441138824052.mp4">HERE</a> to view the generated video.</p>
+      <p>Click <a href="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/452015792863.mp4">HERE</a> to view the generated video.</p>
     </center></td>
   </tr>
 </center>
@@ -193,6 +193,38 @@ python gradio_app.py
 
 
 <span style="color:red">Due to the compression of our video quality in GIF format, please click 'HERE' below to view the original video.</span>
+(ii) Run the following command:
+```
+python inference.py --cfg configs/i2vgen_xl_train.yaml
+```
+In a few minutes, you can retrieve the high-definition video you wish to create from the `workspace/experiments/test_img_01` directory. At present, we find that the current model performs inadequately on **anime images** and **images with a black background** due to the lack of relevant training data. We are consistently working to optimize it.
+
+
+### (3) Run the HiGen model
+
+(i) Download model:
+```
+!pip install modelscope
+from modelscope.hub.snapshot_download import snapshot_download
+model_dir = snapshot_download('iic/HiGen', cache_dir='models/')
+```
+Then you might need the following command to move the checkpoints to the "models/" directory:
+```
+mv ./models/iic/HiGen/* ./models/
+```
+
+(ii) Run the following command for text-to-video generation:
+```
+python inference.py --cfg configs/higen_infer.yaml
+```
+In a few minutes, you can retrieve the videos you wish to create from the `workspace/experiments/text_list_for_t2v_share` directory.
+Then you can execute the following command to perform super-resolution on the generated videos:
+```
+python inference.py --cfg configs/sr600_infer.yaml
+```
+Finally, you can retrieve the high-definition video from the `workspace/experiments/text_list_for_t2v_share` directory.
+
+<span style="color:red">Due to the compression of our video quality in GIF format, please click 'HRER' below to view the original video.</span>
 
 <center>
 <table>
@@ -271,7 +303,7 @@ python gradio_app.py
 </table>
 </center>
 
-### (3) Other methods
+### (4) Other methods
 
 In preparation!!
 
