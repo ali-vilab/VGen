@@ -252,11 +252,6 @@ def worker(gpu, cfg, cfg_update):
         file_name = f'rank_{cfg.world_size:02d}_{cfg.rank:02d}_{idx:04d}_{cap_name}.mp4'
         local_path = os.path.join(cfg.log_dir, f'{file_name}')
         os.makedirs(os.path.dirname(local_path), exist_ok=True)
-        clip_model = CLIPSim()
-        sim_list = clip_model(cfg, video_data)
-        with open("./workspace/linear_0_0.5_appearance.csv", 'w') as f:
-            for sim, tsim in zip(sim_list.tolist(), appearance_cond[0].tolist()):
-                f.write(f"{sim},{tsim}\n")
         try:
             save_i2vgen_video_safe(local_path, video_data.cpu(), captions, cfg.mean, cfg.std, text_size)
             logging.info('Save video to dir %s:' % (local_path))
@@ -268,39 +263,3 @@ def worker(gpu, cfg, cfg_update):
     if not cfg.debug:
         torch.cuda.synchronize()
         dist.barrier()
-
-
-
-class CLIPSim(object):
-    def __init__(self):
-        import clip
-        device = 'cuda'
-        self.model, self.preprocess = clip.load("ViT-L/14", device=device)
-    
-    def load_vid_sim(self, vid_path):
-        from decord import VideoReader
-        import torch.utils.dlpack as dlpack
-        vr = VideoReader(vid_path)
-        frames = dlpack.from_dlpack(vr.get_batch([i for i in range(32)]).to_dlpack())
-        frames = [self.preprocess(Image.fromarray(frames[i].numpy())) for i in range(frames.shape[0])]
-        frames = torch.stack(frames, dim=0)
-        frame_feats = self.model.encode_image(frames.cuda())
-        frame_feats = torch.nn.functional.normalize(frame_feats, dim=-1, p=2)
-        return torch.mm(frame_feats, frame_feats.t())
-
-    def __call__(self, cfg, video_frames):
-        from PIL import Image
-        vid_mean = torch.tensor(cfg.mean, device=video_frames.device).view(1, -1, 1, 1, 1)
-        vid_std = torch.tensor(cfg.std, device=video_frames.device).view(1, -1, 1, 1, 1)
-        gen_video = video_frames.mul_(vid_std).add_(vid_mean)  # 8x3x16x256x384
-        gen_video.clamp_(0, 1)
-        gen_video = gen_video * 255.0
-
-        from PIL import Image
-        frames = gen_video[0].permute(1, 2, 3, 0).cpu().numpy().astype('uint8')
-        frames = [self.preprocess(Image.fromarray(frames[i])) for i in range(frames.shape[0])]
-        frames = torch.stack(frames, dim=0)
-        frame_feats = self.model.encode_image(frames.cuda())
-        frame_feats = torch.nn.functional.normalize(frame_feats, dim=-1, p=2)
-        sim_list = (frame_feats[:1] * frame_feats).sum(dim=-1)
-        return sim_list

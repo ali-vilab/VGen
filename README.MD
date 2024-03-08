@@ -145,18 +145,20 @@ In a few minutes, you can retrieve the high-definition video you wish to create 
 
 ### (3) Run the HiGen model
 
-(i) Download model and test data:
+(i) Download model from Huggingface:
 ```
-!pip install modelscope
-from modelscope.hub.snapshot_download import snapshot_download
-model_dir = snapshot_download('damo/HiGen', cache_dir='models/', revision='v1.0.0')
+TODO
 ```
 
-(ii) Run the following command:
+(ii) Run the following command for text-to-video generation:
 ```
 python inference.py --cfg configs/higen_infer.yaml
 ```
 In a few minutes, you can retrieve the high-definition video you wish to create from the `workspace/experiments/text_list_for_t2v_share` directory.
+Then you can execute the following command to perform super-resolution on the generated videos:
+```
+python inference.py --cfg configs/sr600_infer.yaml
+```
 
 <span style="color:red">Due to the compression of our video quality in GIF format, please click 'HRER' below to view the original video.</span>
 

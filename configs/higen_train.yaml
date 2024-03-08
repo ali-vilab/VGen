@@ -56,7 +56,7 @@ Diffusion: {
     'schedule': 'linear_sd', # linear_sd
     'schedule_param': {
         'num_timesteps': 1000,
-        'zero_terminal_snr': False,
+        'zero_terminal_snr': True,
         'init_beta': 0.00085,
         'last_beta': 0.0120
     },

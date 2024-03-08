@@ -9,6 +9,8 @@ from .losses import kl_divergence, discretized_gaussian_log_likelihood
 def _i(tensor, t, x):
     r"""Index tensor using t and format the output according to x.
     """
+    if tensor.device != x.device:
+        tensor = tensor.to(x.device)
     shape = (x.size(0), ) + (1, ) * (x.ndim - 1)
     return tensor[t].view(shape).to(x)
 

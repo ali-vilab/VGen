@@ -8,7 +8,7 @@ def beta_schedule(schedule='cosine',
                    **kwargs):
     # compute betas
     betas = {
-        'logsnr_cosine_interp': logsnr_cosine_interp_schedule,
+        # 'logsnr_cosine_interp': logsnr_cosine_interp_schedule,
         'linear': linear_schedule,
         'linear_sd': linear_sd_schedule,
         'quadratic': quadratic_schedule,
@@ -33,8 +33,10 @@ def sigma_schedule(schedule='cosine',
         'quadratic': quadratic_schedule,
         'cosine': cosine_schedule
     }[schedule](num_timesteps, **kwargs)
-
-    sigma = betas_to_sigmas(betas)
+    if schedule == 'logsnr_cosine_interp':
+        sigma = betas
+    else:
+        sigma = betas_to_sigmas(betas)
     if zero_terminal_snr and abs(sigma.max() - 1.0) > 0.0001:
         sigma = rescale_zero_terminal_snr(sigma)
 

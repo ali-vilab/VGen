@@ -120,7 +120,7 @@ def load_video_frames(autoencoder, vid_path, train_trans, max_frames=32):
     video_data = rearrange(video_data, 'b f c h w -> (b f) c h w')
     video_data_list = torch.chunk(video_data, video_data.shape[0]//2, dim=0)
 
-    setup_seed(0)
+    # setup_seed(0)
     with torch.no_grad():
         decode_data = []
         for vd_data in video_data_list:
