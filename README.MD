@@ -23,6 +23,7 @@ VGen can produce high-quality videos from the input text, images, desired motion
 
 
 ## 🔥News!!!
+- __[2024.03]__ We release the code and model of HiGen!!
 - __[2023.12]__ We release the code and model of I2VGen-XL and the ModelScope T2V
 - __[2023.12]__ We release the T2V method [HiGen](https://higen-t2v.github.io) and customizing T2V method [DreamVideo](https://dreamvideo-t2v.github.io).
 - __[2023.12]__ We write an [introduction docment](doc/introduction.pdf) for VGen and compare I2VGen-XL with SVD.
@@ -108,18 +109,18 @@ Then you can find the videos you generated in the `workspace/experiments/test_im
 <center>
   <tr>
     <td ><center>
-      <image  height="260" src="https://img.alicdn.com/imgextra/i4/O1CN01Ya2I5I25utrJwJ9Jf_!!6000000007587-2-tps-1280-720.png"></image>	
+      <video  height="260" src="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/452227605224.mp4"></video>	
     </center></td>
     <td ><center>
-      <image height="260" src="https://img.alicdn.com/imgextra/i3/O1CN01CrmYaz1zXBetmg3dd_!!6000000006723-2-tps-1280-720.png"></image>	
+      <video height="260" src="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/452015792863.mp4"></video>	
     </center></td>
   </tr>
   <tr>
     <td ><center>
-      <p>Clike <a href="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/441754174077.mp4">HRER</a> to view the generated video.</p>
+      <p>Click <a href="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/452227605224.mp4">HERE</a> to view the generated video.</p>
     </center></td>
     <td ><center>
-      <p>Clike <a href="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/441138824052.mp4">HRER</a> to view the generated video.</p>
+      <p>Click <a href="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/452015792863.mp4">HERE</a> to view the generated video.</p>
     </center></td>
   </tr>
 </center>
