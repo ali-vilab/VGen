@@ -16,4 +16,4 @@ subject_cfg: configs/dreamvideo/subjectLearning/dog2_subjectLearning_step2.yaml
 motion_cfg: configs/dreamvideo/motionLearning/carTurn_motionLearning.yaml
 base_model: models/finetuned_modelscope.pth
 identity_adapter_index: 500
-temporal_adapter_index: 600
+motion_adapter_index: 600
