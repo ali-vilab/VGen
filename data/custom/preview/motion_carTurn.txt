@@ -1,0 +1,8 @@
+dog.jpg|||a dog running on the road
+dog.jpg|||a dog running on the beach
+bear.jpg|||a bear running on the road
+bear.jpg|||a bear running on the beach
+lion.jpg|||a lion running on the road
+lion.jpg|||a lion running on Mars
+tiger.jpg|||a tiger running on the road
+tiger.jpg|||a tiger running on Mars

@@ -25,6 +25,7 @@ VGen can produce high-quality videos from the input text, images, desired motion
 
 
 ## 🔥News!!!
+- __[2024.03]__ We release the training and inference code of [DreamVideo](https://dreamvideo-t2v.github.io)! 
 - __[2024.03]__ We release the code and model of HiGen!!
 - __[2024.01]__ The gradio demo of I2VGen-XL has been completed in [HuggingFace](https://huggingface.co/spaces/damo-vilab/I2VGen-XL), thanks to our colleague @[Wenmeng Zhou](https://github.com/wenmengzhou) and @[AK](https://twitter.com/_akhaliq) for the support, and welcome to try it out.
 - __[2024.01]__ We support running the gradio app locally, thanks to our colleague @[Wenmeng Zhou](https://github.com/wenmengzhou) for the support and @[AK](https://twitter.com/_akhaliq) for the suggestion, and welcome to have a try.
@@ -304,7 +305,63 @@ Finally, you can retrieve the high-definition video from the `workspace/experime
 </center>
 
 
-### (4) Other methods
+### (4) DreamVideo
+Our DreamVideo is based on fine-tuned ModelScopeT2V. Base model weights, adapter weights, and more cases will be released, so stay tuned.  
+
+#### Training
+(i) Subject Learning
+
+Step 1: learn a textual identity using Textual Inversion.
+```
+python train_net.py --cfg configs/dreamvideo/subjectLearning/dog2_subjectLearning_step1.yaml
+```
+
+Step 2: train an identity adapter by incorporating the learned textual identity.
+```
+python train_net.py --cfg configs/dreamvideo/subjectLearning/dog2_subjectLearning_step2.yaml
+```
+
+Tips:
+- For some subjects, setting `use_mask_diffusion` to `True` may achieve better results. Make sure to put the binary masks of the subject into the subfolder ''masks'', and you can use [SAM](https://github.com/facebookresearch/segment-anything) to obtain these masks.
+
+(ii) Motion Learning
+
+Train a motion adapter on the given videos.
+```
+python train_net.py --cfg configs/dreamvideo/motionLearning/carTurn_motionLearning.yaml
+```
+
+You can customize your own configuration files for subject/motion learning.
+
+Tips:
+- Try increasing training steps or increasing the learning rate for single video motion customization to get better results.
+
+
+
+#### Inference
+(i) Subject Customization
+```
+python inference.py --cfg configs/dreamvideo/infer/subject_dog2.yaml
+```
+
+(ii) Motion Customization
+```
+python inference.py --cfg configs/dreamvideo/infer/motion_carTurn.yaml
+```
+
+Tips:
+- We do not use DDIM Inversion by default. However, for single video motion customization, we encourage you to try setting `inverse_noise_strength` to `0~0.5` to better align the training video. For multi-video motion customization, we recommend setting `inverse_noise_strength` to 0.
+
+(iii) Joint Customization
+```
+python inference.py --cfg configs/dreamvideo/infer/joint_dog2_carTurn.yaml
+```
+
+Tips:
+- Try changing `identity_adapter_index` and `motion_adapter_index` for better results.
+
+
+### (5) Other methods
 
 In preparation!!
 

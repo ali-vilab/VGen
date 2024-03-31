@@ -161,13 +161,14 @@ class CenterCropV2(object):
 
 
 class CenterCropWide(object):
-    def __init__(self, size):
+    def __init__(self, size, interpolation=Image.BOX):
         self.size = size
+        self.interpolation = interpolation
     
     def __call__(self, img):
         if isinstance(img, list):
             scale = min(img[0].size[0]/self.size[0], img[0].size[1]/self.size[1])
-            img = [u.resize((round(u.width // scale), round(u.height // scale)), resample=Image.BOX) for u in img]
+            img = [u.resize((round(u.width // scale), round(u.height // scale)), resample=self.interpolation) for u in img]
             
             # center crop
             x1 = (img[0].width - self.size[0]) // 2
@@ -176,7 +177,7 @@ class CenterCropWide(object):
             return img
         else:
             scale = min(img.size[0]/self.size[0], img.size[1]/self.size[1])
-            img = img.resize((round(img.width // scale), round(img.height // scale)), resample=Image.BOX)
+            img = img.resize((round(img.width // scale), round(img.height // scale)), resample=self.interpolation)
             x1 = (img.width - self.size[0]) // 2
             y1 = (img.height - self.size[1]) // 2
             img = img.crop((x1, y1, x1 + self.size[0], y1 + self.size[1]))

@@ -8,6 +8,7 @@ from torch import einsum
 from einops import rearrange
 from functools import partial
 import torch.nn.functional as F
+import torch.nn.init as init
 from rotary_embedding_torch import RotaryEmbedding
 from fairscale.nn.checkpoint import checkpoint_wrapper
 
@@ -371,6 +372,75 @@ class SpatialTransformer(nn.Module):
             x = self.proj_out(x)
         return x + x_in
 
+
+class SpatialTransformerWithAdapter(nn.Module):
+    """
+    Transformer block for image-like data.
+    First, project the input (aka embedding)
+    and reshape to b, t, d.
+    Then apply standard transformer action.
+    Finally, reshape to image
+    NEW: use_linear for more efficiency instead of the 1x1 convs
+    """
+    def __init__(self, in_channels, n_heads, d_head,
+                 depth=1, dropout=0., context_dim=None,
+                 disable_self_attn=False, use_linear=False,
+                 use_checkpoint=True, 
+                 adapter_list=[], adapter_position_list=['', 'parallel', ''], 
+                 adapter_hidden_dim=None):
+        super().__init__()
+        if exists(context_dim) and not isinstance(context_dim, list):
+            context_dim = [context_dim]
+        self.in_channels = in_channels
+        inner_dim = n_heads * d_head
+        self.norm = torch.nn.GroupNorm(num_groups=32, num_channels=in_channels, eps=1e-6, affine=True)
+        if not use_linear:
+            self.proj_in = nn.Conv2d(in_channels,
+                                     inner_dim,
+                                     kernel_size=1,
+                                     stride=1,
+                                     padding=0)
+        else:
+            self.proj_in = nn.Linear(in_channels, inner_dim)
+
+        self.transformer_blocks = nn.ModuleList(
+            [BasicTransformerBlockWithAdapter(inner_dim, n_heads, d_head, dropout=dropout, context_dim=context_dim[d],
+                                   disable_self_attn=disable_self_attn, checkpoint=use_checkpoint,
+                                   adapter_list=adapter_list, adapter_position_list=adapter_position_list, 
+                                   adapter_hidden_dim=adapter_hidden_dim)
+                for d in range(depth)]
+        )
+        if not use_linear:
+            self.proj_out = zero_module(nn.Conv2d(inner_dim,
+                                                  in_channels,
+                                                  kernel_size=1,
+                                                  stride=1,
+                                                  padding=0))
+        else:
+            self.proj_out = zero_module(nn.Linear(in_channels, inner_dim))
+        self.use_linear = use_linear
+
+    def forward(self, x, context=None):
+        # note: if no context is given, cross-attention defaults to self-attention
+        if not isinstance(context, list):
+            context = [context]
+        b, c, h, w = x.shape
+        x_in = x
+        x = self.norm(x)
+        if not self.use_linear:
+            x = self.proj_in(x)
+        x = rearrange(x, 'b c h w -> b (h w) c').contiguous()
+        if self.use_linear:
+            x = self.proj_in(x)
+        for i, block in enumerate(self.transformer_blocks):
+            x = block(x, context=context[i])
+        if self.use_linear:
+            x = self.proj_out(x)
+        x = rearrange(x, 'b (h w) c -> b c h w', h=h, w=w).contiguous()
+        if not self.use_linear:
+            x = self.proj_out(x)
+        return x + x_in
+
 import os
 _ATTN_PRECISION = os.environ.get("ATTN_PRECISION", "fp32")
 
@@ -424,6 +494,29 @@ class CrossAttention(nn.Module):
         out = torch.einsum('b i j, b j d -> b i d', sim, v)
         out = rearrange(out, '(b h) n d -> b n (h d)', h=h)
         return self.to_out(out)
+
+
+class Adapter(nn.Module):
+    def __init__(self, in_dim, hidden_dim, condition_dim=None):
+        super().__init__()
+        self.down_linear = nn.Linear(in_dim, hidden_dim)
+        self.up_linear = nn.Linear(hidden_dim, in_dim)
+        self.condition_dim = condition_dim
+        if condition_dim is not None:
+            self.condition_linear = nn.Linear(condition_dim, in_dim)
+
+        init.zeros_(self.up_linear.weight)
+        init.zeros_(self.up_linear.bias)
+
+    def forward(self, x, condition=None, condition_lam=1):
+        x_in = x
+        if self.condition_dim is not None and condition is not None:
+            x = x + condition_lam * self.condition_linear(condition)
+        x = self.down_linear(x)
+        x = F.gelu(x)
+        x = self.up_linear(x)
+        x += x_in
+        return x
 
 
 class MemoryEfficientCrossAttention_attemask(nn.Module):
@@ -504,6 +597,78 @@ class BasicTransformerBlock_attemask(nn.Module):
         x = self.attn1(self.norm1(x), context=context if self.disable_self_attn else None) + x
         x = self.attn2(self.norm2(x), context=context) + x
         x = self.ff(self.norm3(x)) + x
+        return x
+
+
+class BasicTransformerBlockWithAdapter(nn.Module):
+    # ATTENTION_MODES = {
+    #     "softmax": CrossAttention,  # vanilla attention
+    #     "softmax-xformers": MemoryEfficientCrossAttention
+    # }
+    def __init__(self, dim, n_heads, d_head, dropout=0., context_dim=None, gated_ff=True, checkpoint=True, disable_self_attn=False, 
+                adapter_list=[], adapter_position_list=['parallel', 'parallel', 'parallel'], adapter_hidden_dim=None, adapter_condition_dim=None
+                ):
+        super().__init__()
+        # attn_mode = "softmax-xformers" if XFORMERS_IS_AVAILBLE else "softmax"
+        # assert attn_mode in self.ATTENTION_MODES
+        # attn_cls = CrossAttention
+        attn_cls = MemoryEfficientCrossAttention
+        self.disable_self_attn = disable_self_attn
+        self.attn1 = attn_cls(query_dim=dim, heads=n_heads, dim_head=d_head, dropout=dropout,
+                              context_dim=context_dim if self.disable_self_attn else None)  # is a self-attention if not self.disable_self_attn
+        self.ff = FeedForward(dim, dropout=dropout, glu=gated_ff)
+        self.attn2 = attn_cls(query_dim=dim, context_dim=context_dim,
+                              heads=n_heads, dim_head=d_head, dropout=dropout)  # is self-attn if context is none
+        self.norm1 = nn.LayerNorm(dim)
+        self.norm2 = nn.LayerNorm(dim)
+        self.norm3 = nn.LayerNorm(dim)
+        self.checkpoint = checkpoint
+        # adapter
+        self.adapter_list = adapter_list
+        self.adapter_position_list = adapter_position_list
+        hidden_dim = dim//2 if not adapter_hidden_dim else adapter_hidden_dim
+        if "self_attention" in adapter_list:
+            self.attn_adapter = Adapter(dim, hidden_dim, adapter_condition_dim)
+        if "cross_attention" in adapter_list:
+            self.cross_attn_adapter = Adapter(dim, hidden_dim, adapter_condition_dim)
+        if "feedforward" in adapter_list:
+            self.ff_adapter = Adapter(dim, hidden_dim, adapter_condition_dim)
+
+
+    def forward_(self, x, context=None, adapter_condition=None, adapter_condition_lam=1):
+        return checkpoint(self._forward, (x, context, adapter_condition, adapter_condition_lam), self.parameters(), self.checkpoint)
+
+    def forward(self, x, context=None, adapter_condition=None, adapter_condition_lam=1):
+        if "self_attention" in self.adapter_list:
+            if self.adapter_position_list[0] == 'parallel':
+                # parallel
+                x = self.attn1(self.norm1(x), context=context if self.disable_self_attn else None) + self.attn_adapter(x, adapter_condition, adapter_condition_lam)
+            elif self.adapter_position_list[0] == 'serial':
+                # serial
+                x = self.attn1(self.norm1(x), context=context if self.disable_self_attn else None) + x
+                x = self.attn_adapter(x, adapter_condition, adapter_condition_lam)
+        else:
+            x = self.attn1(self.norm1(x), context=context if self.disable_self_attn else None) + x
+
+        if "cross_attention" in self.adapter_list:
+            if self.adapter_position_list[1] == 'parallel':
+                # parallel
+                x = self.attn2(self.norm2(x), context=context) + self.cross_attn_adapter(x, adapter_condition, adapter_condition_lam)
+            elif self.adapter_position_list[1] == 'serial':
+                x = self.attn2(self.norm2(x), context=context) + x
+                x = self.cross_attn_adapter(x, adapter_condition, adapter_condition_lam)
+        else:
+            x = self.attn2(self.norm2(x), context=context) + x
+
+        if "feedforward" in self.adapter_list:
+            if self.adapter_position_list[2] == 'parallel':
+                x = self.ff(self.norm3(x)) + self.ff_adapter(x, adapter_condition, adapter_condition_lam)
+            elif self.adapter_position_list[2] == 'serial':
+                x = self.ff(self.norm3(x)) + x
+                x = self.ff_adapter(x, adapter_condition, adapter_condition_lam)
+        else:
+            x = self.ff(self.norm3(x)) + x
+        
         return x
 
 class BasicTransformerBlock(nn.Module):
@@ -1094,6 +1259,114 @@ class TemporalTransformer(nn.Module):
             x = rearrange(x, 'bhw c f -> bhw f c').contiguous()
             for i, block in enumerate(self.transformer_blocks):
                 x = block(x)
+            x = rearrange(x, '(b hw) f c -> b hw f c', b=b).contiguous()
+        else:
+            x = rearrange(x, '(b hw) c f -> b hw f c', b=b).contiguous()
+            for i, block in enumerate(self.transformer_blocks):
+                # context[i] = repeat(context[i], '(b f) l con -> b (f r) l con', r=(h*w)//self.frames, f=self.frames).contiguous()
+                context[i] = rearrange(context[i], '(b f) l con -> b f l con', f=self.frames).contiguous()
+                # calculate each batch one by one (since number in shape could not greater then 65,535 for some package)
+                for j in range(b):
+                    context_i_j = repeat(context[i][j], 'f l con -> (f r) l con', r=(h*w)//self.frames, f=self.frames).contiguous()
+                    x[j] = block(x[j], context=context_i_j)
+        
+        if self.use_linear:
+            x = self.proj_out(x)
+            x = rearrange(x, 'b (h w) f c -> b f c h w', h=h, w=w).contiguous()
+        if not self.use_linear:
+            # x = rearrange(x, 'bhw f c -> bhw c f').contiguous()
+            x = rearrange(x, 'b hw f c -> (b hw) c f').contiguous()
+            x = self.proj_out(x)
+            x = rearrange(x, '(b h w) c f -> b c f h w', b=b, h=h, w=w).contiguous()
+        
+        if self.multiply_zero:
+            x = 0.0 * x + x_in
+        else:
+            x = x + x_in
+        return x
+        
+
+class TemporalTransformerWithAdapter(nn.Module):
+    """
+    Transformer block for image-like data.
+    First, project the input (aka embedding)
+    and reshape to b, t, d.
+    Then apply standard transformer action.
+    Finally, reshape to image
+    """
+    def __init__(self, in_channels, n_heads, d_head,
+                 depth=1, dropout=0., context_dim=None,
+                 disable_self_attn=False, use_linear=False,
+                 use_checkpoint=True, only_self_att=True, multiply_zero=False,
+                 adapter_list=[], adapter_position_list=['parallel', 'parallel', 'parallel'],
+                 adapter_hidden_dim=None, adapter_condition_dim=None):
+        super().__init__()
+        self.multiply_zero = multiply_zero
+        self.only_self_att = only_self_att
+        self.use_adaptor = False
+        if self.only_self_att:
+            context_dim = None
+        if not isinstance(context_dim, list):
+            context_dim = [context_dim]
+        self.in_channels = in_channels
+        inner_dim = n_heads * d_head
+        self.norm = torch.nn.GroupNorm(num_groups=32, num_channels=in_channels, eps=1e-6, affine=True)
+        if not use_linear:
+            self.proj_in = nn.Conv1d(in_channels, 
+                                    inner_dim,
+                                    kernel_size=1,
+                                    stride=1,
+                                    padding=0)
+        else:
+            self.proj_in = nn.Linear(in_channels, inner_dim)
+            if self.use_adaptor:
+                self.adaptor_in = nn.Linear(frames, frames)
+
+        self.transformer_blocks = nn.ModuleList(
+            [BasicTransformerBlockWithAdapter(inner_dim, n_heads, d_head, dropout=dropout, context_dim=context_dim[d], 
+                checkpoint=use_checkpoint, adapter_list=adapter_list, adapter_position_list=adapter_position_list,
+                adapter_hidden_dim=adapter_hidden_dim, adapter_condition_dim=adapter_condition_dim)
+                for d in range(depth)]
+        )
+        if not use_linear:
+            self.proj_out = zero_module(nn.Conv1d(inner_dim,
+                                                in_channels,
+                                                kernel_size=1,
+                                                stride=1,
+                                                padding=0))
+        else:
+            self.proj_out = zero_module(nn.Linear(in_channels, inner_dim))
+            if self.use_adaptor:
+                self.adaptor_out = nn.Linear(frames, frames)
+        self.use_linear = use_linear
+
+    def forward(self, x, context=None, adapter_condition=None, adapter_condition_lam=1):
+        # note: if no context is given, cross-attention defaults to self-attention
+        if self.only_self_att:
+            context = None
+        if not isinstance(context, list):
+            context = [context]
+        b, c, f, h, w = x.shape
+        x_in = x
+        x = self.norm(x)
+
+        if not self.use_linear:
+            x = rearrange(x, 'b c f h w -> (b h w) c f').contiguous()
+            x = self.proj_in(x)
+        # [16384, 16, 320]
+        if self.use_linear:
+            x = rearrange(x, '(b f) c h w -> b (h w) f c', f=self.frames).contiguous()
+            x = self.proj_in(x)
+
+        if adapter_condition is not None:
+            b_cond, f_cond, c_cond = adapter_condition.shape
+            adapter_condition = adapter_condition.unsqueeze(1).unsqueeze(1).repeat(1, h, w, 1, 1)
+            adapter_condition = adapter_condition.reshape(b_cond*h*w, f_cond, c_cond)
+
+        if self.only_self_att:
+            x = rearrange(x, 'bhw c f -> bhw f c').contiguous()
+            for i, block in enumerate(self.transformer_blocks):
+                x = block(x, adapter_condition=adapter_condition, adapter_condition_lam=adapter_condition_lam)
             x = rearrange(x, '(b hw) f c -> b hw f c', b=b).contiguous()
         else:
             x = rearrange(x, '(b hw) c f -> b hw f c', b=b).contiguous()
