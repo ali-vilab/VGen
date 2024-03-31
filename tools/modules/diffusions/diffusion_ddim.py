@@ -367,7 +367,7 @@ class DiffusionDDIM(object):
                 eps_cache.pop(0)
         return xt
 
-    def loss(self, x0, t, model, model_kwargs={}, noise=None, weight = None, use_div_loss= False):
+    def loss(self, x0, t, model, model_kwargs={}, noise=None, weight = None, use_div_loss= False, loss_mask=None):
 
         # noise = torch.randn_like(x0) if noise is None else noise # [80, 4, 8, 32, 32]
         noise = self.sample_loss(x0, noise)
@@ -398,7 +398,13 @@ class DiffusionDDIM(object):
                 'x0': x0, 
                 'x_{t-1}': self.q_posterior_mean_variance(x0, xt, t)[0], 
                 'v':_i(self.sqrt_alphas_cumprod, t, xt) * noise - _i(self.sqrt_one_minus_alphas_cumprod, t, xt) * x0}[self.mean_type]
-            loss = (out - target).pow(1 if self.loss_type.endswith('l1') else 2).abs().flatten(1).mean(dim=1)
+            if loss_mask is not None:
+                loss_mask = loss_mask[:, :, 0, ...].unsqueeze(2)  # just use one channel (all channels are same)
+                loss_mask = loss_mask.permute(0, 2, 1, 3, 4)  # b,c,f,h,w 
+                # use masked diffusion
+                loss = (out * loss_mask - target * loss_mask).pow(1 if self.loss_type.endswith('l1') else 2).abs().flatten(1).mean(dim=1)
+            else:
+                loss = (out - target).pow(1 if self.loss_type.endswith('l1') else 2).abs().flatten(1).mean(dim=1)
             if weight is not None:
                 loss = loss*weight   
 

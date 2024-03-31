@@ -226,3 +226,70 @@ class FrozenOpenCLIPTextVisualEmbedder(nn.Module):
         
         return self(text)
 
+
+@EMBEDDER.register_class()
+class FrozenOpenCLIPCustomEmbedder(nn.Module):
+    """
+    Uses the OpenCLIP transformer encoder for text
+    """
+    LAYERS = [
+        #"pooled",
+        "last",
+        "penultimate"
+    ]
+    def __init__(self, pretrained, vit_resolution=(224, 224), arch="ViT-H-14", device="cuda", max_length=77,
+                 freeze=True, layer="last", **kwargs):
+        super().__init__()
+        assert layer in self.LAYERS
+        model, _, preprocess = open_clip.create_model_and_transforms(arch, device=torch.device('cpu'), pretrained=pretrained)
+        self.model = model
+        data_white = np.ones((vit_resolution[0], vit_resolution[1], 3), dtype=np.uint8)*255
+        self.white_image = preprocess(T.ToPILImage()(data_white)).unsqueeze(0)
+
+        self.device = device
+        self.max_length = max_length
+        if freeze:
+            self.freeze()
+        self.layer = layer
+        if self.layer == "last":
+            self.layer_idx = 0
+        elif self.layer == "penultimate":
+            self.layer_idx = 1
+        else:
+            raise NotImplementedError()
+
+    def freeze(self):
+        self.model = self.model.eval()
+        for param in self.parameters():
+            param.requires_grad = False
+    
+    def forward(self, image=None, text=None, **kwargs):
+        xi = self.model.encode_image(image.to(self.device)) if image is not None else None
+        tokens = open_clip.tokenize(text)
+        xt, x = self.encode_with_transformer(tokens.to(self.device), **kwargs)
+        return xi, xt, x
+
+    def encode_with_transformer(self, tokens, embedding_manager = None):
+        x = self.model.token_embedding(tokens)  # [batch_size, n_ctx, d_model]     
+        if embedding_manager is not None:
+            x = embedding_manager(tokens, x)  # embeddding replace
+        x = x + self.model.positional_embedding
+        x = x.permute(1, 0, 2).contiguous()  # NLD -> LND
+        x = self.text_transformer_forward(x, attn_mask=self.model.attn_mask)
+        x = x.permute(1, 0, 2).contiguous()  # LND -> NLD
+        x = self.model.ln_final(x)
+        xt = x[torch.arange(x.shape[0]), tokens.argmax(dim=-1)] @ self.model.text_projection
+        return xt, x
+
+    def text_transformer_forward(self, x: torch.Tensor, attn_mask = None):
+        for i, r in enumerate(self.model.transformer.resblocks):
+            if i == len(self.model.transformer.resblocks) - self.layer_idx:
+                break
+            if self.model.transformer.grad_checkpointing and not torch.jit.is_scripting():
+                x = checkpoint(r, x, attn_mask)
+            else:
+                x = r(x, attn_mask=attn_mask)
+        return x
+
+    def encode(self, text):
+        return self(text)
