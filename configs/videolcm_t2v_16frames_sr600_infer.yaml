@@ -1,0 +1,101 @@
+TASK_TYPE: inference_sr600_entrance
+use_fp16: True
+vldm_cfg: ''
+round: 1
+batch_size: 1
+# For important input
+test_list_path: data/text_list_for_videolcm.txt
+test_model: models/sr_step_110000_ema.pth
+double_frames_sr: True
+embedder: {
+    'type': 'FrozenOpenCLIPTextVisualEmbedder',
+    'layer': 'penultimate',
+    'vit_resolution': [224, 224],
+    'pretrained': 'models/open_clip_pytorch_model.bin',
+    'negative_prompt': 'worst quality, normal quality, low quality, low res, blurry, text, watermark, logo, banner, extra digits, cropped, jpeg artifacts, signature, username, error, sketch ,duplicate, ugly, monochrome, horror, geometry, mutation, disgusting',
+    'positive_prompt': ', cinematic, High Contrast, highly detailed, Unreal Engine 5, no blur, full length ultra-wide angle shot a cinematic scene, taken using a Canon EOS R camera, hyper detailed photo - realistic maximum detail, 32k, Color Grading, portrait Photography, ultra HD, extreme meticulous detailing, skin pore detailing, hyper sharpness, perfect without deformations, 4k render'
+}
+UNet: {
+    'type': 'UNetSD_SR600',
+    'in_dim': 4,
+    'dim': 320,
+    'y_dim': 1024,
+    'context_dim': 1024,
+    'out_dim': 4,
+    'dim_mult': [1, 2, 4, 4],
+    'num_heads': 8,
+    'head_dim': 64,
+    'num_res_blocks': 2,
+    'attn_scales' :[1, 0.5, 0.25],
+    'use_scale_shift_norm': True,
+    'dropout': 0.1,
+    'temporal_attn_times': 1,
+    'temporal_attention': True,
+    'use_checkpoint': True,
+    'use_image_dataset': False,
+    'use_sim_mask': False,
+    'inpainting': True
+}
+Diffusion: {
+    'type': 'DiffusionDDIMSR',
+    'reverse_diffusion': {
+      'schedule': 'cosine',
+      'mean_type': 'v',
+      'schedule_param':
+      {
+        'num_timesteps': 1000,
+        'zero_terminal_snr': True
+      }
+    },
+    'forward_diffusion': {
+      'schedule': 'logsnr_cosine_interp',
+      'mean_type': 'v',
+      'schedule_param':
+      {
+        'num_timesteps': 1000,
+        'zero_terminal_snr': True,
+        'scale_min': 2.0,
+        'scale_max': 4.0
+      }
+    }
+}
+batch_sizes: {
+    "1": 256,
+    "4": 96,
+    "8": 48,
+    "16": 32,
+    "24": 24,
+    "32": 10
+}
+visual_train: {
+    'type': 'VisualTrainTextImageToVideo',
+    'partial_keys': [
+        # ['y', 'local_image', 'fps'],
+        # ['image', 'local_image', 'fps'],
+        # ['y', 'image']
+        ['y', 'image', 'local_image', 'fps']
+    ],
+    'use_offset_noise': True,
+    'guide_scale': 9.0, 
+}
+
+chunk_size: 4
+decoder_bs: 4
+lr: 0.00003
+
+noise_strength: 0.1
+# classifier-free guidance
+p_zero: 0.0
+guide_scale: 3.0
+num_steps: 1000000
+
+use_zero_infer: True
+viz_interval: 50        # 200
+save_ckp_interval: 50   # 500
+
+# Log
+log_dir: "workspace/experiments"
+log_interval: 1
+seed: 6666
+
+total_noise_levels: 700

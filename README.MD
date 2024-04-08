@@ -25,6 +25,9 @@ VGen can produce high-quality videos from the input text, images, desired motion
 
 
 ## 🔥News!!!
+
+- __[2024.04]__ We release the code and models of [TF-T2V](https://tf-t2v.github.io)! 
+- __[2024.04]__ We release the code and models of [VideoLCM](https://tf-t2v.github.io)! 
 - __[2024.03]__ We release the training and inference code of [DreamVideo](https://dreamvideo-t2v.github.io)! 
 - __[2024.03]__ We release the code and model of HiGen!!
 - __[2024.01]__ The gradio demo of I2VGen-XL has been completed in [HuggingFace](https://huggingface.co/spaces/damo-vilab/I2VGen-XL), thanks to our colleague @[Wenmeng Zhou](https://github.com/wenmengzhou) and @[AK](https://twitter.com/_akhaliq) for the support, and welcome to try it out.
@@ -361,7 +364,201 @@ Tips:
 - Try changing `identity_adapter_index` and `motion_adapter_index` for better results.
 
 
-### (5) Other methods
+
+### (5) Run the TF-T2V (CVPR-2024) model
+
+(i) Download model:
+```
+!pip install modelscope
+from modelscope.hub.snapshot_download import snapshot_download
+model_dir = snapshot_download('iic/tf-t2v', cache_dir='models/')
+```
+Then you might need the following command to move the checkpoints to the "models/" directory:
+```
+mv ./models/iic/tf-t2v/* ./models/
+```
+
+(ii) We provide a config file for generating 16-frame video with 448x256 resolution. The command is as follows:
+```
+python inference.py --cfg configs/tft2v_t2v_infer.yaml
+```
+(If there are environmental problems during operation, we also provide the environment configuration "tft2v_environment.yaml" of TF-T2V for your reference.)
+
+
+In a few minutes, you can retrieve the videos you wish to create from the `workspace/experiments/text_list_for_tft2v` directory.
+Then you can execute the following command to perform super-resolution on the generated videos:
+```
+python inference.py --cfg configs/tft2v_16frames_sr600_infer.yaml
+```
+Finally, you can retrieve the high-definition video from the `workspace/experiments/text_list_for_tft2v` directory.
+(It should be noted that the super-resolution model only supports 32-frame input, and 16-frame video cannot be used, thus we construct a pseudo 32-frame video by copying frames.)
+
+<span style="color:red">Due to the compression of our video quality in GIF format, please click 'HERE' below to view the original video.</span>
+<table>
+<center>
+  <tr>
+    <td ><center>
+      <image  height="260" src="source/tft2v_t2v_16frame_1.gif"></image>	
+    </center></td>
+    <td ><center>
+      <image height="260" src="source/tft2v_t2v_16frame_2.gif"></image>	
+    </center></td>
+  </tr>
+  <tr>
+    <td ><center>
+      <p>Click <a href="https://cloud.video.taobao.com/vod/play/d0pnU3FxV01sT3ljVGowRFVmeVJOR2R0U3Rya05udGJoZ29BR203QzlURzZQZWw1SnpKVVVCTlh4OVFON0V5UUVMUDduY1RJak82VE1sdXdHTjNOaHc9PQ">HERE</a> to view the generated video.</p>
+    </center></td>
+    <td ><center>
+      <p>Click <a href="https://cloud.video.taobao.com/vod/play/d0pnU3FxV01sT3ljVGowRFVmeVJOR2FXNTVHdDdoTndIOHh1R09zejZsQzZQZWw1SnpKVVVCTlh4OVFON0V5UUVMUDduY1RJak82VE1sdXdHTjNOaHc9PQ">HERE</a> to view the generated video.</p>
+    </center></td>
+  </tr>
+</center>
+</table>
+</center>
+
+(iii) Additionally, you can run the following command for text-to-video generation (32 frames):
+```
+python inference.py --cfg configs/tft2v_t2v_32frames_infer.yaml
+```
+
+In a few minutes, you can retrieve the videos you wish to create from the `workspace/experiments/text_list_for_tft2v_32frame` directory.
+Then you can execute the following command to perform super-resolution on the generated videos:
+```
+python inference.py --cfg configs/tft2v_32frames_sr600_infer.yaml
+```
+Finally, you can retrieve the high-definition video from the `workspace/experiments/text_list_for_tft2v_32frame` directory.
+(It should be noted that the super-resolution model only supports 32-frame input, and 16-frame video cannot be used.)
+
+<span style="color:red">Due to the compression of our video quality in GIF format, please click 'HERE' below to view the original video.</span>
+<table>
+<center>
+  <tr>
+    <td ><center>
+      <image  height="260" src="source/tft2v_t2v_1.gif"></image>	
+    </center></td>
+    <td ><center>
+      <image height="260" src="source/tft2v_t2v_2.gif"></image>	
+    </center></td>
+  </tr>
+  <tr>
+    <td ><center>
+      <p>Click <a href="https://cloud.video.taobao.com/vod/play/eGhWQVU2UHBJcWRTMXRISFNKcFhnY0Z1dTlkM013M3ZsNDZCUHlad2lrRzZQZWw1SnpKVVVCTlh4OVFON0V5UUVMUDduY1RJak82VE1sdXdHTjNOaHc9PQ">HERE</a> to view the generated video.</p>
+    </center></td>
+    <td ><center>
+      <p>Click <a href="https://cloud.video.taobao.com/vod/play/eGhWQVU2UHBJcWRTMXRISFNKcFhnWDBaTmQxYTc1TzRYS3BFTG1TMXhORzZQZWw1SnpKVVVCTlh4OVFON0V5UUVMUDduY1RJak82VE1sdXdHTjNOaHc9PQ">HERE</a> to view the generated video.</p>
+    </center></td>
+  </tr>
+</center>
+</table>
+</center>
+
+
+(iv) Run the following command for compositional video generation like videocomposer (32 frames):
+
+```
+python inference.py --cfg configs/tft2v_vcomposer_32frames_infer.yaml
+```
+In a few minutes, you can retrieve the videos you wish to create from the `workspace/experiments/vid_list_vcomposer_32frame` directory.
+Then you can execute the following command to perform super-resolution on the generated videos:
+```
+python inference.py --cfg configs/tft2v_vcomposer_32frames_sr600_infer.yaml
+```
+Finally, you can retrieve the high-definition video from the `workspace/experiments/vid_list_vcomposer_32frame` directory.
+
+
+<span style="color:red">Due to the compression of our video quality in GIF format, please click 'HERE' below to view the original video.</span>
+<table>
+<center>
+  <tr>
+    <td ><center>
+      <image  height="260" src="source/tft2v_vcomposer_1.gif"></image>	
+    </center></td>
+    <td ><center>
+      <image height="260" src="source/tft2v_vcomposer_2.gif"></image>	
+    </center></td>
+  </tr>
+  <tr>
+    <td ><center>
+      <p>Click <a href="https://cloud.video.taobao.com/vod/play/dkwzYUtUNExsSzQ2cGZRM0N3Z0VYWlczOW5YanFzdkkzYW1hRDZRRGlHNjZQZWw1SnpKVVVCTlh4OVFON0V5UUVMUDduY1RJak82VE1sdXdHTjNOaHc9PQ">HERE</a> to view the generated video.</p>
+    </center></td>
+    <td ><center>
+      <p>Click <a href="https://cloud.video.taobao.com/vod/play/dkwzYUtUNExsSzQ2cGZRM0N3Z0VYUlNNRHVwN0ZmbndFMkpZeFlEczdsZTZQZWw1SnpKVVVCTlh4OVFON0V5UUVMUDduY1RJak82VE1sdXdHTjNOaHc9PQ">HERE</a> to view the generated video.</p>
+    </center></td>
+  </tr>
+</center>
+</table>
+</center>
+
+
+(v) We also provide a config file for generating 16-frame video with 448x256 resolution under the compositional video synthesis setting. The command is as follows:
+```
+python inference.py --cfg configs/tft2v_vcomposer_infer.yaml
+```
+You can also generate a 16-frame video with 896x512 resolution within one model by running:
+```
+python inference.py --cfg configs/tft2v_vcomposer_896x512_infer.yaml
+```
+
+It should be noted that the super-resolution model only supports 32-frame input, and 16-frame video cannot be used.
+
+
+
+### (6) Run the VideoLCM model
+
+(i) Download models as in TF-T2V (if you have already downloaded them in TF-T2V, skip this step):
+```
+!pip install modelscope
+from modelscope.hub.snapshot_download import snapshot_download
+model_dir = snapshot_download('iic/tf-t2v', cache_dir='models/')
+```
+Then you might need the following command to move the checkpoints to the "models/" directory:
+```
+mv ./models/iic/tf-t2v/* ./models/
+```
+
+(ii) Run the following command for text-to-video generation (16 frames with 448x256 resolution):
+```
+python inference.py --cfg configs/videolcm_t2v_infer.yaml
+```
+
+To generate high-resolution videos (1280x720 resolution), you can run the following command:
+```
+python inference.py --cfg configs/videolcm_t2v_16frames_sr600_infer.yaml
+```
+
+
+<span style="color:red">Due to the compression of our video quality in GIF format, please click 'HERE' below to view the original video.</span>
+<table>
+<center>
+  <tr>
+    <td ><center>
+      <image  height="260" src="source/videolcm_t2v_1.gif"></image>	
+    </center></td>
+    <td ><center>
+      <image height="260" src="source/videolcm_t2v_2.gif"></image>	
+    </center></td>
+  </tr>
+  <tr>
+    <td ><center>
+      <p>Click <a href="https://cloud.video.taobao.com/vod/play/TGdxZ2dwem8xVXFtcm1TYjlCMXd6UXFzMVM/dDV1MTltVldlWlVUajlkcTZQZWw1SnpKVVVCTlh4OVFON0V5UUVMUDduY1RJak82VE1sdXdHTjNOaHc9PQ">HERE</a> to view the generated video.</p>
+    </center></td>
+    <td ><center>
+      <p>Click <a href="https://cloud.video.taobao.com/vod/play/OVZ5THVhZW1hbkZxSm4wRzVNNm0xMDFxbjdoVzR6VjhXWlBoSkNjKw/VjI2UGVsNUp6SlVVQk5YeDlRTjdFeVFFTFA3bmNUSWpPNlRNbHV3R04zTmh3PT0">HERE</a> to view the generated video.</p>
+    </center></td>
+  </tr>
+</center>
+</table>
+</center>
+
+
+(iii) Run the following command for compositional video generation (16 frames with 448x256 resolution):
+```
+python inference.py --cfg configs/videolcm_vcomposer_infer.yaml
+```
+
+
+
+### (7) Other methods
 
 In preparation!!
 
@@ -378,10 +575,11 @@ If this repo is useful to you, please cite our corresponding technical paper.
 
 
 ```bibtex
-@article{2023videocomposer,
-  title={VideoComposer: Compositional Video Synthesis with Motion Controllability},
-  author={Wang, Xiang and Yuan, Hangjie and Zhang, Shiwei and Chen, Dayou and Wang, Jiuniu, and Zhang, Yingya, and Shen, Yujun, and Zhao, Deli and Zhou, Jingren},
-  booktitle={arXiv preprint arXiv:2306.02018},
+@article{wang2023videocomposer,
+  title={Videocomposer: Compositional Video Synthesis with Motion Controllability},
+  author={Wang, Xiang and Yuan, Hangjie and Zhang, Shiwei and Chen, Dayou and Wang, Jiuniu and Zhang, Yingya and Shen, Yujun and Zhao, Deli and Zhou, Jingren},
+  journal={NeurIPS},
+  volume={36},
   year={2023}
 }
 @article{2023i2vgenxl,
@@ -396,17 +594,17 @@ If this repo is useful to you, please cite our corresponding technical paper.
   journal={arXiv preprint arXiv:2308.06571},
   year={2023}
 }
-@article{dreamvideo,
+@inproceedings{dreamvideo,
   title={DreamVideo: Composing Your Dream Videos with Customized Subject and Motion},
   author={Wei, Yujie and Zhang, Shiwei and Qing, Zhiwu and Yuan, Hangjie and Liu, Zhiheng and Liu, Yu and Zhang, Yingya and Zhou, Jingren and Shan, Hongming},
-  journal={arXiv preprint arXiv:2312.04433},
-  year={2023}
+  booktitle={CVPR},
+  year={2024}
 }
-@article{qing2023higen,
+@inproceedings{higen,
   title={Hierarchical Spatio-temporal Decoupling for Text-to-Video Generation},
   author={Qing, Zhiwu and Zhang, Shiwei and Wang, Jiayu and Wang, Xiang and Wei, Yujie and Zhang, Yingya and Gao, Changxin and Sang, Nong },
-  journal={arXiv preprint arXiv:2312.04483},
-  year={2023}
+  booktitle={CVPR},
+  year={2024}
 }
 @article{wang2023videolcm,
   title={VideoLCM: Video Latent Consistency Model},
@@ -420,17 +618,17 @@ If this repo is useful to you, please cite our corresponding technical paper.
   journal={arXiv preprint arXiv:2312.09767},
   year={2023}
 }
-@article{2023InstructVideo,
+@inproceedings{InstructVideo,
   title={InstructVideo: Instructing Video Diffusion Models with Human Feedback},
   author={Yuan, Hangjie and Zhang, Shiwei and Wang, Xiang and Wei, Yujie and Feng, Tao and Pan, Yining and Zhang, Yingya and Liu, Ziwei and Albanie, Samuel and Ni, Dong},
-  booktitle={arXiv preprint arXiv:2312.12490},
-  year={2023}
+  booktitle={CVPR},
+  year={2024}
 }
-@article{TFT2V,
- title={A Recipe for Scaling up Text-to-Video Generation with Text-free Videos},
- author={Wang, Xiang and Zhang, Shiwei and Yuan, Hangjie and Qing, Zhiwu and Gong, Biao and Zhang, Yingya and Shen, Yujun and Gao, Changxin and Sang, Nong},
- journal={arXiv preprint arXiv:2312.15770},
- year={2023}
+@inproceedings{TFT2V,
+  title={A Recipe for Scaling up Text-to-Video Generation with Text-free Videos},
+  author={Wang, Xiang and Zhang, Shiwei and Yuan, Hangjie and Qing, Zhiwu and Gong, Biao and Zhang, Yingya and Shen, Yujun and Gao, Changxin and Sang, Nong},
+  booktitle={CVPR},
+  year={2024}
 }
 ```
 

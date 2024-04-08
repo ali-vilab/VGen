@@ -6,7 +6,7 @@ import torch.nn.functional as F
 import math
 
 # from canvas import DOWNLOAD_TO_CACHE
-from artist import DOWNLOAD_TO_CACHE
+# from artist import DOWNLOAD_TO_CACHE
 
 __all__ = ['SketchSimplification', 'sketch_simplification_gan', 'sketch_simplification_mse',
            'sketch_to_pencil_v1', 'sketch_to_pencil_v2']
@@ -85,7 +85,7 @@ def sketch_simplification_gan(pretrained=False):
         #     DOWNLOAD_TO_CACHE('models/sketch_simplification/sketch_simplification_gan.pth'),
         #     map_location='cpu'))
         model.load_state_dict(torch.load(
-            DOWNLOAD_TO_CACHE('VideoComposer/Hangjie/models/sketch_simplification/sketch_simplification_gan.pth'),
+            'models/sketch_simplification_gan.pth',
             map_location='cpu'))
     return model
 

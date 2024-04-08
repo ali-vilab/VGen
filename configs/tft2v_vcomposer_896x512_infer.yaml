@@ -1,0 +1,90 @@
+TASK_TYPE: inference_tft2v_vcomposer_entrance
+use_fp16: True
+guide_scale: 9.0
+use_fp16: True
+chunk_size: 2
+decoder_bs: 2
+sample_fps: 3
+max_frames: 16
+target_fps: 16      # FPS Conditions, not encoding fps
+scale: 8
+batch_size: 1
+use_zero_infer: True 
+resolution: [896, 512]
+# For important input
+round: 1
+seed: 88
+use_fps_condition: False
+test_list_path: data/vid_list_vcomposer.txt
+positive_prompt: ', cinematic, High Contrast, highly detailed, no blur, 4k render'
+vldm_cfg: configs/t2v_train.yaml
+data_dir: "data/videos"
+# test_model: workspace/model_bk/model_scope_0267000.pth
+test_model: models/tft2v_vcomposer_non_ema_270000_896x512.pth
+partial_keys: [
+                    ['y', 'depth'],
+                    ['y', 'sketch'],
+                    ['y', 'local_image'],
+                ]
+embedder: {
+    'type': 'FrozenOpenCLIPTextVisualEmbedder',
+    'layer': 'penultimate',
+    'pretrained': 'models/open_clip_pytorch_model.bin'
+}
+
+auto_encoder: {
+    'type': 'AutoencoderKL',
+    'ddconfig': {
+        'double_z': True, 
+        'z_channels': 4,
+        'resolution': 256, 
+        'in_channels': 3,
+        'out_ch': 3, 
+        'ch': 128, 
+        'ch_mult': [1, 2, 4, 4],
+        'num_res_blocks': 2, 
+        'attn_resolutions': [], 
+        'dropout': 0.0,
+        'video_kernel_size': [3, 1, 1]
+    },
+    'embed_dim': 4,
+    'pretrained': 'models/v2-1_512-ema-pruned.ckpt'
+}
+
+UNet: {
+    'type': 'UNetSD_TFT2V',
+    'config': None,
+    'in_dim': 4,
+    'dim': 320,
+    'y_dim': 1024,
+    'context_dim': 1024,
+    'out_dim': 4,
+    'dim_mult': [1, 2, 4, 4],
+    'num_heads': 8,
+    'head_dim': 64,
+    'num_res_blocks': 2,
+    # 'attn_scales': [1 / 1, 1 / 2, 1 / 4],
+    'dropout': 0.1,
+    'temporal_attention': True,
+    'num_tokens': 4,
+    'temporal_attn_times': 1,
+    'use_checkpoint': True,
+    'use_fps_condition': False,
+    'use_sim_mask': False
+}
+video_compositions: ['text', 'mask', 'depthmap', 'sketch', 'motion', 'image', 'local_image', 'single_sketch']
+Diffusion: {
+    'type': 'DiffusionDDIM',
+    'schedule': 'linear_sd', # cosine
+    'schedule_param': {
+        'num_timesteps': 1000,
+        "init_beta": 0.00085, 
+        "last_beta": 0.0120,
+        'zero_terminal_snr': True,
+    },
+    'mean_type': 'v',
+    'loss_type': 'mse',
+    'var_type': 'fixed_small',
+    'rescale_timesteps': False,
+    'noise_strength': 0.1
+}
