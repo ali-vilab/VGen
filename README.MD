@@ -398,10 +398,10 @@ Finally, you can retrieve the high-definition video from the `workspace/experime
 <center>
   <tr>
     <td ><center>
-      <image  height="260" src="https://img.alicdn.com/imgextra/i3/O1CN01sYfJvj1ESLZKaSYjL_!!6000000000350-1-tps-320-180.gif"></image>	
+      <image  height="260" src="https://img.alicdn.com/imgextra/i1/O1CN014OJopR1MFXQ0y9jN1_!!6000000001405-1-tps-320-180.gif"></image>	
     </center></td>
     <td ><center>
-      <image height="260" src="https://img.alicdn.com/imgextra/i4/O1CN01z95HUN1xqlOQofSiz_!!6000000006495-1-tps-320-180.gif"></image>	
+      <image height="260" src="https://img.alicdn.com/imgextra/i1/O1CN01gzSvmL1s7oRR4sBJf_!!6000000005720-1-tps-320-180.gif"></image>	
     </center></td>
   </tr>
   <tr>
@@ -434,10 +434,10 @@ Finally, you can retrieve the high-definition video from the `workspace/experime
 <center>
   <tr>
     <td ><center>
-      <image  height="260" src="https://img.alicdn.com/imgextra/i2/O1CN01QrEAPM1PvcewRM6ar_!!6000000001903-1-tps-320-180.gif"></image>	
+      <image  height="260" src="https://img.alicdn.com/imgextra/i3/O1CN01PN4Gv31ZfGfrf4bI3_!!6000000003221-1-tps-320-180.gif"></image>	
     </center></td>
     <td ><center>
-      <image height="260" src="https://img.alicdn.com/imgextra/i4/O1CN01CykVZD1wKsCQaOGwc_!!6000000006290-1-tps-320-180.gif"></image>	
+      <image height="260" src="https://img.alicdn.com/imgextra/i3/O1CN01qMPlvb26JAtAqovud_!!6000000007640-1-tps-320-180.gif"></image>	
     </center></td>
   </tr>
   <tr>
@@ -471,10 +471,10 @@ Finally, you can retrieve the high-definition video from the `workspace/experime
 <center>
   <tr>
     <td ><center>
-      <image  height="260" src="https://img.alicdn.com/imgextra/i4/O1CN01aRPa5j20nVQEuD63m_!!6000000006894-1-tps-320-180.gif"></image>	
+      <image  height="260" src="https://img.alicdn.com/imgextra/i2/O1CN01I4cVz01eHWDQKnC0b_!!6000000003846-1-tps-320-180.gif"></image>	
     </center></td>
     <td ><center>
-      <image height="260" src="https://img.alicdn.com/imgextra/i3/O1CN01oCs8ZT1RJj7Up6zhN_!!6000000002091-1-tps-320-180.gif"></image>	
+      <image height="260" src="https://img.alicdn.com/imgextra/i1/O1CN01VWLCS01TEo65Rkv8F_!!6000000002351-1-tps-320-180.gif"></image>	
     </center></td>
   </tr>
   <tr>
@@ -532,10 +532,10 @@ python inference.py --cfg configs/videolcm_t2v_16frames_sr600_infer.yaml
 <center>
   <tr>
     <td ><center>
-      <image  height="260" src="https://img.alicdn.com/imgextra/i4/O1CN01gFGTMO1zSbjellb6W_!!6000000006713-1-tps-320-180.gif"></image>	
+      <image  height="260" src="https://img.alicdn.com/imgextra/i2/O1CN01AqHVYW1T2tnVCfd1u_!!6000000002325-1-tps-320-180.gif"></image>	
     </center></td>
     <td ><center>
-      <image height="260" src="https://img.alicdn.com/imgextra/i1/O1CN01pCZ49I1q2ekgpggyW_!!6000000005438-1-tps-320-180.gif"></image>	
+      <image height="260" src="https://img.alicdn.com/imgextra/i1/O1CN01a7YqU51GxbpoqiKsv_!!6000000000689-1-tps-320-180.gif"></image>	
     </center></td>
   </tr>
   <tr>
