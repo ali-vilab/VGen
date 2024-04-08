@@ -13,3 +13,5 @@ cache*
 .DS_Store
 *DS_Store
 outputs/
+**/__pycache__
+*/__pycache__

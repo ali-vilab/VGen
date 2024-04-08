@@ -9,7 +9,7 @@ import torch.nn.functional as F
 import math
 
 # from canvas import DOWNLOAD_TO_CACHE
-from artist import DOWNLOAD_TO_CACHE
+# from artist import DOWNLOAD_TO_CACHE
 
 __all__ = ['PiDiNet', 'pidinet_bsd_tiny', 'pidinet_bsd_small', 'pidinet_bsd',
            'pidinet_nyud', 'pidinet_multicue']
@@ -737,7 +737,7 @@ def pidinet_bsd(pretrained=False, vanilla_cnn=True):
         #     DOWNLOAD_TO_CACHE(f'models/pidinet/table5_pidinet.pth'),
         #     map_location='cpu')['state_dict']
         state = torch.load(
-            DOWNLOAD_TO_CACHE(f'VideoComposer/Hangjie/models/pidinet/table5_pidinet.pth'),
+            "models/table5_pidinet.pth",
             map_location='cpu')['state_dict']
         if vanilla_cnn:
             state = convert_pidinet(state, 'carv4')

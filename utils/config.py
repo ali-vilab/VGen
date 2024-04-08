@@ -29,7 +29,7 @@ class Config(object):
             "--cfg",
             dest="cfg_file",
             help="Path to the configuration file",
-            default='configs/i2vgen_xl_infer.yaml'
+            default='configs/tft2v_t2v_infer.yaml'
         )
         parser.add_argument(
             "--init_method",

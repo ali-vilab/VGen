@@ -77,6 +77,14 @@ cfg.guide_scale = 3.0
 cfg.vit_mean = [0.48145466, 0.4578275, 0.40821073]
 cfg.vit_std = [0.26862954, 0.26130258, 0.27577711]
 
+# sketch
+cfg.sketch_mean = [0.485, 0.456, 0.406]
+cfg.sketch_std = [0.229, 0.224, 0.225]
+# cfg.misc_size = 256
+cfg.depth_std = 20.0
+cfg.depth_clamp = 10.0
+cfg.hist_sigma = 10.0
+
 # Model
 cfg.scale_factor = 0.18215  
 cfg.use_checkpoint = True

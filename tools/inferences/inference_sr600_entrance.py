@@ -77,7 +77,7 @@ def inference_sr600_entrance(cfg_update,  **kwargs):
     return cfg
 
 
-def load_video_frames(autoencoder, vid_path, train_trans, max_frames=32):
+def load_video_frames(autoencoder, vid_path, train_trans, max_frames=32, double_frames_sr=False):
     capture = cv2.VideoCapture(vid_path)
     _fps = capture.get(cv2.CAP_PROP_FPS)
     sample_fps = _fps
@@ -105,6 +105,8 @@ def load_video_frames(autoencoder, vid_path, train_trans, max_frames=32):
         if (pointer - start_frame) % stride == 0:
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             frame = Image.fromarray(frame)
+            if double_frames_sr:
+                frame_list.append(frame)
             frame_list.append(frame)
     
     capture.release()
@@ -241,7 +243,8 @@ def worker(gpu, cfg, cfg_update):
         file_name = f'rank_{cfg.world_size:02d}_{cfg.rank:02d}_{idx:04d}_{cap_name}.mp4'
         low_video_local_path = os.path.join(cfg.log_dir, f'{file_name}')
 
-        video_data_feature = load_video_frames(autoencoder, low_video_local_path, train_trans)
+        video_data_feature = load_video_frames(autoencoder, low_video_local_path, train_trans, double_frames_sr=getattr(cfg, "double_frames_sr", False))
+        # from ipdb import set_trace; set_trace()
 
         with amp.autocast(enabled=True):
             pynvml.nvmlInit()
@@ -277,6 +280,8 @@ def worker(gpu, cfg, cfg_update):
                         )
         
         video_data = 1. / cfg.scale_factor * video_data # [1, 4, 32, 46]
+        if getattr(cfg, "double_frames_sr", False):
+            video_data = video_data[:,:,::2,:,:]
         video_data = rearrange(video_data, 'b c f h w -> (b f) c h w')
         chunk_size = min(cfg.decoder_bs, video_data.shape[0])
         video_data_list = torch.chunk(video_data, video_data.shape[0]//chunk_size, dim=0)
