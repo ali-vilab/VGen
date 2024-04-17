@@ -406,13 +406,13 @@ python inference.py --cfg configs/dreamvideo/infer/examples/subject_wolf_plushie
       <img src="https://img.alicdn.com/imgextra/i4/O1CN01wjCCkF1f7jMzZh6pn_!!6000000003960-2-tps-256-256.png" />
     </center></td>
     <td><center>
-      <img src="https://img.alicdn.com/imgextra/i1/O1CN01QFAied1QTVyCFtcX5_!!6000000001977-1-tps-256-256.gif" />
+      <img src="https://img.alicdn.com/imgextra/i2/O1CN016RJQ1u1zEPSfSzfjh_!!6000000006682-1-tps-256-256.gif" />
     </center></td>
     <td><center>
       <img src="https://img.alicdn.com/imgextra/i4/O1CN013ekGAg1vwbDDt8N9H_!!6000000006237-2-tps-256-256.png" />
     </center></td>
     <td><center>
-      <img src="https://img.alicdn.com/imgextra/i4/O1CN01qvczw71OkLI5eBXh3_!!6000000001743-1-tps-256-256.gif" />
+      <img src="https://img.alicdn.com/imgextra/i2/O1CN011HQwSb1REglZ81Ki8_!!6000000002080-1-tps-256-256.gif" />
     </center></td>
   </tr>
   <tr>
