@@ -392,35 +392,38 @@ python inference.py --cfg configs/dreamvideo/infer/examples/subject_dog2.yaml
 python inference.py --cfg configs/dreamvideo/infer/examples/subject_wolf_plushie.yaml
 ```
 
-<table style="width: 100%; height: auto;">
-<tr style="display: flex; width: 100%;">
-  <td style="text-align:center; display: flex; align-items: center; justify-content: center; flex: 1;"><b>Subject</b></td>
-  <td style="text-align:center; display: flex; align-items: center; justify-content: center; flex: 1;"><b>Generated Video</b></td>
-  <td style="text-align:center; display: flex; align-items: center; justify-content: center; flex: 1;"><b>Subject</b></td>
-  <td style="text-align:center; display: flex; align-items: center; justify-content: center; flex: 1;"><b>Generated Video</b></td>
+<center>
+<table>
+<center>
+<tr>
+  <td style="text-align:center;"><center><b>Subject</b></center></td>
+  <td style="text-align:center;"><center><b>Generated Video</b></center></td>
+  <td style="text-align:center;"><center><b>Subject</b></center></td>
+  <td style="text-align:center;"><center><b>Generated Video</b></center></td>
 </tr>
-  <tr style="display: flex; width: 100%;">
-    <td style="flex: 1;">
-      <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i1/O1CN01b13peM1yhQwWy8CVN_!!6000000006610-2-tps-591-592.png" />
-    </td>
-    <td style="flex: 1;">
-      <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i1/O1CN01QFAied1QTVyCFtcX5_!!6000000001977-1-tps-256-256.gif" />
-    </td>
-    <td style="flex: 1;">
-      <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i2/O1CN011dP6CB1JgbzDjbLVy_!!6000000001058-2-tps-592-592.png" />
-    </td>
-    <td style="flex: 1;">
-      <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i4/O1CN01qvczw71OkLI5eBXh3_!!6000000001743-1-tps-256-256.gif" />
-    </td>
+  <tr>
+    <td><center>
+      <img src="https://img.alicdn.com/imgextra/i4/O1CN01wjCCkF1f7jMzZh6pn_!!6000000003960-2-tps-256-256.png" />
+    </center></td>
+    <td><center>
+      <img src="https://img.alicdn.com/imgextra/i1/O1CN01QFAied1QTVyCFtcX5_!!6000000001977-1-tps-256-256.gif" />
+    </center></td>
+    <td><center>
+      <img src="https://img.alicdn.com/imgextra/i4/O1CN013ekGAg1vwbDDt8N9H_!!6000000006237-2-tps-256-256.png" />
+    </center></td>
+    <td><center>
+      <img src="https://img.alicdn.com/imgextra/i4/O1CN01qvczw71OkLI5eBXh3_!!6000000001743-1-tps-256-256.gif" />
+    </center></td>
   </tr>
-  <tr style="display: flex; width: 100%;">
-  <td style="text-align:center;flex: 1;">dog</td>
-  <td style="text-align:center;flex: 1;">"a * eating pizza"</br> seed: 2767</td>
-  <td style="text-align:center;flex: 1;">wolf plushie</td>
-  <td style="text-align:center;flex: 1;">"a * running in the forest" </br> seed: 2339</td>
+  <tr>
+  <td style="text-align:center;"><center>dog</center></td>
+  <td style="text-align:center;"><center>"a * eating pizza"</br> seed: 2767</center></td>
+  <td style="text-align:center;"><center>wolf plushie</center></td>
+  <td style="text-align:center;"><center>"a * running in the forest" </br> seed: 2339</center></td>
 </tr>
+</center>
 </table>
-
+</center>
 
 (ii) Motion Customization
 ```
@@ -429,34 +432,38 @@ python inference.py --cfg configs/dreamvideo/infer/examples/motion_carTurn.yaml
 python inference.py --cfg configs/dreamvideo/infer/examples/motion_playingGuitar.yaml
 ```
 
-<table style="width: 100%; height: auto;">
-<tr style="display: flex; width: 100%;">
-  <td style="text-align:center; display: flex; align-items: center; justify-content: center; flex: 1;"><b>Motion</b></td>
-  <td style="text-align:center; display: flex; align-items: center; justify-content: center; flex: 1;"><b>Generated Video</b></td>
-  <td style="text-align:center; display: flex; align-items: center; justify-content: center; flex: 1;"><b>Motion</b></td>
-  <td style="text-align:center; display: flex; align-items: center; justify-content: center; flex: 1;"><b>Generated Video</b></td>
+<center>
+<table>
+<center>
+<tr>
+  <td style="text-align:center;"><center><b>Motion</b></center></td>
+  <td style="text-align:center;"><center><b>Generated Video</b></center></td>
+  <td style="text-align:center;"><center><b>Motion</b></center></td>
+  <td style="text-align:center;"><center><b>Generated Video</b></center></td>
 </tr>
-  <tr style="display: flex; width: 100%;">
-    <td style="flex: 1;">
-      <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i1/O1CN01r9yeiR1irw83xSXZz_!!6000000004467-1-tps-256-256.gif" />
-    </td>
-    <td style="flex: 1;">
-      <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i4/O1CN01OKbdZj1sy1b2Nhq5M_!!6000000005834-1-tps-256-256.gif" />
-    </td>
-    <td style="flex: 1;">
-      <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i4/O1CN01ufN5XT1nSoWlS9SpL_!!6000000005089-1-tps-534-534.gif" />
-    </td>
-    <td style="flex: 1;">
-      <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i4/O1CN01okWw0V1s544J9v6BU_!!6000000005714-1-tps-256-256.gif" />
-    </td>
+  <tr>
+    <td><center>
+      <img src="https://img.alicdn.com/imgextra/i1/O1CN01r9yeiR1irw83xSXZz_!!6000000004467-1-tps-256-256.gif" />
+    </center></td>
+    <td><center>
+      <img src="https://img.alicdn.com/imgextra/i4/O1CN01OKbdZj1sy1b2Nhq5M_!!6000000005834-1-tps-256-256.gif" />
+    </center></td>
+    <td><center>
+      <img src="https://img.alicdn.com/imgextra/i4/O1CN01GkeSm31p1S679Hf3J_!!6000000005300-1-tps-256-256.gif" />
+    </center></td>
+    <td><center>
+      <img src="https://img.alicdn.com/imgextra/i4/O1CN01okWw0V1s544J9v6BU_!!6000000005714-1-tps-256-256.gif" />
+    </center></td>
   </tr>
-  <tr style="display: flex; width: 100%;">
-  <td style="text-align:center;flex: 1;">"a car running on the road"</td>
-  <td style="text-align:center;flex: 1;">"a lion running on the road"</br> seed: 8888</td>
-  <td style="text-align:center;flex: 1;">"a person is playing guitar"</td>
-  <td style="text-align:center;flex: 1;">"a monkey is playing guitar on Mars" </br> seed: 8888</td>
+  <tr>
+  <td style="text-align:center;"><center>"a car running on the road"</center></td>
+  <td style="text-align:center;"><center>"a lion running on the road"</br> seed: 8888</center></td>
+  <td style="text-align:center;"><center>"a person is playing guitar"</center></td>
+  <td style="text-align:center;"><center>"a monkey is playing guitar on Mars" </br> seed: 8888</center></td>
 </tr>
+</center>
 </table>
+</center>
 
 (iii) Joint Customization
 ```
@@ -469,56 +476,60 @@ python inference.py --cfg configs/dreamvideo/infer/examples/joint_wolf_plushie_c
 python inference.py --cfg configs/dreamvideo/infer/examples/joint_wolf_plushie_playingGuitar.yaml
 ```
 
-<table style="width: 100%; height: auto;">
-  <tr style="display: flex; width: 100%;">
-    <td style="flex: 1;">
-      <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i3/O1CN01OmiF5i1oZVtSb2bUm_!!6000000005239-2-tps-1214-1214.png" />
-    </td>
-    <td style="flex: 1;">
-      <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i1/O1CN01b13peM1yhQwWy8CVN_!!6000000006610-2-tps-591-592.png" />
-    </td>
-    <td style="flex: 1;">
-      <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i2/O1CN011dP6CB1JgbzDjbLVy_!!6000000001058-2-tps-592-592.png" />
-    </td>
+<center>
+<table>
+<center>
+  <tr>
+    <td><center>
+      <img src="https://img.alicdn.com/imgextra/i4/O1CN01uT4pI71EAwWGLx9hP_!!6000000000312-2-tps-256-256.png" />
+    </center></td>
+    <td><center>
+      <img src="https://img.alicdn.com/imgextra/i4/O1CN01wjCCkF1f7jMzZh6pn_!!6000000003960-2-tps-256-256.png" />
+    </center></td>
+    <td><center>
+      <img src="https://img.alicdn.com/imgextra/i4/O1CN013ekGAg1vwbDDt8N9H_!!6000000006237-2-tps-256-256.png" />
+    </center></td>
   </tr>
-  <tr style="display: flex; width: 100%;">
-    <td style="text-align:center;flex: 1;"></td>
-    <td style="text-align:center;flex: 1;">dog</td>
-    <td style="text-align:center;flex: 1;">wolf plushie</td>
+  <tr >
+    <td style="text-align:center;"></td>
+    <td style="text-align:center;"><center>dog</center></td>
+    <td style="text-align:center;"><center>wolf plushie</center></td>
   </tr>
-  <tr style="display: flex; width: 100%;">
-    <td style="flex: 1;">
-      <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i1/O1CN01r9yeiR1irw83xSXZz_!!6000000004467-1-tps-256-256.gif" />
-    </td>
-    <td style="flex: 1;">
-      <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i4/O1CN01GOVb6p244rHKdTzPJ_!!6000000007338-1-tps-256-256.gif" />
-    </td>
-    <td style="flex: 1;">
-      <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i3/O1CN01uwNzW21kLXO82PKjp_!!6000000004667-1-tps-256-256.gif" />
-    </td>
+  <tr>
+    <td><center>
+      <img src="https://img.alicdn.com/imgextra/i1/O1CN01r9yeiR1irw83xSXZz_!!6000000004467-1-tps-256-256.gif" />
+    </center></td>
+    <td><center>
+      <img src="https://img.alicdn.com/imgextra/i4/O1CN01GOVb6p244rHKdTzPJ_!!6000000007338-1-tps-256-256.gif" />
+    </center></td>
+    <td><center>
+      <img src="https://img.alicdn.com/imgextra/i3/O1CN01uwNzW21kLXO82PKjp_!!6000000004667-1-tps-256-256.gif" />
+    </center></td>
   </tr>
-  <tr style="display: flex; width: 100%;">
-    <td style="text-align:center;flex: 1;">"a car running on the road"</td>
-    <td style="text-align:center;flex: 1;">"a * running on the beach"</br> seed: 8888</td>
-    <td style="text-align:center;flex: 1;">"a * running on the road"</br> seed: 3677</td>
+  <tr>
+    <td style="text-align:center;"><center>"a car running on the road"</center></td>
+    <td style="text-align:center;"><center>"a * running on the beach"</br> seed: 8888</center></td>
+    <td style="text-align:center;"><center>"a * running on the road"</br> seed: 3677</center></td>
   </tr>
-  <tr style="display: flex; width: 100%;">
-    <td style="flex: 1;">
-      <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i4/O1CN01ufN5XT1nSoWlS9SpL_!!6000000005089-1-tps-534-534.gif" />
-    </td>
-    <td style="flex: 1;">
-      <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i1/O1CN01ouNpOm1Ptn4sG4uFV_!!6000000001899-1-tps-256-256.gif" />
-    </td>
-    <td style="flex: 1;">
-      <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i4/O1CN01q7kZra1SpcJezWkrk_!!6000000002296-1-tps-256-256.gif" />
-    </td>
+  <tr>
+    <td><center>
+      <img src="https://img.alicdn.com/imgextra/i4/O1CN01GkeSm31p1S679Hf3J_!!6000000005300-1-tps-256-256.gif" />
+    </center></td>
+    <td><center>
+      <img src="https://img.alicdn.com/imgextra/i1/O1CN01ouNpOm1Ptn4sG4uFV_!!6000000001899-1-tps-256-256.gif" />
+    </center></td>
+    <td><center>
+      <img src="https://img.alicdn.com/imgextra/i4/O1CN01q7kZra1SpcJezWkrk_!!6000000002296-1-tps-256-256.gif" />
+    </center></td>
   </tr>
-  <tr style="display: flex; width: 100%;">
-    <td style="text-align:center;flex: 1;">"a person is playing guitar"</td>
-    <td style="text-align:center;flex: 1;">"a * is playing guitar on the moon"</br> seed: 8888</td>
-    <td style="text-align:center;flex: 1;">"a * is playing guitar"</br> seed: 6071</td>
+  <tr>
+    <td style="text-align:center;"><center>"a person is playing guitar"</center></td>
+    <td style="text-align:center;"><center>"a * is playing guitar on the moon"</br> seed: 8888</center></td>
+    <td style="text-align:center;"><center>"a * is playing guitar"</br> seed: 6071</center></td>
   </tr>
+</center>
 </table>
+</center>
 
 
 ### (5) Run the TF-T2V (CVPR-2024) model
