@@ -8,12 +8,12 @@ scale: 8
 batch_size: 1
 noise_strength: 0.1
 round: 1
-seed: 8888  # Specify a fixed seed during inference. Invalid if use_random_seed is True.
-use_random_seed: True  # Set to True to use the random seed for inference
+seed: 2767  # Specify a fixed seed during inference. Invalid if use_random_seed is True.
+use_random_seed: False  # Set to True to use the random seed for inference
 log_dir: workspace/dreamvideo/infer/subject_custom
 test_list_path: data/custom/infer/subject_dog2.txt  # Path to your test file
 test_data_dir: data/images/custom/dog2  # Directory path to the subject images. Modify it for your subject.
 subject_cfg: configs/dreamvideo/subjectLearning/dog2_subjectLearning_step2.yaml  # Path to your configuration file of subject learning
 base_model: models/model_scope_v1-5_0632000.pth
-# Try changing 'identity_adapter_index' for better results.
-identity_adapter_index: 500  # Use the ID adapter trained for 'identity_adapter_index' steps for inference
+text_embedding_path: models/DreamVideo/subject/text_embedding/text_embedding_of_dog2_0003000.pth
+identity_adapter_path: models/DreamVideo/subject/dog2_adapter_00000500.pth

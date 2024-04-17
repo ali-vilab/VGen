@@ -26,6 +26,7 @@ VGen can produce high-quality videos from the input text, images, desired motion
 
 ## 🔥News!!!
 
+- __[2024.04]__ We release the models of [DreamVideo](https://dreamvideo-t2v.github.io) and ModelScopeT2V V1.5!!! ModelScopeT2V V1.5 is further fine-tuned on ModelScopeT2V for 365k iterations with more data.
 - __[2024.04]__ We release the code and models of [TF-T2V](https://tf-t2v.github.io)! 
 - __[2024.04]__ We release the code and models of [VideoLCM](https://tf-t2v.github.io)! 
 - __[2024.03]__ We release the training and inference code of [DreamVideo](https://dreamvideo-t2v.github.io)! 
@@ -309,7 +310,19 @@ Finally, you can retrieve the high-definition video from the `workspace/experime
 
 
 ### (4) DreamVideo
-Our DreamVideo is based on fine-tuned ModelScopeT2V. Base model weights, adapter weights, and more cases will be released, so stay tuned.  
+Our DreamVideo uses `ModelScopeT2V V1.5` as the base video diffusion model. `ModelScopeT2V V1.5 is further fine-tuned on ModelScopeT2V for 365k iterations with more data.`
+
+#### Download ModelScopeT2V V1.5 and adapter weights of DreamVideo
+```
+!pip install modelscope
+from modelscope.hub.snapshot_download import snapshot_download
+model_dir = snapshot_download('iic/dreamvideo-t2v', cache_dir='models/')
+```
+Then you might need the following command to move the checkpoints to the "models/" directory:
+```
+mv ./models/iic/dreamvideo-t2v/* ./models/
+```
+Or you can download the checkpoint of ModelScopeT2V V1.5 and adapter weights of DreamVideo from this [link](https://modelscope.cn/models/iic/dreamvideo-t2v/files). 
 
 #### Training
 (i) Subject Learning
@@ -325,7 +338,8 @@ python train_net.py --cfg configs/dreamvideo/subjectLearning/dog2_subjectLearnin
 ```
 
 Tips:
-- For some subjects, setting `use_mask_diffusion` to `True` may achieve better results. Make sure to put the binary masks of the subject into the subfolder ''masks'', and you can use [SAM](https://github.com/facebookresearch/segment-anything) to obtain these masks.
+- Generally, step 1 takes `1500 to 3000` training steps, and step 2 takes `500 to 1000` training steps. For certain subjects (like cats, etc.), excessive training may generate unnatural videos, and using text embedding with fewer training steps or reducing the training steps of step 2 may help.
+- For some subjects (like dogs, etc.), setting `use_mask_diffusion` to `True` may achieve better results. Make sure to put the binary masks of the subject into the folder `data/images/custom/YOUR_SUBJECT/masks`, and you can use [SAM](https://github.com/facebookresearch/segment-anything) to obtain these masks.
 
 (ii) Motion Learning
 
@@ -337,8 +351,9 @@ python train_net.py --cfg configs/dreamvideo/motionLearning/carTurn_motionLearni
 You can customize your own configuration files for subject/motion learning.
 
 Tips:
-- Try increasing training steps or increasing the learning rate for single video motion customization to get better results.
-
+- Generally, motion learning takes `500 to 2000` training steps.
+- Try setting `p_image_zero` from `0 to 0.5` to adjust the effect of appearance guidance during training.
+- Try increasing training steps or increasing the learning rate for single video motion customization to better align the motion pattern.
 
 
 #### Inference
@@ -351,9 +366,12 @@ python inference.py --cfg configs/dreamvideo/infer/subject_dog2.yaml
 ```
 python inference.py --cfg configs/dreamvideo/infer/motion_carTurn.yaml
 ```
+For inference with appearance guidance, make sure to add images of foreground objects (e.g., any image of a bear) to the folder `data/images/motionReferenceImgs` and modify your test file.
 
 Tips:
-- We do not use DDIM Inversion by default. However, for single video motion customization, we encourage you to try setting `inverse_noise_strength` to `0~0.5` to better align the training video. For multi-video motion customization, we recommend setting `inverse_noise_strength` to 0.
+- Try setting `appearance_guide_strength_cond` and `appearance_guide_strength_uncond` from `0 to 1` to adjust the effect of appearance guidance during inference.
+- We do not use DDIM Inversion by default. However, for single video motion customization, you can try setting `inverse_noise_strength` to `0~0.5` to better align the training video. For multi-video motion customization, we recommend setting `inverse_noise_strength` to `0`.
+
 
 (iii) Joint Customization
 ```
@@ -361,8 +379,166 @@ python inference.py --cfg configs/dreamvideo/infer/joint_dog2_carTurn.yaml
 ```
 
 Tips:
-- Try changing `identity_adapter_index` and `motion_adapter_index` for better results.
+- Try changing `identity_adapter_index` and `motion_adapter_index` for better results. Typically, increasing identity_adapter_index improves identity preservation, while increasing motion_adapter_index enhances motion alignment. Balance the two for optimal results.
 
+
+#### Examples
+We provide some examples for inference. Before you start, make sure you download the models.
+
+(i) Subject Customization
+```
+python inference.py --cfg configs/dreamvideo/infer/examples/subject_dog2.yaml
+
+python inference.py --cfg configs/dreamvideo/infer/examples/subject_wolf_plushie.yaml
+```
+
+<table style="width: 100%; height: auto;">
+<tr style="display: flex; width: 100%;">
+  <td style="text-align:center; display: flex; align-items: center; justify-content: center; flex: 1;"><b>Subject</b></td>
+  <td style="text-align:center; display: flex; align-items: center; justify-content: center; flex: 1;"><b>Generated Video</b></td>
+  <td style="text-align:center; display: flex; align-items: center; justify-content: center; flex: 1;"><b>Subject</b></td>
+  <td style="text-align:center; display: flex; align-items: center; justify-content: center; flex: 1;"><b>Generated Video</b></td>
+</tr>
+  <tr style="display: flex; width: 100%;">
+    <td style="flex: 1;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 0px; width: 100%; height: 100%;">
+        <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i2/O1CN01SbeTWK25vMFdpqnsM_!!6000000007588-0-tps-1280-1280.jpg" />
+        <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i2/O1CN01DCwGm91zI4aMfeUpA_!!6000000006690-0-tps-1441-1441.jpg" />
+        <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i3/O1CN01zWjkLQ1PLtivpOOy5_!!6000000001825-0-tps-1280-1280.jpg" />
+        <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i4/O1CN01pNKqAg1PLRKH7xeWi_!!6000000001824-0-tps-1277-1277.jpg" />
+      </div>
+    </td>
+    <td style="flex: 1;">
+      <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i1/O1CN01QFAied1QTVyCFtcX5_!!6000000001977-1-tps-256-256.gif" />
+    </td>
+    <td style="flex: 1;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 0px; width: 100%; height: 100%;">
+        <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i1/O1CN010ByaQx1xJmprOX3GT_!!6000000006423-0-tps-2048-2048.jpg" />
+        <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i1/O1CN01LKdliR1bo5UXjIpKv_!!6000000003511-0-tps-2048-2048.jpg" />
+        <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i2/O1CN01ZJ42sh1ZnVlI2ZNAL_!!6000000003239-0-tps-2048-2048.jpg" />
+        <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i1/O1CN01BMQyqb1oT6Lhxyco7_!!6000000005225-0-tps-2048-2048.jpg" />
+      </div>
+    </td>
+    <td style="flex: 1;">
+      <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i4/O1CN01qvczw71OkLI5eBXh3_!!6000000001743-1-tps-256-256.gif" />
+    </td>
+  </tr>
+  <tr style="display: flex; width: 100%;">
+  <td style="text-align:center;flex: 1;">dog</td>
+  <td style="text-align:center;flex: 1;">"a * eating pizza"</br> seed: 2767</td>
+  <td style="text-align:center;flex: 1;">wolf plushie</td>
+  <td style="text-align:center;flex: 1;">"a * running in the forest" </br> seed: 2339</td>
+</tr>
+</table>
+
+
+(ii) Motion Customization
+```
+python inference.py --cfg configs/dreamvideo/infer/examples/motion_carTurn.yaml
+
+python inference.py --cfg configs/dreamvideo/infer/examples/motion_playingGuitar.yaml
+```
+
+<table style="width: 100%; height: auto;">
+<tr style="display: flex; width: 100%;">
+  <td style="text-align:center; display: flex; align-items: center; justify-content: center; flex: 1;"><b>Motion</b></td>
+  <td style="text-align:center; display: flex; align-items: center; justify-content: center; flex: 1;"><b>Generated Video</b></td>
+  <td style="text-align:center; display: flex; align-items: center; justify-content: center; flex: 1;"><b>Motion</b></td>
+  <td style="text-align:center; display: flex; align-items: center; justify-content: center; flex: 1;"><b>Generated Video</b></td>
+</tr>
+  <tr style="display: flex; width: 100%;">
+    <td style="flex: 1;">
+      <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i1/O1CN01r9yeiR1irw83xSXZz_!!6000000004467-1-tps-256-256.gif" />
+    </td>
+    <td style="flex: 1;">
+      <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i4/O1CN01OKbdZj1sy1b2Nhq5M_!!6000000005834-1-tps-256-256.gif" />
+    </td>
+    <td style="flex: 1;">
+      <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i4/O1CN01ufN5XT1nSoWlS9SpL_!!6000000005089-1-tps-534-534.gif" />
+    </td>
+    <td style="flex: 1;">
+      <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i4/O1CN01okWw0V1s544J9v6BU_!!6000000005714-1-tps-256-256.gif" />
+    </td>
+  </tr>
+  <tr style="display: flex; width: 100%;">
+  <td style="text-align:center;flex: 1;">"a car running on the road"</td>
+  <td style="text-align:center;flex: 1;">"a lion running on the road"</br> seed: 8888</td>
+  <td style="text-align:center;flex: 1;">"a person is playing guitar"</td>
+  <td style="text-align:center;flex: 1;">"a monkey is playing guitar on Mars" </br> seed: 8888</td>
+</tr>
+</table>
+
+(iii) Joint Customization
+```
+python inference.py --cfg configs/dreamvideo/infer/examples/joint_dog2_carTurn.yaml
+
+python inference.py --cfg configs/dreamvideo/infer/examples/joint_dog2_playingGuitar.yaml
+
+python inference.py --cfg configs/dreamvideo/infer/examples/joint_wolf_plushie_carTurn.yaml
+
+python inference.py --cfg configs/dreamvideo/infer/examples/joint_wolf_plushie_playingGuitar.yaml
+```
+
+<table style="width: 100%; height: auto;">
+  <tr style="display: flex; width: 100%;">
+    <td style="flex: 1;">
+      <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i3/O1CN01OmiF5i1oZVtSb2bUm_!!6000000005239-2-tps-1214-1214.png" />
+    </td>
+    <td style="flex: 1;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 0px; width: 100%; height: 100%;">
+        <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i2/O1CN01SbeTWK25vMFdpqnsM_!!6000000007588-0-tps-1280-1280.jpg" />
+        <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i2/O1CN01DCwGm91zI4aMfeUpA_!!6000000006690-0-tps-1441-1441.jpg" />
+        <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i3/O1CN01zWjkLQ1PLtivpOOy5_!!6000000001825-0-tps-1280-1280.jpg" />
+        <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i4/O1CN01pNKqAg1PLRKH7xeWi_!!6000000001824-0-tps-1277-1277.jpg" />
+      </div>
+    </td>
+    <td style="flex: 1;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 0px; width: 100%; height: 100%;">
+        <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i1/O1CN010ByaQx1xJmprOX3GT_!!6000000006423-0-tps-2048-2048.jpg" />
+        <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i1/O1CN01LKdliR1bo5UXjIpKv_!!6000000003511-0-tps-2048-2048.jpg" />
+        <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i2/O1CN01ZJ42sh1ZnVlI2ZNAL_!!6000000003239-0-tps-2048-2048.jpg" />
+        <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i1/O1CN01BMQyqb1oT6Lhxyco7_!!6000000005225-0-tps-2048-2048.jpg" />
+      </div>
+    </td>
+  </tr>
+  <tr style="display: flex; width: 100%;">
+    <td style="text-align:center;flex: 1;"></td>
+    <td style="text-align:center;flex: 1;">dog</td>
+    <td style="text-align:center;flex: 1;">wolf plushie</td>
+  </tr>
+  <tr style="display: flex; width: 100%;">
+    <td style="flex: 1;">
+      <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i1/O1CN01r9yeiR1irw83xSXZz_!!6000000004467-1-tps-256-256.gif" />
+    </td>
+    <td style="flex: 1;">
+      <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i4/O1CN01GOVb6p244rHKdTzPJ_!!6000000007338-1-tps-256-256.gif" />
+    </td>
+    <td style="flex: 1;">
+      <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i3/O1CN01uwNzW21kLXO82PKjp_!!6000000004667-1-tps-256-256.gif" />
+    </td>
+  </tr>
+  <tr style="display: flex; width: 100%;">
+    <td style="text-align:center;flex: 1;">"a car running on the road"</td>
+    <td style="text-align:center;flex: 1;">"a * running on the beach"</br> seed: 8888</td>
+    <td style="text-align:center;flex: 1;">"a * running on the road"</br> seed: 3677</td>
+  </tr>
+  <tr style="display: flex; width: 100%;">
+    <td style="flex: 1;">
+      <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i4/O1CN01ufN5XT1nSoWlS9SpL_!!6000000005089-1-tps-534-534.gif" />
+    </td>
+    <td style="flex: 1;">
+      <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i1/O1CN01ouNpOm1Ptn4sG4uFV_!!6000000001899-1-tps-256-256.gif" />
+    </td>
+    <td style="flex: 1;">
+      <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i4/O1CN01q7kZra1SpcJezWkrk_!!6000000002296-1-tps-256-256.gif" />
+    </td>
+  </tr>
+  <tr style="display: flex; width: 100%;">
+    <td style="text-align:center;flex: 1;">"a person is playing guitar"</td>
+    <td style="text-align:center;flex: 1;">"a * is playing guitar on the moon"</br> seed: 8888</td>
+    <td style="text-align:center;flex: 1;">"a * is playing guitar"</br> seed: 6071</td>
+  </tr>
+</table>
 
 
 ### (5) Run the TF-T2V (CVPR-2024) model

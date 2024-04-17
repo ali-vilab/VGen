@@ -1,0 +1,15 @@
+v_PlayingGuitar_g03_c01.avi|||a person is playing guitar
+v_PlayingGuitar_g06_c01.avi|||a person is playing guitar
+v_PlayingGuitar_g08_c01.avi|||a person is playing guitar
+v_PlayingGuitar_g09_c01.avi|||a person is playing guitar
+v_PlayingGuitar_g10_c01.avi|||a person is playing guitar
+v_PlayingGuitar_g07_c01.avi|||a person is playing guitar
+v_PlayingGuitar_g11_c01.avi|||a person is playing guitar
+v_PlayingGuitar_g14_c01.avi|||a person is playing guitar
+v_PlayingGuitar_g16_c01.avi|||a person is playing guitar
+v_PlayingGuitar_g18_c01.avi|||a person is playing guitar
+v_PlayingGuitar_g20_c01.avi|||a person is playing guitar
+v_PlayingGuitar_g21_c01.avi|||a person is playing guitar
+v_PlayingGuitar_g23_c01.avi|||a person is playing guitar
+v_PlayingGuitar_g24_c01.avi|||a person is playing guitar
+v_PlayingGuitar_g25_c01.avi|||a person is playing guitar

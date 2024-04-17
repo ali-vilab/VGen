@@ -2,17 +2,17 @@ TASK_TYPE: train_dreamvideo_entrance
 ENABLE: true
 use_ema: false
 num_workers: 6
-frame_lens: [32, ]
+frame_lens: [32, ]  # Number of video frames used for training
 sample_fps: [8, ]
 resolution: [256, 256]
 vit_resolution: [224, 224]
 vid_dataset: {
     'type': 'VideoCustomDataset',
-    'data_list': ['data/custom/train/vid_carTurn.txt', ],
-    'data_dir_list': ['data/videos/custom', ],
+    'data_list': ['data/custom/train/vid_carTurn.txt', ],  # Path to the training file, which contains video file names and text prompts. Modify it for your motion.
+    'data_dir_list': ['data/videos/custom', ],  # Directory path to the motion videos. Modify it for your motion.
     'vit_resolution': [224, 224],
     'resolution': [256, 256],
-    'get_random_frame': True,
+    'get_random_frame': True,  # Use a random frame as appearance guidance
     'max_words': 1,
 }
 embedder: {
@@ -40,12 +40,12 @@ UNet: {
     'use_checkpoint': True,
     'use_fps_condition': False,
     'use_sim_mask': False,
-    'temporal_adapter_list': ['self_attention', 'cross_attention', 'feedforward'],
+    'temporal_adapter_list': ['self_attention', 'cross_attention', 'feedforward'],  # Use adapter in all layers. The 'cross_attention' here is actually the second self-attention layer.
     'temporal_adapter_condition_dim': 1024,
 }
 Diffusion: {
     'type': 'DiffusionDDIM',
-    'schedule': 'linear_sd', # cosine
+    'schedule': 'linear_sd',
     'schedule_param': {
         'num_timesteps': 1000,
         'init_beta': 0.00085,
@@ -68,9 +68,9 @@ visual_train: {
     ],
     'use_offset_noise': True,
     'guide_scale': 9.0, 
-    'infer_with_custom_text': True,
-    'data_list': ['data/custom/preview/motion_carTurn.txt', ],
-    'data_dir_list': ['data/images/motionReferenceImgs', ],
+    'infer_with_custom_text': True,  # Set to True to generate videos with your custom text prompts
+    'data_list': ['data/custom/preview/motion_carTurn.txt', ],  # Path to your custom text prompts. Modify it for your motion.
+    'data_dir_list': ['data/images/motionReferenceImgs', ],  # Directory path to the reference images used for appearance guidance during inference. Modify it for your motion.
 }
 
 Pretrain: {
@@ -79,13 +79,14 @@ Pretrain: {
     'fix_temporal_weight': True,
     'train_adapter': True,
     'grad_scale': 0.2,
-    'resume_checkpoint': 'models/finetuned_modelscope.pth',
+    'resume_checkpoint': 'models/model_scope_v1-5_0632000.pth',
     'sd_keys_path': 'data/stable_diffusion_image_key_temporal_attention_x1.json',
 }
 
 chunk_size: 1
 decoder_bs: 8
-lr: 0.00004  # default: 0.00001
+# Try increasing training steps or increasing the learning rate for single video motion customization to get better results.
+lr: 0.00001
 
 # dreamvideo configuration
 use_textInversion: False
@@ -93,19 +94,22 @@ freeze_text_embedding: False
 fix_spatial_weight: True
 fix_temporal_weight: True
 train_adapter: True
-use_clip_adapter_condition: True
-gen_frames: 32
+use_clip_adapter_condition: True  # True for using appearance guidance in motion customization
+gen_frames: 32  # The frame number of generated videos during inference
 decay_mode: 'none'
 negative_prompt: ''
-sample_preview: True
+sample_preview: True  # Set to True to preview generated videos during training
 save_latents: True
 
 noise_strength: 0.1
 # classifier-free guidance
 p_zero: 0.5
-p_image_zero: 0.5
+# Try adjusting 'p_image_zero' from 0 to 0.5 to achieve better results
+p_image_zero: 0.5  # Probability of inputting a blank image to the adapter conditional layer during training
 guide_scale: 9.0
-num_steps: 3000
+appearance_guide_strength_cond: 1
+appearance_guide_strength_uncond: 1
+num_steps: 3000  # Number of training steps
 
 viz_interval: 100       
 save_ckp_interval: 100   
@@ -113,4 +117,5 @@ save_ckp_interval: 100
 # Log
 log_dir: "workspace/dreamvideo/motionLearning"
 log_interval: 10
-seed: 8888
+seed: 8888  # Specify a fixed seed during training. Invalid if use_random_seed is True.
+use_random_seed: False  # Set to True to initialize the random seed for training

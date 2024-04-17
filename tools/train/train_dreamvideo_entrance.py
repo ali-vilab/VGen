@@ -46,6 +46,8 @@ def train_dreamvideo_entrance(cfg_update,  **kwargs):
         os.environ['MASTER_PORT']= find_free_port()
     cfg.pmi_rank = int(os.getenv('RANK', 0)) # 0
     cfg.pmi_world_size = int(os.getenv('WORLD_SIZE', 1))
+    if cfg.use_random_seed:
+        cfg.seed = random.randint(0, 10000)
     setup_seed(cfg.seed)
 
     if cfg.debug:
@@ -255,11 +257,10 @@ def worker(gpu, cfg):
         y_image = y_image.unsqueeze(1).detach()
         y_words_0 = y_words.detach().clone()
         y_image_0 = y_image.clone()
-        try:
-            y_words[torch.rand(y_words.size(0)) < cfg.p_zero, :] = zero_y_negative
-            y_image[torch.rand(y_image.size(0)) < cfg.p_image_zero, :] = zero_feature
-        except:
-            pass
+
+        cfg.p_image_zero = getattr(cfg, 'p_image_zero', 0)
+        y_words[torch.rand(y_words.size(0)) < cfg.p_zero, :] = zero_y_negative
+        y_image[torch.rand(y_image.size(0)) < cfg.p_image_zero, :] = zero_feature
         
         # forward
         model_kwargs = {'y': y_words}
@@ -325,6 +326,9 @@ def worker(gpu, cfg):
                     if cfg.use_clip_adapter_condition:
                         visual_kwards[0]['y_image'] = y_image_0[:viz_num]
                         visual_kwards[1]['y_image'] = zero_feature.repeat(y_image_0.size(0), 1, 1)
+
+                        visual_kwards[0]['ag_strength'] = getattr(cfg, 'appearance_guide_strength_cond', 1)
+                        visual_kwards[1]['ag_strength'] = getattr(cfg, 'appearance_guide_strength_uncond', 1)
                     input_kwards = {
                         'model': model, 'video_data': video_data[:viz_num], 'step': step, 
                         'ref_frame': ref_frame[:viz_num], 'captions': captions[:viz_num]}

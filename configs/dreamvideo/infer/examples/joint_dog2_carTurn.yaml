@@ -9,15 +9,15 @@ batch_size: 1
 noise_strength: 0.1
 round: 1
 seed: 8888  # Specify a fixed seed during inference. Invalid if use_random_seed is True.
-use_random_seed: True  # Set to True to use the random seed for inference
+use_random_seed: False  # Set to True to use the random seed for inference
 log_dir: workspace/dreamvideo/infer/joint_custom
 test_list_path: data/custom/infer/joint_dog2_carTurn.txt  # Path to your test file
 test_data_dir: data/images/custom/dog2  # Directory path to the subject images. Modify it for your subject.
 subject_cfg: configs/dreamvideo/subjectLearning/dog2_subjectLearning_step2.yaml  # Path to your configuration file of subject learning
 motion_cfg: configs/dreamvideo/motionLearning/carTurn_motionLearning.yaml  # Path to your configuration file of motion learning
 base_model: models/model_scope_v1-5_0632000.pth
-# Try changing 'identity_adapter_index' and 'motion_adapter_index' for better results.
-identity_adapter_index: 500  # Use the ID adapter trained for 'identity_adapter_index' steps for inference
-motion_adapter_index: 1500  # Use the motion adapter trained for 'motion_adapter_index' steps for inference
+text_embedding_path: models/DreamVideo/subject/text_embedding/text_embedding_of_dog2_0003000.pth
+identity_adapter_path: models/DreamVideo/subject/dog2_adapter_00000500.pth
+motion_adapter_path: models/DreamVideo/motion/carTurn_adapter_00001500.pth
 appearance_guide_strength_cond: 1
 appearance_guide_strength_uncond: 1
