@@ -401,23 +401,13 @@ python inference.py --cfg configs/dreamvideo/infer/examples/subject_wolf_plushie
 </tr>
   <tr style="display: flex; width: 100%;">
     <td style="flex: 1;">
-      <div style="display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 0px; width: 100%; height: 100%;">
-        <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i2/O1CN01SbeTWK25vMFdpqnsM_!!6000000007588-0-tps-1280-1280.jpg" />
-        <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i2/O1CN01DCwGm91zI4aMfeUpA_!!6000000006690-0-tps-1441-1441.jpg" />
-        <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i3/O1CN01zWjkLQ1PLtivpOOy5_!!6000000001825-0-tps-1280-1280.jpg" />
-        <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i4/O1CN01pNKqAg1PLRKH7xeWi_!!6000000001824-0-tps-1277-1277.jpg" />
-      </div>
+      <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i1/O1CN01b13peM1yhQwWy8CVN_!!6000000006610-2-tps-591-592.png" />
     </td>
     <td style="flex: 1;">
       <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i1/O1CN01QFAied1QTVyCFtcX5_!!6000000001977-1-tps-256-256.gif" />
     </td>
     <td style="flex: 1;">
-      <div style="display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 0px; width: 100%; height: 100%;">
-        <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i1/O1CN010ByaQx1xJmprOX3GT_!!6000000006423-0-tps-2048-2048.jpg" />
-        <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i1/O1CN01LKdliR1bo5UXjIpKv_!!6000000003511-0-tps-2048-2048.jpg" />
-        <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i2/O1CN01ZJ42sh1ZnVlI2ZNAL_!!6000000003239-0-tps-2048-2048.jpg" />
-        <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i1/O1CN01BMQyqb1oT6Lhxyco7_!!6000000005225-0-tps-2048-2048.jpg" />
-      </div>
+      <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i2/O1CN011dP6CB1JgbzDjbLVy_!!6000000001058-2-tps-592-592.png" />
     </td>
     <td style="flex: 1;">
       <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i4/O1CN01qvczw71OkLI5eBXh3_!!6000000001743-1-tps-256-256.gif" />
@@ -485,20 +475,10 @@ python inference.py --cfg configs/dreamvideo/infer/examples/joint_wolf_plushie_p
       <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i3/O1CN01OmiF5i1oZVtSb2bUm_!!6000000005239-2-tps-1214-1214.png" />
     </td>
     <td style="flex: 1;">
-      <div style="display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 0px; width: 100%; height: 100%;">
-        <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i2/O1CN01SbeTWK25vMFdpqnsM_!!6000000007588-0-tps-1280-1280.jpg" />
-        <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i2/O1CN01DCwGm91zI4aMfeUpA_!!6000000006690-0-tps-1441-1441.jpg" />
-        <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i3/O1CN01zWjkLQ1PLtivpOOy5_!!6000000001825-0-tps-1280-1280.jpg" />
-        <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i4/O1CN01pNKqAg1PLRKH7xeWi_!!6000000001824-0-tps-1277-1277.jpg" />
-      </div>
+      <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i1/O1CN01b13peM1yhQwWy8CVN_!!6000000006610-2-tps-591-592.png" />
     </td>
     <td style="flex: 1;">
-      <div style="display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 0px; width: 100%; height: 100%;">
-        <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i1/O1CN010ByaQx1xJmprOX3GT_!!6000000006423-0-tps-2048-2048.jpg" />
-        <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i1/O1CN01LKdliR1bo5UXjIpKv_!!6000000003511-0-tps-2048-2048.jpg" />
-        <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i2/O1CN01ZJ42sh1ZnVlI2ZNAL_!!6000000003239-0-tps-2048-2048.jpg" />
-        <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i1/O1CN01BMQyqb1oT6Lhxyco7_!!6000000005225-0-tps-2048-2048.jpg" />
-      </div>
+      <img style="width: auto; height: 100%; object-fit: cover;" src="https://img.alicdn.com/imgextra/i2/O1CN011dP6CB1JgbzDjbLVy_!!6000000001058-2-tps-592-592.png" />
     </td>
   </tr>
   <tr style="display: flex; width: 100%;">
