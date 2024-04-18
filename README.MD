@@ -26,6 +26,7 @@ VGen can produce high-quality videos from the input text, images, desired motion
 
 ## 🔥News!!!
 
+- __[2024.04]__ We release the models of [DreamVideo](https://dreamvideo-t2v.github.io) and ModelScopeT2V V1.5!!! ModelScopeT2V V1.5 is further fine-tuned on ModelScopeT2V for 365k iterations with more data.
 - __[2024.04]__ We release the code and models of [TF-T2V](https://tf-t2v.github.io)! 
 - __[2024.04]__ We release the code and models of [VideoLCM](https://tf-t2v.github.io)! 
 - __[2024.03]__ We release the training and inference code of [DreamVideo](https://dreamvideo-t2v.github.io)! 
@@ -309,7 +310,19 @@ Finally, you can retrieve the high-definition video from the `workspace/experime
 
 
 ### (4) DreamVideo
-Our DreamVideo is based on fine-tuned ModelScopeT2V. Base model weights, adapter weights, and more cases will be released, so stay tuned.  
+Our DreamVideo uses `ModelScopeT2V V1.5` as the base video diffusion model. `ModelScopeT2V V1.5 is further fine-tuned on ModelScopeT2V for 365k iterations with more data.`
+
+#### Download ModelScopeT2V V1.5 and adapter weights of DreamVideo
+```
+!pip install modelscope
+from modelscope.hub.snapshot_download import snapshot_download
+model_dir = snapshot_download('iic/dreamvideo-t2v', cache_dir='models/')
+```
+Then you might need the following command to move the checkpoints to the "models/" directory:
+```
+mv ./models/iic/dreamvideo-t2v/* ./models/
+```
+Or you can download the checkpoint of ModelScopeT2V V1.5 and adapter weights of DreamVideo from this [link](https://modelscope.cn/models/iic/dreamvideo-t2v/files). 
 
 #### Training
 (i) Subject Learning
@@ -325,7 +338,8 @@ python train_net.py --cfg configs/dreamvideo/subjectLearning/dog2_subjectLearnin
 ```
 
 Tips:
-- For some subjects, setting `use_mask_diffusion` to `True` may achieve better results. Make sure to put the binary masks of the subject into the subfolder ''masks'', and you can use [SAM](https://github.com/facebookresearch/segment-anything) to obtain these masks.
+- Generally, step 1 takes `1500 to 3000` training steps, and step 2 takes `500 to 1000` training steps. For certain subjects (like cats, etc.), excessive training may generate unnatural videos, and using text embedding with fewer training steps or reducing the training steps of step 2 may help.
+- For some subjects (like dogs, etc.), setting `use_mask_diffusion` to `True` may achieve better results. Make sure to put the binary masks of the subject into the folder `data/images/custom/YOUR_SUBJECT/masks`, and you can use [SAM](https://github.com/facebookresearch/segment-anything) to obtain these masks.
 
 (ii) Motion Learning
 
@@ -337,8 +351,9 @@ python train_net.py --cfg configs/dreamvideo/motionLearning/carTurn_motionLearni
 You can customize your own configuration files for subject/motion learning.
 
 Tips:
-- Try increasing training steps or increasing the learning rate for single video motion customization to get better results.
-
+- Generally, motion learning takes `500 to 2000` training steps.
+- Try setting `p_image_zero` from `0 to 0.5` to adjust the effect of appearance guidance during training.
+- Try increasing training steps or increasing the learning rate for single video motion customization to better align the motion pattern.
 
 
 #### Inference
@@ -351,9 +366,12 @@ python inference.py --cfg configs/dreamvideo/infer/subject_dog2.yaml
 ```
 python inference.py --cfg configs/dreamvideo/infer/motion_carTurn.yaml
 ```
+For inference with appearance guidance, make sure to add images of foreground objects (e.g., any image of a bear) to the folder `data/images/motionReferenceImgs` and modify your test file.
 
 Tips:
-- We do not use DDIM Inversion by default. However, for single video motion customization, we encourage you to try setting `inverse_noise_strength` to `0~0.5` to better align the training video. For multi-video motion customization, we recommend setting `inverse_noise_strength` to 0.
+- Try setting `appearance_guide_strength_cond` and `appearance_guide_strength_uncond` from `0 to 1` to adjust the effect of appearance guidance during inference.
+- We do not use DDIM Inversion by default. However, for single video motion customization, you can try setting `inverse_noise_strength` to `0~0.5` to better align the training video. For multi-video motion customization, we recommend setting `inverse_noise_strength` to `0`.
+
 
 (iii) Joint Customization
 ```
@@ -361,8 +379,157 @@ python inference.py --cfg configs/dreamvideo/infer/joint_dog2_carTurn.yaml
 ```
 
 Tips:
-- Try changing `identity_adapter_index` and `motion_adapter_index` for better results.
+- Try changing `identity_adapter_index` and `motion_adapter_index` for better results. Typically, increasing identity_adapter_index improves identity preservation, while increasing motion_adapter_index enhances motion alignment. Balance the two for optimal results.
 
+
+#### Examples
+We provide some examples for inference. Before you start, make sure you download the models.
+
+(i) Subject Customization
+```
+python inference.py --cfg configs/dreamvideo/infer/examples/subject_dog2.yaml
+
+python inference.py --cfg configs/dreamvideo/infer/examples/subject_wolf_plushie.yaml
+```
+
+<center>
+<table>
+<center>
+<tr>
+  <td style="text-align:center;"><center><b>Subject</b></center></td>
+  <td style="text-align:center;"><center><b>Generated Video</b></center></td>
+  <td style="text-align:center;"><center><b>Subject</b></center></td>
+  <td style="text-align:center;"><center><b>Generated Video</b></center></td>
+</tr>
+  <tr>
+    <td><center>
+      <img src="https://img.alicdn.com/imgextra/i4/O1CN01wjCCkF1f7jMzZh6pn_!!6000000003960-2-tps-256-256.png" />
+    </center></td>
+    <td><center>
+      <img src="https://img.alicdn.com/imgextra/i2/O1CN016RJQ1u1zEPSfSzfjh_!!6000000006682-1-tps-256-256.gif" />
+    </center></td>
+    <td><center>
+      <img src="https://img.alicdn.com/imgextra/i4/O1CN013ekGAg1vwbDDt8N9H_!!6000000006237-2-tps-256-256.png" />
+    </center></td>
+    <td><center>
+      <img src="https://img.alicdn.com/imgextra/i2/O1CN011HQwSb1REglZ81Ki8_!!6000000002080-1-tps-256-256.gif" />
+    </center></td>
+  </tr>
+  <tr>
+  <td style="text-align:center;"><center>dog</center></td>
+  <td style="text-align:center;"><center>"a * eating pizza"</br> seed: 2767</center></td>
+  <td style="text-align:center;"><center>wolf plushie</center></td>
+  <td style="text-align:center;"><center>"a * running in the forest" </br> seed: 2339</center></td>
+</tr>
+</center>
+</table>
+</center>
+
+(ii) Motion Customization
+```
+python inference.py --cfg configs/dreamvideo/infer/examples/motion_carTurn.yaml
+
+python inference.py --cfg configs/dreamvideo/infer/examples/motion_playingGuitar.yaml
+```
+
+<center>
+<table>
+<center>
+<tr>
+  <td style="text-align:center;"><center><b>Motion</b></center></td>
+  <td style="text-align:center;"><center><b>Generated Video</b></center></td>
+  <td style="text-align:center;"><center><b>Motion</b></center></td>
+  <td style="text-align:center;"><center><b>Generated Video</b></center></td>
+</tr>
+  <tr>
+    <td><center>
+      <img src="https://img.alicdn.com/imgextra/i1/O1CN01r9yeiR1irw83xSXZz_!!6000000004467-1-tps-256-256.gif" />
+    </center></td>
+    <td><center>
+      <img src="https://img.alicdn.com/imgextra/i4/O1CN01OKbdZj1sy1b2Nhq5M_!!6000000005834-1-tps-256-256.gif" />
+    </center></td>
+    <td><center>
+      <img src="https://img.alicdn.com/imgextra/i4/O1CN01GkeSm31p1S679Hf3J_!!6000000005300-1-tps-256-256.gif" />
+    </center></td>
+    <td><center>
+      <img src="https://img.alicdn.com/imgextra/i4/O1CN01okWw0V1s544J9v6BU_!!6000000005714-1-tps-256-256.gif" />
+    </center></td>
+  </tr>
+  <tr>
+  <td style="text-align:center;"><center>"a car running on the road"</center></td>
+  <td style="text-align:center;"><center>"a lion running on the road"</br> seed: 8888</center></td>
+  <td style="text-align:center;"><center>"a person is playing guitar"</center></td>
+  <td style="text-align:center;"><center>"a monkey is playing guitar on Mars" </br> seed: 8888</center></td>
+</tr>
+</center>
+</table>
+</center>
+
+(iii) Joint Customization
+```
+python inference.py --cfg configs/dreamvideo/infer/examples/joint_dog2_carTurn.yaml
+
+python inference.py --cfg configs/dreamvideo/infer/examples/joint_dog2_playingGuitar.yaml
+
+python inference.py --cfg configs/dreamvideo/infer/examples/joint_wolf_plushie_carTurn.yaml
+
+python inference.py --cfg configs/dreamvideo/infer/examples/joint_wolf_plushie_playingGuitar.yaml
+```
+
+<center>
+<table>
+<center>
+  <tr>
+    <td><center>
+      <img src="https://img.alicdn.com/imgextra/i4/O1CN01uT4pI71EAwWGLx9hP_!!6000000000312-2-tps-256-256.png" />
+    </center></td>
+    <td><center>
+      <img src="https://img.alicdn.com/imgextra/i4/O1CN01wjCCkF1f7jMzZh6pn_!!6000000003960-2-tps-256-256.png" />
+    </center></td>
+    <td><center>
+      <img src="https://img.alicdn.com/imgextra/i4/O1CN013ekGAg1vwbDDt8N9H_!!6000000006237-2-tps-256-256.png" />
+    </center></td>
+  </tr>
+  <tr >
+    <td style="text-align:center;"></td>
+    <td style="text-align:center;"><center>dog</center></td>
+    <td style="text-align:center;"><center>wolf plushie</center></td>
+  </tr>
+  <tr>
+    <td><center>
+      <img src="https://img.alicdn.com/imgextra/i1/O1CN01r9yeiR1irw83xSXZz_!!6000000004467-1-tps-256-256.gif" />
+    </center></td>
+    <td><center>
+      <img src="https://img.alicdn.com/imgextra/i4/O1CN01GOVb6p244rHKdTzPJ_!!6000000007338-1-tps-256-256.gif" />
+    </center></td>
+    <td><center>
+      <img src="https://img.alicdn.com/imgextra/i3/O1CN01uwNzW21kLXO82PKjp_!!6000000004667-1-tps-256-256.gif" />
+    </center></td>
+  </tr>
+  <tr>
+    <td style="text-align:center;"><center>"a car running on the road"</center></td>
+    <td style="text-align:center;"><center>"a * running on the beach"</br> seed: 8888</center></td>
+    <td style="text-align:center;"><center>"a * running on the road"</br> seed: 3677</center></td>
+  </tr>
+  <tr>
+    <td><center>
+      <img src="https://img.alicdn.com/imgextra/i4/O1CN01GkeSm31p1S679Hf3J_!!6000000005300-1-tps-256-256.gif" />
+    </center></td>
+    <td><center>
+      <img src="https://img.alicdn.com/imgextra/i1/O1CN01ouNpOm1Ptn4sG4uFV_!!6000000001899-1-tps-256-256.gif" />
+    </center></td>
+    <td><center>
+      <img src="https://img.alicdn.com/imgextra/i4/O1CN01q7kZra1SpcJezWkrk_!!6000000002296-1-tps-256-256.gif" />
+    </center></td>
+  </tr>
+  <tr>
+    <td style="text-align:center;"><center>"a person is playing guitar"</center></td>
+    <td style="text-align:center;"><center>"a * is playing guitar on the moon"</br> seed: 8888</center></td>
+    <td style="text-align:center;"><center>"a * is playing guitar"</br> seed: 6071</center></td>
+  </tr>
+</center>
+</table>
+</center>
 
 
 ### (5) Run the TF-T2V (CVPR-2024) model

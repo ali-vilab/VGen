@@ -1,0 +1,23 @@
+TASK_TYPE: inference_dreamvideo_entrance
+use_fp16: True
+guide_scale: 9.0
+chunk_size: 2
+decoder_bs: 2
+max_frames: 32
+scale: 8
+batch_size: 1
+noise_strength: 0.1
+round: 1
+seed: 3677  # Specify a fixed seed during inference. Invalid if use_random_seed is True.
+use_random_seed: False  # Set to True to use the random seed for inference
+log_dir: workspace/dreamvideo/infer/joint_custom
+test_list_path: data/custom/infer/joint_wolf_plushie_carTurn.txt  # Path to your test file
+test_data_dir: data/images/custom/wolf_plushie  # Directory path to the subject images. Modify it for your subject.
+subject_cfg: configs/dreamvideo/subjectLearning/wolf_plushie_subjectLearning_step2.yaml  # Path to your configuration file of subject learning
+motion_cfg: configs/dreamvideo/motionLearning/carTurn_motionLearning.yaml  # Path to your configuration file of motion learning
+base_model: models/model_scope_v1-5_0632000.pth
+text_embedding_path: models/DreamVideo/subject/text_embedding/text_embedding_of_wolf_plushie_0003000.pth
+identity_adapter_path: models/DreamVideo/subject/wolf_plushie_adapter_00000500.pth
+motion_adapter_path: models/DreamVideo/motion/carTurn_adapter_00001500.pth
+appearance_guide_strength_cond: 1
+appearance_guide_strength_uncond: 1

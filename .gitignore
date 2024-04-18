@@ -9,9 +9,12 @@
 *.onnx
 *.tar
 *.bin
+*.sh
 cache*
 .DS_Store
 *DS_Store
 outputs/
 **/__pycache__
 */__pycache__
+models/
+workspace/

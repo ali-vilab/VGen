@@ -8,8 +8,8 @@ resolution: [256, 256]
 vit_resolution: [224, 224]
 img_dataset: {
     'type': 'ImageCustomDataset',
-    'data_list': ['data/custom/train/img_dog2.txt', ],  # Path to the training file, which contains image file names and text prompts. Modify it for your subject.
-    'data_dir_list': ['data/images/custom/dog2', ],  # Directory path to the subject images. Modify it for your subject.
+    'data_list': ['data/custom/train/img_wolf_plushie.txt', ],  # Path to the training file, which contains image file names and text prompts. Modify it for your subject.
+    'data_dir_list': ['data/images/custom/wolf_plushie', ],  # Directory path to the subject images. Modify it for your subject.
     'vit_resolution': [224, 224],
     'resolution': [256, 256],
     'max_words': 6,
@@ -24,7 +24,7 @@ embedder: {
 embedmanager: {
     'type': 'EmbeddingManager',
     'placeholder_strings': ["*"],  # Placeholder string for textual inversion
-    'initializer_words': ["dog"],  # Learnable text embedding is initialized to the embedding of 'initializer_words'. Modify it for your subject.
+    'initializer_words': ["wolf"],  # Learnable text embedding is initialized to the embedding of 'initializer_words'. Modify it for your subject.
     'per_image_tokens': False,
     'num_vectors_per_token': 1,
     'progressive_words': False
@@ -76,8 +76,8 @@ visual_train: {
     'use_offset_noise': True,
     'guide_scale': 9.0, 
     'infer_with_custom_text': True,  # Set to True to generate videos with your custom text prompts
-    'data_list': ['data/custom/preview/subject_dog2.txt', ],  # Path to your custom text prompts. Modify it for your subject.
-    'data_dir_list': ['data/images/custom/dog2', ],  # Directory path to the subject images. Modify it for your subject.
+    'data_list': ['data/custom/preview/subject_wolf_plushie.txt', ],  # Path to your custom text prompts. Modify it for your subject.
+    'data_dir_list': ['data/images/custom/wolf_plushie', ],  # Directory path to the subject images. Modify it for your subject.
 }
 
 Pretrain: {
@@ -107,7 +107,7 @@ decay_mode: 'none'
 negative_prompt: ''
 sample_preview: True  # Set to True to preview generated videos during training
 # You can try text embeddings with fewer or more training steps.
-text_embedding_path: 'workspace/dreamvideo/subjectLearningStep1/dog2_subjectLearning_step1/embeddings/text_embedding_of_*_0003000.pth'  
+text_embedding_path: 'workspace/dreamvideo/subjectLearningStep1/wolf_plushie_subjectLearning_step1/embeddings/text_embedding_of_*_0003000.pth'
 
 noise_strength: 0.1
 # classifier-free guidance

@@ -12,11 +12,11 @@ round: 1
 seed: 8888  # Specify a fixed seed during inference. Invalid if use_random_seed is True.
 use_random_seed: True  # Set to True to use the random seed for inference
 log_dir: workspace/dreamvideo/infer/motion_custom
-test_list_path: data/custom/infer/motion_carTurn.txt  # Path to your test file
+test_list_path: data/custom/infer/motion_playingGuitar.txt  # Path to your test file
 test_data_dir: data/images/motionReferenceImgs  # Directory path to the reference images used for appearance guidance during inference. Modify it for your motion.
-motion_cfg: configs/dreamvideo/motionLearning/carTurn_motionLearning.yaml  # Path to your configuration file of motion learning
+motion_cfg: configs/dreamvideo/motionLearning/playingGuitar_motionLearning.yaml  # Path to your configuration file of motion learning
 base_model: models/model_scope_v1-5_0632000.pth
 # Try changing 'motion_adapter_index' for better results.
-motion_adapter_index: 1500  # Use the motion adapter trained for 'motion_adapter_index' steps for inference
+motion_adapter_index: 600  # Use the motion adapter trained for 'motion_adapter_index' steps for inference
 appearance_guide_strength_cond: 1
-appearance_guide_strength_uncond: 1
+appearance_guide_strength_uncond: 0  # Set to 0 during inference to disable appearance guidance of unconditional generation by classifier-free guidance

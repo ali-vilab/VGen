@@ -2,32 +2,24 @@ TASK_TYPE: train_dreamvideo_entrance
 ENABLE: true
 use_ema: false
 num_workers: 6
-frame_lens: [1, ]  # Treat image as single frame video
+frame_lens: [32, ]  # Number of video frames used for training
 sample_fps: [8, ]
 resolution: [256, 256]
 vit_resolution: [224, 224]
-img_dataset: {
-    'type': 'ImageCustomDataset',
-    'data_list': ['data/custom/train/img_dog2.txt', ],  # Path to the training file, which contains image file names and text prompts. Modify it for your subject.
-    'data_dir_list': ['data/images/custom/dog2', ],  # Directory path to the subject images. Modify it for your subject.
+vid_dataset: {
+    'type': 'VideoCustomDataset',
+    'data_list': ['data/custom/train/vid_playingGuitar.txt', ],  # Path to the training file, which contains video file names and text prompts. Modify it for your motion.
+    'data_dir_list': ['data/videos/custom/playingGuitar', ],  # Directory path to the motion videos. Modify it for your motion.
     'vit_resolution': [224, 224],
     'resolution': [256, 256],
-    'max_words': 6,
-    "placeholder_strings": ['*']  # Placeholder string for textual inversion
+    'get_random_frame': True,  # Use a random frame as appearance guidance
+    'max_words': 1,
 }
 embedder: {
     'type': 'FrozenOpenCLIPCustomEmbedder',
     'layer': 'penultimate',
     'vit_resolution': [224, 224],
     'pretrained': 'models/open_clip_pytorch_model.bin'
-}
-embedmanager: {
-    'type': 'EmbeddingManager',
-    'placeholder_strings': ["*"],  # Placeholder string for textual inversion
-    'initializer_words': ["dog"],  # Learnable text embedding is initialized to the embedding of 'initializer_words'. Modify it for your subject.
-    'per_image_tokens': False,
-    'num_vectors_per_token': 1,
-    'progressive_words': False
 }
 UNet: {
     'type': 'UNetSD_DreamVideo',
@@ -48,7 +40,8 @@ UNet: {
     'use_checkpoint': True,
     'use_fps_condition': False,
     'use_sim_mask': False,
-    'spatial_adapter_list': ['cross_attention'],  # Use adapter in cross-attention layers
+    'temporal_adapter_list': ['self_attention', 'cross_attention', 'feedforward'],  # Use adapter in all layers. The 'cross_attention' here is actually the second self-attention layer.
+    'temporal_adapter_condition_dim': 1024,
 }
 Diffusion: {
     'type': 'DiffusionDDIM',
@@ -66,7 +59,7 @@ Diffusion: {
     'noise_strength': 0.1
 }
 batch_sizes: {
-    "1": 4
+    "32": 2  # You can increase the batch size
 }
 visual_train: {
     'type': 'VisualTrainDreamVideo',
@@ -76,8 +69,8 @@ visual_train: {
     'use_offset_noise': True,
     'guide_scale': 9.0, 
     'infer_with_custom_text': True,  # Set to True to generate videos with your custom text prompts
-    'data_list': ['data/custom/preview/subject_dog2.txt', ],  # Path to your custom text prompts. Modify it for your subject.
-    'data_dir_list': ['data/images/custom/dog2', ],  # Directory path to the subject images. Modify it for your subject.
+    'data_list': ['data/custom/preview/motion_playingGuitar.txt', ],  # Path to your custom text prompts. Modify it for your motion.
+    'data_dir_list': ['data/images/motionReferenceImgs', ],  # Directory path to the reference images used for appearance guidance during inference. Modify it for your motion.
 }
 
 Pretrain: {
@@ -95,31 +88,33 @@ decoder_bs: 8
 lr: 0.00001
 
 # dreamvideo configuration
-use_textInversion: True
-freeze_text_embedding: True
+use_textInversion: False
+freeze_text_embedding: False
 fix_spatial_weight: True
 fix_temporal_weight: True
 train_adapter: True
-use_clip_adapter_condition: False  # False for subject customization
-use_mask_diffusion: True  # If set to True, make sure to put the binary masks of the subject into the folder ''data/images/custom/YOUR_SUBJECT/masks''
+use_clip_adapter_condition: True  # True for using appearance guidance in motion customization
 gen_frames: 32  # The frame number of generated videos during inference
 decay_mode: 'none'
 negative_prompt: ''
 sample_preview: True  # Set to True to preview generated videos during training
-# You can try text embeddings with fewer or more training steps.
-text_embedding_path: 'workspace/dreamvideo/subjectLearningStep1/dog2_subjectLearning_step1/embeddings/text_embedding_of_*_0003000.pth'  
+save_latents: False
 
 noise_strength: 0.1
 # classifier-free guidance
-p_zero: 0
+p_zero: 0.5
+# Try adjusting 'p_image_zero' from 0 to 0.5 to achieve better results
+p_image_zero: 0  # Probability of inputting a blank image to the adapter conditional layer during training
 guide_scale: 9.0
+appearance_guide_strength_cond: 1
+appearance_guide_strength_uncond: 0  # Set to 0 during inference to disable appearance guidance of unconditional generation by classifier-free guidance
 num_steps: 1000  # Number of training steps
 
 viz_interval: 100       
-save_ckp_interval: 100   
+save_ckp_interval: 100
 
 # Log
-log_dir: "workspace/dreamvideo/subjectLearningStep2"
+log_dir: "workspace/dreamvideo/motionLearning"
 log_interval: 10
 seed: 8888  # Specify a fixed seed during training. Invalid if use_random_seed is True.
 use_random_seed: False  # Set to True to initialize the random seed for training

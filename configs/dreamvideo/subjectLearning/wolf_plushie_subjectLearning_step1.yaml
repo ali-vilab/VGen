@@ -8,8 +8,8 @@ resolution: [256, 256]
 vit_resolution: [224, 224]
 img_dataset: {
     'type': 'ImageCustomDataset',
-    'data_list': ['data/custom/train/img_dog2.txt', ],  # Path to the training file, which contains image file names and text prompts. Modify it for your subject.
-    'data_dir_list': ['data/images/custom/dog2', ],  # Directory path to the subject images. Modify it for your subject.
+    'data_list': ['data/custom/train/img_wolf_plushie.txt', ],  # Path to the training file, which contains image file names and text prompts. Modify it for your subject.
+    'data_dir_list': ['data/images/custom/wolf_plushie', ],  # Directory path to the subject images. Modify it for your subject.
     'vit_resolution': [224, 224],
     'resolution': [256, 256],
     'max_words': 6,
@@ -24,13 +24,13 @@ embedder: {
 embedmanager: {
     'type': 'EmbeddingManager',
     'placeholder_strings': ["*"],  # Placeholder string for textual inversion
-    'initializer_words': ["dog"],  # Learnable text embedding is initialized to the embedding of 'initializer_words'. Modify it for your subject.
+    'initializer_words': ["wolf"],  # Learnable text embedding is initialized to the embedding of 'initializer_words'. Modify it for your subject.
     'per_image_tokens': False,
     'num_vectors_per_token': 1,
     'progressive_words': False
 }
 UNet: {
-    'type': 'UNetSD_DreamVideo',
+    'type': 'UNetSD_T2VBase',
     'in_dim': 4,
     'y_dim': 1024,
     'upper_len': 128,
@@ -47,8 +47,7 @@ UNet: {
     'temporal_attn_times': 1,
     'use_checkpoint': True,
     'use_fps_condition': False,
-    'use_sim_mask': False,
-    'spatial_adapter_list': ['cross_attention'],  # Use adapter in cross-attention layers
+    'use_sim_mask': False
 }
 Diffusion: {
     'type': 'DiffusionDDIM',
@@ -76,15 +75,14 @@ visual_train: {
     'use_offset_noise': True,
     'guide_scale': 9.0, 
     'infer_with_custom_text': True,  # Set to True to generate videos with your custom text prompts
-    'data_list': ['data/custom/preview/subject_dog2.txt', ],  # Path to your custom text prompts. Modify it for your subject.
-    'data_dir_list': ['data/images/custom/dog2', ],  # Directory path to the subject images. Modify it for your subject.
+    'data_list': ['data/custom/preview/subject_wolf_plushie.txt', ],  # Path to your custom text prompts. Modify it for your subject.
+    'data_dir_list': ['data/images/custom/wolf_plushie', ],  # Directory path to the subject images. Modify it for your subject.
 }
 
 Pretrain: {
     'type': pretrain_dreamvideo,
     'fix_spatial_weight': True,
     'fix_temporal_weight': True,
-    'train_adapter': True,
     'grad_scale': 0.2,
     'resume_checkpoint': 'models/model_scope_v1-5_0632000.pth',
     'sd_keys_path': 'data/stable_diffusion_image_key_temporal_attention_x1.json',
@@ -92,34 +90,32 @@ Pretrain: {
 
 chunk_size: 1
 decoder_bs: 8
-lr: 0.00001
+lr: 0.0001
 
 # dreamvideo configuration
 use_textInversion: True
-freeze_text_embedding: True
+freeze_text_embedding: False
 fix_spatial_weight: True
 fix_temporal_weight: True
-train_adapter: True
+train_adapter: False
 use_clip_adapter_condition: False  # False for subject customization
 use_mask_diffusion: True  # If set to True, make sure to put the binary masks of the subject into the folder ''data/images/custom/YOUR_SUBJECT/masks''
 gen_frames: 32  # The frame number of generated videos during inference
 decay_mode: 'none'
 negative_prompt: ''
 sample_preview: True  # Set to True to preview generated videos during training
-# You can try text embeddings with fewer or more training steps.
-text_embedding_path: 'workspace/dreamvideo/subjectLearningStep1/dog2_subjectLearning_step1/embeddings/text_embedding_of_*_0003000.pth'  
 
 noise_strength: 0.1
 # classifier-free guidance
 p_zero: 0
 guide_scale: 9.0
-num_steps: 1000  # Number of training steps
+num_steps: 3000  # Number of training steps
 
-viz_interval: 100       
-save_ckp_interval: 100   
+viz_interval: 200       
+save_ckp_interval: 200   
 
 # Log
-log_dir: "workspace/dreamvideo/subjectLearningStep2"
+log_dir: "workspace/dreamvideo/subjectLearningStep1"
 log_interval: 10
 seed: 8888  # Specify a fixed seed during training. Invalid if use_random_seed is True.
 use_random_seed: False  # Set to True to initialize the random seed for training

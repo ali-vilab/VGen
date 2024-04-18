@@ -11,9 +11,9 @@ round: 1
 seed: 8888  # Specify a fixed seed during inference. Invalid if use_random_seed is True.
 use_random_seed: True  # Set to True to use the random seed for inference
 log_dir: workspace/dreamvideo/infer/subject_custom
-test_list_path: data/custom/infer/subject_dog2.txt  # Path to your test file
-test_data_dir: data/images/custom/dog2  # Directory path to the subject images. Modify it for your subject.
-subject_cfg: configs/dreamvideo/subjectLearning/dog2_subjectLearning_step2.yaml  # Path to your configuration file of subject learning
+test_list_path: data/custom/infer/subject_wolf_plushie.txt  # Path to your test file
+test_data_dir: data/images/custom/wolf_plushie  # Directory path to the subject images. Modify it for your subject.
+subject_cfg: configs/dreamvideo/subjectLearning/wolf_plushie_subjectLearning_step2.yaml  # Path to your configuration file of subject learning
 base_model: models/model_scope_v1-5_0632000.pth
 # Try changing 'identity_adapter_index' for better results.
 identity_adapter_index: 500  # Use the ID adapter trained for 'identity_adapter_index' steps for inference

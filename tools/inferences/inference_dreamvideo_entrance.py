@@ -5,6 +5,7 @@ import sys
 sys.path.insert(0, '/'.join(osp.realpath(__file__).split('/')[:-4]))
 import json
 import math
+import random
 import torch
 import pynvml
 import logging
@@ -80,6 +81,8 @@ def worker(gpu, cfg, cfg_update):
             cfg[k] = v
 
     cfg.gpu = gpu
+    if cfg.use_random_seed:
+        cfg.seed = random.randint(0, 10000)
     cfg.seed = int(cfg.seed)
     cfg.rank = cfg.pmi_rank * cfg.gpus_per_machine + gpu
     setup_seed(cfg.seed + cfg.rank)
@@ -162,17 +165,28 @@ def worker(gpu, cfg, cfg_update):
         resume_step = 0
 
     merged_state_dict = state_dict.copy()
-    if hasattr(cfg, 'identity_adapter_index'):
+    if hasattr(cfg, 'identity_adapter_index') and hasattr(cfg, 'identity_adapter_path'):
+        raise Exception("Both identity_adapter_index and identity_adapter_path are used, please set only one.")
+    elif hasattr(cfg, 'identity_adapter_index'):
         subject_cfg_name = cfg.subject_cfg.split('/')[-1].split('.')[0]
         identity_adapter_name = f'adapter_{cfg.identity_adapter_index:08d}.pth'
         identity_adapter_path = os.path.join(subject_log_dir, subject_cfg_name, 'checkpoints', identity_adapter_name)
         id_adapter_state_dict = torch.load(identity_adapter_path, map_location='cpu')
         merged_state_dict.update(id_adapter_state_dict['state_dict'])
-    if hasattr(cfg, 'motion_adapter_index'):
+    elif hasattr(cfg, 'identity_adapter_path'):
+        id_adapter_state_dict = torch.load(cfg.identity_adapter_path, map_location='cpu')
+        merged_state_dict.update(id_adapter_state_dict['state_dict'])
+
+    if hasattr(cfg, 'motion_adapter_index') and hasattr(cfg, 'motion_adapter_path'):
+        raise Exception("Both motion_adapter_index and motion_adapter_path are used, please set only one.")
+    elif hasattr(cfg, 'motion_adapter_index'):
         motion_cfg_name = cfg.motion_cfg.split('/')[-1].split('.')[0]
         motion_adapter_name = f'adapter_{cfg.motion_adapter_index:08d}.pth'
         motion_adapter_path = os.path.join(motion_log_dir, motion_cfg_name, 'checkpoints', motion_adapter_name)
         motion_adapter_state_dict = torch.load(motion_adapter_path, map_location='cpu')
+        merged_state_dict.update(motion_adapter_state_dict['state_dict'])
+    elif hasattr(cfg, 'motion_adapter_path'):
+        motion_adapter_state_dict = torch.load(cfg.motion_adapter_path, map_location='cpu')
         merged_state_dict.update(motion_adapter_state_dict['state_dict'])
 
     status = model.load_state_dict(merged_state_dict, strict=True)
@@ -230,8 +244,8 @@ def worker(gpu, cfg, cfg_update):
             logging.info(f'GPU Memory used {meminfo.used / (1024 ** 3):.2f} GB')
             # sample images (DDIM)
             with amp.autocast(enabled=cfg.use_fp16):
-                # cur_seed = torch.initial_seed()
-                # logging.info(f"Current seed {cur_seed} ...")
+                cur_seed = torch.initial_seed()
+                logging.info(f"Current seed {cur_seed} ...")
                 noise = torch.randn([1, 4, cfg.max_frames, int(cfg.resolution[1]/cfg.scale), int(cfg.resolution[0]/cfg.scale)])
                 noise = noise.to(gpu)
                 if cfg.noise_strength > 0:
@@ -249,9 +263,8 @@ def worker(gpu, cfg, cfg_update):
                     model_kwargs[0]['y_image'] = y_visual
                     model_kwargs[1]['y_image'] = zero_feature
 
-                    appearance_guide_strength = getattr(cfg, 'appearance_guide_strength', 1)
-                    model_kwargs[0]['ag_strength'] = appearance_guide_strength
-                    model_kwargs[1]['ag_strength'] = appearance_guide_strength
+                    model_kwargs[0]['ag_strength'] = getattr(cfg, 'appearance_guide_strength_cond', 1)
+                    model_kwargs[1]['ag_strength'] = getattr(cfg, 'appearance_guide_strength_uncond', 1)
 
                 video_data = diffusion.ddim_sample_loop(
                     noise=noise,
