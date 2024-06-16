@@ -15,7 +15,7 @@ class FrozenOpenCLIPEmbedder(nn.Module):
     Uses the OpenCLIP transformer encoder for text
     """
     LAYERS = [
-        #"pooled",
+        # "pooled",
         "last",
         "penultimate"
     ]
@@ -225,6 +225,81 @@ class FrozenOpenCLIPTextVisualEmbedder(nn.Module):
     def encode(self, text):
         
         return self(text)
+
+
+@EMBEDDER.register_class()
+class FrozenOpenCLIPEmbedderZero(nn.Module):
+    """
+    Uses the OpenCLIP transformer encoder for text
+    """
+    LAYERS = [
+        #"pooled",
+        "last",
+        "penultimate"
+    ]
+    def __init__(self, pretrained, vit_resolution=(224, 224), arch="ViT-H-14", device="cuda", max_length=77,
+                 freeze=True, layer="last"):
+        super().__init__()
+        assert layer in self.LAYERS
+        # local_path = DOWNLOAD_TO_CACHE(pretrained)
+        model, _, preprocess = open_clip.create_model_and_transforms(arch, device=torch.device('cpu'), pretrained=pretrained)
+        # del model.visual
+        self.model = model
+        data_white = np.ones((vit_resolution[0], vit_resolution[1], 3), dtype=np.uint8)*255
+        self.white_image = preprocess(T.ToPILImage()(data_white)).unsqueeze(0)
+        self.zero_feature = self.model.encode_image(self.white_image.to(torch.device('cpu')))
+        # del self.model.visual
+
+        self.device = device
+        self.max_length = max_length
+        if freeze:
+            self.freeze()
+        self.layer = layer
+        if self.layer == "last":
+            self.layer_idx = 0
+        elif self.layer == "penultimate":
+            self.layer_idx = 1
+        else:
+            raise NotImplementedError()
+
+    def freeze(self):
+        self.model = self.model.eval()
+        for param in self.parameters():
+            param.requires_grad = False
+    
+    def forward(self, text):
+        tokens = open_clip.tokenize(text)
+        z = self.encode_with_transformer(tokens.to(self.device))
+        return z
+    
+    def forward_image(self, image):
+        # tokens = open_clip.tokenize(text)
+        z = self.model.encode_image(image.to(self.device))
+        return z
+
+    def encode_with_transformer(self, text):
+        x = self.model.token_embedding(text)  # [batch_size, n_ctx, d_model]
+        x = x + self.model.positional_embedding
+        x = x.permute(1, 0, 2)  # NLD -> LND
+        x = self.text_transformer_forward(x, attn_mask=self.model.attn_mask)
+        x = x.permute(1, 0, 2)  # LND -> NLD
+        x = self.model.ln_final(x)
+        return x
+
+    def text_transformer_forward(self, x: torch.Tensor, attn_mask = None):
+        for i, r in enumerate(self.model.transformer.resblocks):
+            if i == len(self.model.transformer.resblocks) - self.layer_idx:
+                break
+            if self.model.transformer.grad_checkpointing and not torch.jit.is_scripting():
+                x = checkpoint(r, x, attn_mask)
+            else:
+                x = r(x, attn_mask=attn_mask)
+        return x
+
+    def encode(self, text):
+        return self(text)
+
+
 
 
 @EMBEDDER.register_class()

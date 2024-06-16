@@ -4,6 +4,7 @@ import math
 from utils.registry_class import DIFFUSION
 from .schedules import beta_schedule, sigma_schedule
 from .losses import kl_divergence, discretized_gaussian_log_likelihood
+import torch.utils.checkpoint as checkpoint
 # from .dpm_solver import NoiseScheduleVP, model_wrapper_guided_diffusion, model_wrapper, DPM_Solver
 
 def _i(tensor, t, x):
@@ -509,3 +510,303 @@ class DiffusionDDIM(object):
             return t.float() * 1000.0 / self.num_timesteps
         return t
         #return t.float()
+
+
+@DIFFUSION.register_class()
+class DiffusionDDIMReward(DiffusionDDIM):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+    
+    # @torch.no_grad() # This is quite important since we need gradient for this operation.
+    def ddim_sample_loop_partial(self, noise, model, starting_partial, grad_checkpointing, truncated_backprop, trunc_backprop_timestep,
+            model_kwargs={}, clamp=None, percentile=None, condition_fn=None, guide_scale=None, ddim_timesteps=20, eta=0.0):
+        # prepare input
+        b = noise.size(0)
+        xt = noise
+
+        # diffusion process (TODO: clamp is inaccurate! Consider replacing the stride by explicit prev/next steps)
+        steps = (1 + torch.arange(0, self.num_timesteps, self.num_timesteps // ddim_timesteps)).clamp(0, self.num_timesteps - 1).flip(0)
+        starting_step = int(len(steps) * starting_partial)
+        steps = steps[-starting_step:]
+
+        for step in steps:
+            t = torch.full((b, ), step, dtype=torch.long, device=xt.device)
+            
+            ### V2 implementation for grad_checkpointing + truncated_backprop
+            if grad_checkpointing:
+                if truncated_backprop:
+                    if trunc_backprop_timestep is not None:
+                        if step > steps[-trunc_backprop_timestep]:
+                            # print(step)
+                            # xt = xt.detach()
+                            with torch.no_grad():
+                                xt, _ = self.ddim_sample_gradient(xt, t, model, model_kwargs, clamp, percentile, condition_fn, guide_scale, ddim_timesteps, eta)
+                        else:
+                            xt, _ = checkpoint.checkpoint(self.ddim_sample_gradient, xt, t, model, model_kwargs, clamp, percentile, condition_fn, guide_scale, ddim_timesteps, eta, use_reentrant=False)   
+                    else:
+                        print("Not implemented.")
+            else:
+                print('Please use gradient checkpointing.')
+                assert False
+
+        return xt
+
+    # @torch.no_grad() # This is quite important since we need gradient for this operation.
+    def ddim_sample_gradient(self, xt, t, model, model_kwargs={}, clamp=None, percentile=None, condition_fn=None, guide_scale=None, ddim_timesteps=20, eta=0.0):
+        r"""Sample from p(x_{t-1} | x_t) using DDIM.
+            - condition_fn: for classifier-based guidance (guided-diffusion).
+            - guide_scale: for classifier-free guidance (glide/dalle-2).
+        """
+        stride = self.num_timesteps // ddim_timesteps
+
+        # predict distribution of p(x_{t-1} | x_t)
+        _, _, _, x0 = self.p_mean_variance(xt, t, model, model_kwargs, clamp, percentile, guide_scale)
+        # This is the denoised observation based on Eq.9.
+        if condition_fn is not None:
+            # x0 -> eps
+            alpha = _i(self.alphas_cumprod, t, xt)
+            eps = (_i(self.sqrt_recip_alphas_cumprod, t, xt) * xt - x0) / \
+                   _i(self.sqrt_recipm1_alphas_cumprod, t, xt)
+            eps = eps - (1 - alpha).sqrt() * condition_fn(xt, self._scale_timesteps(t), **model_kwargs)
+
+            # eps -> x0: denoised obseravtion (Eq.9 in DDIM)
+            x0 = _i(self.sqrt_recip_alphas_cumprod, t, xt) * xt - \
+                 _i(self.sqrt_recipm1_alphas_cumprod, t, xt) * eps
+        
+        # derive variables
+        # For the 'eps' variable below, when self.mean_type == 'eps', eps is equal to out.
+        # For the 'eps' variable below, when self.mean_type == 'x0', eps obtained using Eq.4.
+        # The following equation is based on Eq.4.
+        eps = (_i(self.sqrt_recip_alphas_cumprod, t, xt) * xt - x0) / \
+               _i(self.sqrt_recipm1_alphas_cumprod, t, xt)
+        alphas = _i(self.alphas_cumprod, t, xt)
+        alphas_prev = _i(self.alphas_cumprod, (t - stride).clamp(0), xt)
+        sigmas = eta * torch.sqrt((1 - alphas_prev) / (1 - alphas) * (1 - alphas / alphas_prev))
+
+        # random sample
+        noise = torch.randn_like(xt)
+        direction = torch.sqrt(1 - alphas_prev - sigmas ** 2) * eps
+        mask = t.ne(0).float().view(-1, *((1, ) * (xt.ndim - 1)))
+        xt_1 = torch.sqrt(alphas_prev) * x0 + direction + mask * sigmas * noise
+        return xt_1, x0
+    
+
+    # @torch.no_grad()
+    def ddim_sample_with_logprob(self, xt, t, model, model_kwargs={}, clamp=None, percentile=None, condition_fn=None, guide_scale=None, ddim_timesteps=20, eta=0.0,
+                prev_sample = None):
+        r"""Sample from p(x_{t-1} | x_t) using DDIM.
+            - condition_fn: for classifier-based guidance (guided-diffusion).
+            - guide_scale: for classifier-free guidance (glide/dalle-2).
+        """
+        stride = self.num_timesteps // ddim_timesteps
+
+        # predict distribution of p(x_{t-1} | x_t)
+        _, _, _, x0 = self.p_mean_variance(xt, t, model, model_kwargs, clamp, percentile, guide_scale)
+        # This is the denoised observation based on Eq.9.
+        if condition_fn is not None:
+            # x0 -> eps
+            alpha = _i(self.alphas_cumprod, t, xt)
+            eps = (_i(self.sqrt_recip_alphas_cumprod, t, xt) * xt - x0) / \
+                   _i(self.sqrt_recipm1_alphas_cumprod, t, xt)
+            eps = eps - (1 - alpha).sqrt() * condition_fn(xt, self._scale_timesteps(t), **model_kwargs)
+
+            # eps -> x0: denoised obseravtion (Eq.9 in DDIM)
+            x0 = _i(self.sqrt_recip_alphas_cumprod, t, xt) * xt - \
+                 _i(self.sqrt_recipm1_alphas_cumprod, t, xt) * eps
+        
+        # derive variables
+        # For the 'eps' variable below, when self.mean_type == 'eps', eps is equal to out.
+        # For the 'eps' variable below, when self.mean_type == 'x0', eps obtained using Eq.4.
+        # The following equation is based on Eq.4.
+        eps = (_i(self.sqrt_recip_alphas_cumprod, t, xt) * xt - x0) / \
+               _i(self.sqrt_recipm1_alphas_cumprod, t, xt)
+        alphas = _i(self.alphas_cumprod, t, xt)
+        alphas_prev = _i(self.alphas_cumprod, (t - stride).clamp(0), xt)
+        sigmas = eta * torch.sqrt((1 - alphas_prev) / (1 - alphas) * (1 - alphas / alphas_prev))
+
+        # random sample
+        noise = torch.randn_like(xt)
+        direction = torch.sqrt(1 - alphas_prev - sigmas ** 2) * eps
+        mask = t.ne(0).float().view(-1, *((1, ) * (xt.ndim - 1)))
+        if prev_sample is None:
+            xt_1 = torch.sqrt(alphas_prev) * x0 + direction + mask * sigmas * noise
+        else:
+            xt_1 = prev_sample
+
+        # log prob of prev_sample given prev_sample_mean and std_dev_t
+        xt_1_mean = torch.sqrt(alphas_prev) * x0 + direction
+        log_prob = (
+            - ((xt_1.detach() - xt_1_mean)**2) / (2 * (sigmas**2))
+            - torch.log(sigmas)
+            - torch.log(torch.sqrt(2 * torch.as_tensor(math.pi)))
+        )
+        # mean along all but batch dimension
+        log_prob = log_prob.mean(dim=tuple(range(1, log_prob.ndim)))
+
+        ### Original DDPO implementation
+        # # log prob of prev_sample given prev_sample_mean and std_dev_t
+        # log_prob = (
+        #     -((prev_sample.detach() - prev_sample_mean) ** 2) / (2 * (std_dev_t**2))
+        #     - torch.log(std_dev_t)
+        #     - torch.log(torch.sqrt(2 * torch.as_tensor(math.pi)))
+        # )
+        # # mean along all but batch dimension
+        # log_prob = log_prob.mean(dim=tuple(range(1, log_prob.ndim)))
+
+        return xt_1, x0, log_prob
+
+
+    # @torch.no_grad()
+    def ddim_sample_loop_with_logprob(self, noise, model, model_kwargs={}, clamp=None, percentile=None, condition_fn=None, guide_scale=None, ddim_timesteps=20, eta=0.0):
+        # prepare input
+        b = noise.size(0)
+        xt = noise
+        all_log_probs = []
+        all_latents = [xt]
+
+        # diffusion process (TODO: clamp is inaccurate! Consider replacing the stride by explicit prev/next steps)
+        steps = (1 + torch.arange(0, self.num_timesteps, self.num_timesteps // ddim_timesteps)).clamp(0, self.num_timesteps - 1).flip(0)
+        for step in steps:
+            t = torch.full((b, ), step, dtype=torch.long, device=xt.device)
+            xt, _, log_prob = self.ddim_sample_with_logprob(xt, t, model, model_kwargs, clamp, percentile, condition_fn, guide_scale, ddim_timesteps, eta)
+            all_log_probs.append(log_prob)
+            all_latents.append(xt)
+        return xt, steps, all_log_probs, all_latents
+    
+
+    def loss(self, x0, t, model, model_kwargs={}, noise=None, weight = None, use_div_loss= False, reward_type=[]):
+        noise = torch.randn_like(x0) if noise is None else noise # [80, 4, 8, 32, 32]
+        xt = self.q_sample(x0, t, noise=noise)
+        x0_ = None
+
+        # compute loss
+        if self.loss_type in ['kl', 'rescaled_kl']:
+            loss, _ = self.variational_lower_bound(x0, xt, t, model, model_kwargs)
+            if self.loss_type == 'rescaled_kl':
+                loss = loss * self.num_timesteps
+        elif self.loss_type in ['mse', 'rescaled_mse', 'l1', 'rescaled_l1']: # self.loss_type: mse
+            out = model(xt, self._scale_timesteps(t), **model_kwargs)
+
+            # VLB for variation
+            loss_vlb = 0.0
+            if self.var_type in ['learned', 'learned_range']: # self.var_type: 'fixed_small'
+                out, var = out.chunk(2, dim=1)
+                frozen = torch.cat([out.detach(), var], dim=1)  # learn var without affecting the prediction of mean
+                loss_vlb, _ = self.variational_lower_bound(x0, xt, t, model=lambda *args, **kwargs: frozen)
+                if self.loss_type.startswith('rescaled_'):
+                    loss_vlb = loss_vlb * self.num_timesteps / 1000.0
+            
+            # MSE/L1 for x0/eps
+            # target = {'eps': noise, 'x0': x0, 'x_{t-1}': self.q_posterior_mean_variance(x0, xt, t)[0]}[self.mean_type]
+            post_mu, post_var, post_log_var = self.q_posterior_mean_variance(x0, xt, t)
+            target_dict = {'eps': noise, 'x0': x0, 'x_{t-1}': post_mu, 'var': post_var, 'log_var': post_log_var}
+            target = target_dict[self.mean_type]
+            loss = (out - target).pow(1 if self.loss_type.endswith('l1') else 2).abs().flatten(1).mean(dim=1)
+            if weight is not None:
+                loss = loss * weight   
+
+            # div loss
+            if use_div_loss and self.mean_type == 'eps' and x0.shape[2] > 1:
+                # derive  x0
+                x0_ = _i(self.sqrt_recip_alphas_cumprod, t, xt) * xt - \
+                    _i(self.sqrt_recipm1_alphas_cumprod, t, xt) * out
+
+                # # derive xt_1, set eta=0 as ddim
+                # alphas_prev = _i(self.alphas_cumprod, (t - 1).clamp(0), xt)
+                # direction = torch.sqrt(1 - alphas_prev) * out
+                # xt_1 = torch.sqrt(alphas_prev) * x0_ + direction
+
+                # ncfhw, std on f
+                div_loss = 0.001/(x0_.std(dim=2).flatten(1).mean(dim=1)+1e-4)
+                # print(div_loss, loss)
+                loss = loss + div_loss
+
+            ### Version 2: For reward calculation
+            ### Estimate x0
+            if x0_ is None:
+                x0_ = _i(self.sqrt_recip_alphas_cumprod, t, xt) * xt - \
+                    _i(self.sqrt_recipm1_alphas_cumprod, t, xt) * out
+            ### Estimate prob: q(x_t-1 | x_t) = N(x_{t-1}; \frac{x_t}{\sqrt{1 - \beta_t}}, \beta_t)
+            beta_t = _i(self.betas, t, xt)
+            if self.mean_type == 'eps':
+                est_xt_minus_one = (xt - torch.sqrt(beta_t) * out) / torch.sqrt(1 - beta_t)
+            else:
+                assert False
+            log_prob = - 0.5 * torch.log(2 * torch.as_tensor(math.pi) * beta_t) - (est_xt_minus_one - xt / torch.sqrt(1 - beta_t))**2 / (2 * beta_t)
+            log_prob = log_prob.mean(dim=tuple(range(1, log_prob.ndim)))
+
+            # total loss
+            loss = loss + loss_vlb
+        elif self.loss_type in ['charbonnier']:
+            out = model(xt, self._scale_timesteps(t), **model_kwargs)
+
+            # VLB for variation
+            loss_vlb = 0.0
+            if self.var_type in ['learned', 'learned_range']:
+                out, var = out.chunk(2, dim=1)
+                frozen = torch.cat([out.detach(), var], dim=1)  # learn var without affecting the prediction of mean
+                loss_vlb, _ = self.variational_lower_bound(x0, xt, t, model=lambda *args, **kwargs: frozen)
+                if self.loss_type.startswith('rescaled_'):
+                    loss_vlb = loss_vlb * self.num_timesteps / 1000.0
+            
+            # MSE/L1 for x0/eps
+            target = {'eps': noise, 'x0': x0, 'x_{t-1}': self.q_posterior_mean_variance(x0, xt, t)[0]}[self.mean_type]
+            loss = torch.sqrt((out - target)**2 + self.epsilon)
+            if weight is not None:
+                loss = loss*weight
+            loss = loss.flatten(1).mean(dim=1)
+            
+            # total loss
+            loss = loss + loss_vlb
+        
+        return loss, x0_, log_prob
+
+
+
+class GaussianDiffusionReward(object):
+    def __init__(self,
+                 betas,
+                 mean_type='eps',
+                 var_type='learned_range',
+                 loss_type='mse',
+                 epsilon = 1e-12,
+                 rescale_timesteps=False):
+        # check input
+        if not isinstance(betas, torch.DoubleTensor):
+            betas = torch.tensor(betas, dtype=torch.float64)
+        assert min(betas) > 0 and max(betas) <= 1
+        assert mean_type in ['x0', 'x_{t-1}', 'eps']
+        assert var_type in ['learned', 'learned_range', 'fixed_large', 'fixed_small']
+        assert loss_type in ['mse', 'rescaled_mse', 'kl', 'rescaled_kl', 'l1', 'rescaled_l1','charbonnier']
+        self.betas = betas
+        print('betas ', betas)
+        self.num_timesteps = len(betas)
+        self.mean_type = mean_type # eps
+        self.var_type = var_type # 'fixed_small'
+        self.loss_type = loss_type # mse
+        self.epsilon = epsilon # 1e-12
+        self.rescale_timesteps = rescale_timesteps # False
+
+        # alphas
+        alphas = 1 - self.betas
+        self.alphas_cumprod = torch.cumprod(alphas, dim=0)
+        # Original self.alphas_cumprod_prev
+        self.alphas_cumprod_prev = torch.cat([alphas.new_ones([1]), self.alphas_cumprod[:-1]])
+        # TODO: New self.alphas_cumprod_prev
+        # lin_space = self.alphas_cumprod[0] - self.alphas_cumprod[1]
+        self.alphas_cumprod_next = torch.cat([self.alphas_cumprod[1:], alphas.new_zeros([1])])
+
+        # q(x_t | x_{t-1})
+        self.sqrt_alphas_cumprod = torch.sqrt(self.alphas_cumprod)
+        self.sqrt_one_minus_alphas_cumprod = torch.sqrt(1.0 - self.alphas_cumprod)
+        self.log_one_minus_alphas_cumprod = torch.log(1.0 - self.alphas_cumprod)
+        self.sqrt_recip_alphas_cumprod = torch.sqrt(1.0 / self.alphas_cumprod)
+        self.sqrt_recipm1_alphas_cumprod = torch.sqrt(1.0 / self.alphas_cumprod - 1)
+
+        # q(x_{t-1} | x_t, x_0)
+        self.posterior_variance = betas * (1.0 - self.alphas_cumprod_prev) / (1.0 - self.alphas_cumprod)
+        self.posterior_log_variance_clipped = torch.log(self.posterior_variance.clamp(1e-20))
+        self.posterior_mean_coef1 = betas * torch.sqrt(self.alphas_cumprod_prev) / (1.0 - self.alphas_cumprod)
+        self.posterior_mean_coef2 = (1.0 - self.alphas_cumprod_prev) * torch.sqrt(alphas) / (1.0 - self.alphas_cumprod)
+    
+    

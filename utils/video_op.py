@@ -43,6 +43,7 @@ def gen_text_image(captions, text_size):
     text_images = torch.from_numpy(text_images)
     return text_images
 
+
 @torch.no_grad()
 def save_video_refimg_and_text(
     local_path,
@@ -208,6 +209,54 @@ def save_i2vgen_video_safe(
     
     if exception is not None:
         raise exception
+
+
+
+@torch.no_grad()
+def save_video_local(
+    local_path,
+    gen_video, 
+    # captions, 
+    mean=[0.5, 0.5, 0.5], 
+    std=[0.5, 0.5, 0.5],
+    # text_size=256, 
+    retry=5
+):
+    vid_mean = torch.tensor(mean, device=gen_video.device).view(1, -1, 1, 1, 1) #ncfhw
+    vid_std = torch.tensor(std, device=gen_video.device).view(1, -1, 1, 1, 1) #ncfhw
+
+    # text_images = gen_text_image(captions, text_size) # Tensor 1x256x256x3
+    # text_images = text_images.unsqueeze(1) # Tensor 1x1x256x256x3
+    # text_images = text_images.repeat_interleave(repeats=gen_video.size(2), dim=1) # 1x16x256x256x3
+
+    gen_video = gen_video.mul_(vid_std).add_(vid_mean)  # 8x3x16x256x384
+    gen_video.clamp_(0, 1)
+    gen_video = gen_video * 255.0
+    images = rearrange(gen_video, 'b c f h w -> b f h w c')
+    # images = torch.cat([text_images, images], dim=3)
+
+    images = images[0]
+    images = [(img.numpy()).astype('uint8') for img in images]
+
+    exception = None
+    for _ in [None] * retry:
+        try:
+            save_fps = 8
+            frame_dir = os.path.join(os.path.dirname(local_path), '%s_frames' % (os.path.basename(local_path)))
+            os.system(f'rm -rf {frame_dir}'); os.makedirs(frame_dir, exist_ok=True)
+            for fid, frame in enumerate(images):
+                tpth = os.path.join(frame_dir, '%04d.png' % (fid+1))
+                cv2.imwrite(tpth, frame[:,:,::-1], [int(cv2.IMWRITE_JPEG_QUALITY), 100])
+            cmd = f'ffmpeg -y -f image2 -loglevel quiet -framerate {save_fps} -i {frame_dir}/%04d.png -vcodec libx264 -crf 17  -pix_fmt yuv420p {local_path}'
+            os.system(cmd); os.system(f'rm -rf {frame_dir}')
+            break
+        except Exception as e:
+            exception = e
+            continue
+    if exception is not None:
+        raise exception
+    
+    return images
 
 
 @torch.no_grad()
