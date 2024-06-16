@@ -1,0 +1,116 @@
+TASK_TYPE: t2v_instructvideo_entrance
+ENABLE: true
+num_workers: 1
+frame_lens: [16, 16, 16, 16]
+data_type: ['vid_diff_reward', 'vid_diff_reward', 'vid_diff_reward', 'vid_diff_reward']
+resolution: [256, 256]
+vit_resolution: [224, 224]
+
+vid_reward_dataset: {
+    'type': 'VideoDataset',
+    'data_list': ['data/instructvideo/webvid_simple_animals_2_selected_20_train_file_list/00000.txt'],
+    'data_dir_list': ['data/instructvideo/train/', ],
+    'vit_resolution': [224, 224],
+    'resolution': [256, 256],
+    'vit_frames': 1,
+    'get_first_frame': True,
+    'max_words': 1000,
+}
+
+Pretrain: {
+    'type': pretrain_instructvideo,
+    'resume_checkpoint': 'models/model_scope_v1-4_0600000.pth',
+    'pretrained_image_keys': 'data/stable_diffusion_image_key_temporal_attention_x1.json',
+    'fix_weight': False,
+}
+
+UNet: {
+    'type': 'UNetSD_LoRA',
+    'in_dim': 4,
+    'dim': 320,
+    'y_dim': 1024,
+    'context_dim': 1024,
+    'out_dim': 4,
+    'dim_mult': [1, 2, 4, 4],
+    'num_heads': 8,
+    'head_dim': 64,
+    'num_res_blocks': 2,
+    'attn_scales': [1.0, 0.5, 0.25],
+    'dropout': 0.1,
+    'temporal_attention': True,
+    'temporal_attn_times': 1,
+    'use_checkpoint': True,
+    'use_fps_condition': False,
+    'use_sim_mask': False,
+    ### For LoRA tuning
+    'use_lora': True, # False, # True,
+    'lora_rank': 4,
+    'lora_alpha': ,
+    # In yaml, 'None' does not need to be specified. 
+}
+
+visual_train: {
+    'type': 'VisualVideoTextDuringTrainUnClip',
+}
+
+embedder: {
+    'type': 'FrozenOpenCLIPEmbedderZero',
+    'layer': 'penultimate',
+    'pretrained': 'models/stable-diffusion-v/open_clip_pytorch_model.bin'
+}
+
+Diffusion: {
+    'type': 'DiffusionDDIMReward',
+    'schedule': 'linear_sd',
+    'schedule_param': {
+        'num_timesteps': 1000,
+        'init_beta': 0.00085,
+        'last_beta': 0.0120,
+        'zero_terminal_snr': False,
+    },
+    'mean_type': 'eps',
+    'loss_type': 'mse',
+    'var_type': 'fixed_small',
+    'rescale_timesteps': False,
+    'noise_strength': 0.,
+}
+
+ddim_timesteps: 20
+ddim_steps: [951, 901, 851, 801, 751, 701, 651, 601, 551, 501, 451, 401, 351, 301, 251, 201, 151, 101,  51,   1]
+
+### Reward fine-tuning
+partial_timestep: 1. # for reward
+starting_partial: 0.6 # 0.6 # 0.6 # 0.6 # 0.8 # 0.4 # 0.1 # 0.02  # for diffreward
+truncated_backprop: True
+trunc_backprop_timestep: 1
+reward_precision: 'fp16'
+segments: 4
+selection_method: 'TSN'
+exponential_TSN: True 
+reward_source: 'gt' # 'estimated_x0'
+
+batch_sizes: {
+    "1": 16,
+    "4": 8,
+    "8": 4,
+    "16": 2,
+    "24": 1,
+    "32": 1,
+}
+sample_fps: [8, ]
+lr: 0.00001
+num_steps: 1000000
+chunk_size: 1
+decoder_bs: 1
+temporal_offset_noise: true
+temporal_offset_noise_strength: 0.1
+share_noise: False
+p_zero: 0.1
+p_img_zero: 0.9
+log_interval: 100
+viz_interval: 100
+grad_scale: {
+    'spatial': 1, # For LoRA, we do not specify the learning rate like ModelScope.
+    'temporal': 1,
+}
+grad_checkpointing: True
