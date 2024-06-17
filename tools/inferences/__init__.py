@@ -8,4 +8,5 @@ from .inference_videolcm_entrance import *
 from .inference_tft2v_vcomposer_entrance import *
 from .inference_videolcm_vcomposer_entrance import *
 from .inference_tft2v_sr600_entrance import *
+from .inference_instructvideo_entrance import *
 

@@ -1,0 +1,1 @@
+python train_net.py --cfg configs/instructvideo/train/reward_webvid_ani45_20_reg_vidldm_LoRA_TSNExp16Diffreward_Partial06_Trunc1_Check_ddim20.yaml

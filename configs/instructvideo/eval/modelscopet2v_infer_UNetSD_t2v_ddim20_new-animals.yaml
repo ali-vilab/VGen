@@ -1,0 +1,69 @@
+TASK_TYPE: inference_instructvideo_entrance
+ENABLE: true
+frame_lens: [16]
+resolution: [256, 256]
+vit_resolution: [224, 224]
+
+embedder: {
+    'type': 'FrozenOpenCLIPEmbedderZero',
+    'layer': 'penultimate',
+    'pretrained': 'models/stable-diffusion-v/open_clip_pytorch_model.bin'
+}
+
+UNet: {
+    'type': 'UNetSD_LoRA',
+    'in_dim': 4,
+    'dim': 320,
+    'y_dim': 1024,
+    'context_dim': 1024,
+    'out_dim': 4,
+    'dim_mult': [1, 2, 4, 4],
+    'num_heads': 8,
+    'head_dim': 64,
+    'num_res_blocks': 2,
+    'attn_scales': [1.0, 0.5, 0.25],
+    'dropout': 0.1,
+    'temporal_attention': True,
+    'temporal_attn_times': 1,
+    'use_checkpoint': True,
+    'use_fps_condition': False,
+    'use_sim_mask': False,
+    ### For LoRA tuning
+    'use_lora': False, # False, # True,
+    'lora_rank': 4,
+    'lora_alpha': , # In yaml, 'None' does not need to be specified. 
+}
+
+chunk_size: 4
+decoder_bs: 4
+temporal_offset_noise: false
+temporal_offset_noise_strength: 0.1
+share_noise: False
+
+Diffusion: {
+    'type': 'DiffusionDDIMReward',
+    'schedule': 'linear_sd',
+    'schedule_param': {
+        'num_timesteps': 1000,
+        'init_beta': 0.00085,
+        'last_beta': 0.0120,
+        'zero_terminal_snr': False,
+    },
+    'mean_type': 'eps',
+    'loss_type': 'mse',
+    'var_type': 'fixed_small',
+    'rescale_timesteps': False,
+    'noise_strength': 0,
+}
+ddim_timesteps: 20
+ddim_steps: [951, 901, 851, 801, 751, 701, 651, 601, 551, 501, 451, 401, 351, 301, 251, 201, 151, 101,  51,   1]
+
+webvid_dir: 'data/instructvideo/'
+webvid_cap_file: 'eval/'
+webvid_eval_text: 'eval_simple_animals_2_webvid_videos_selected_eval'
+webvid_test_caps: 22
+webvid_dir_save: 'data/instructvideo/generated/modelscopet2v_ddim20_new-animals_0600000_'
+infer_checkpoint: 'models/model_scope_v1-4_0600000.pth'
+
+suffix: ''
+seed: 8888

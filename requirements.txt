@@ -24,3 +24,4 @@ pytorch-lightning==1.4.2
 torchmetrics==0.6.0
 gradio==3.39.0
 imageio-ffmpeg
+piq

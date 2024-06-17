@@ -26,6 +26,8 @@ VGen can produce high-quality videos from the input text, images, desired motion
 
 ## 🔥News!!!
 
+
+- __[2024.06]__ We release the code and models of [InstructVideo](https://instructvideo.github.io/). InstructVideo enables the **LoRA** fine-tuning and inference in VGen. Feel free to use LoRA fine-tuning for other tasks.
 - __[2024.04]__ We release the models of [DreamVideo](https://dreamvideo-t2v.github.io) and ModelScopeT2V V1.5!!! ModelScopeT2V V1.5 is further fine-tuned on ModelScopeT2V for 365k iterations with more data.
 - __[2024.04]__ We release the code and models of [TF-T2V](https://tf-t2v.github.io)! 
 - __[2024.04]__ We release the code and models of [VideoLCM](https://tf-t2v.github.io)! 
@@ -723,9 +725,57 @@ python inference.py --cfg configs/videolcm_t2v_16frames_sr600_infer.yaml
 python inference.py --cfg configs/videolcm_vcomposer_infer.yaml
 ```
 
+### (7) InstructVideo (CVPR 2024)
+
+Feel free to reach out (hj.yuan@zju.edu.cn) if have questions.
+
+#### Dataset preparation and environment configuration
+The training of InstructVideo requires video-text pairs to save computational cost during reward fine-tuning.
+In the paper, we utilize a small set of videos in WebVid to fine-tune our base model.
+The file list is shown under the folder:
+```
+data/instructvideo/webvid_simple_animals_2_selected_20_train_file_list/00000.txt
+```
+You should try filtering the videos from your webvid dataset to compose the training data. Another alternative is to use your own video-text pairs.
+(I tested InstructVideo on WebVid data and some proprietary data. Both worked.)
+
+Concerning the environment configuration, you should follow the instructions for [VGen installation](https://github.com/ali-vilab/VGen?tab=readme-ov-file#installation).
 
 
-### (7) Other methods
+#### Pre-trained weights preparation
+```
+!pip install modelscope
+from modelscope.hub.snapshot_download import snapshot_download
+model_dir = snapshot_download('iic/InstructVideo', cache_dir='models/')
+```
+You need to move the checkpoints to the "models/" directory:
+```
+mv ./models/iic/InstructVideo/* ./models/
+```
+Note that `models/model_scope_v1-4_0600000.pth` is the pre-trained base model used in the paper.
+The fine-tuned model is placed under the folder `models/instructvideo-finetuned`.
+
+You can get access to the provided files on [Instructvideo ModelScope Page](https://modelscope.cn/models/iic/InstructVideo/files).
+
+
+#### The inference of InstructVideo
+You can leverage the provided fine-tuned checkpoints to generate videos by running the command:
+```
+bash configs/instructvideo/eval_generate_videos.sh
+```
+This command uses yaml files under `configs/instructvideo/eval`, containing caption file paths for generating videos of in-domain animals, new animals and non-animals.
+Feel free to switch among them or replace them with your own captions.
+Although we fine-tuned using 20-step DDIM, you can still use 50-step DDIM generation.
+
+#### The reward fine-tuning of InstructVideo
+You can perform InstrcutVideo reward fine-tuning by running the command:
+```
+bash configs/instructvideo/train.sh
+```
+Since performing reward fine-tuning can lead to over-optimization, I strongly recommend checking the generation performance on some evaluation captions regularly (like the captions indicated in `configs/instructvideo/eval`).
+
+
+### (8) Other methods
 
 In preparation!!
 

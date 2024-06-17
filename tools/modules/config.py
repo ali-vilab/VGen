@@ -196,6 +196,40 @@ cfg.log_dir = 'workspace/temp_dir'
 # -----------------------------------------------------------------------------
 
 
+# ---------------------------- InstructVideo -----------------------------------------------
+cfg.reward_type = 'HPSv2'
+# cfg.temporal_reward_type = ['std', 'mean']
+cfg.temporal_reward_type = []
+cfg.data_align_method = None
+cfg.data_align_coef = 10
+cfg.segments = 8
+cfg.selection_method = 'fixed_first'
+cfg.exponential_TSN = True
+cfg.lambda_TAR = 1.
+cfg.reward_normalization = False # True
+cfg.positive_reward = False
+cfg.partial_timestep = None
+cfg.ddim_steps = [981, 961, 941, 921, 901, 881, 861, 841, 821, 801, 781, 761, 741, 721,
+                    701, 681, 661, 641, 621, 601, 581, 561, 541, 521, 501, 481, 461, 441,
+                    421, 401, 381, 361, 341, 321, 301, 281, 261, 241, 221, 201, 181, 161,
+                    141, 121, 101,  81,  61,  41,  21,   1]
+# cfg.motion_rep = "SSIM"
+cfg.motion_rep = None
+cfg.low_penal_threshold = 0.05
+cfg.reward_weights = {
+    'reward': 1, # 0.001, # 0.01, # 0.1, # 0.01, # 10,
+    'reg': 1, # 10, # 10, # 0.01,
+}
+cfg.temp_dir = 'workspace/temp_dir'
+cfg.adv_clip_max = 5
+cfg.ST_reward_weights = {
+    'spatial': 1,
+    'temporal': 1,
+}
+# -----------------------------------------------------------------------------
+
+
+
 # ---------------------------Others--------------------------------------------
 # seed 
 cfg.seed = 8888

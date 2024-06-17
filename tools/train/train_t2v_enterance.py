@@ -160,7 +160,7 @@ def worker(gpu, cfg):
     
     # optimizer
     optimizer = optim.AdamW(params=model.parameters(),
-            lr=cfg.lr, weight_decay=cfg.weight_decay)
+                        lr=cfg.lr, weight_decay=cfg.weight_decay)
     scaler = amp.GradScaler(enabled=cfg.use_fp16)
     if cfg.use_fsdp:
         config = {}
