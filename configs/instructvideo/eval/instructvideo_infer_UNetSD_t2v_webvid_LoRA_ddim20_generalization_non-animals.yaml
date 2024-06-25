@@ -63,7 +63,7 @@ webvid_cap_file: 'eval/'
 webvid_eval_text: 'eval_non-animals_hps_v2_all_eval'
 webvid_test_caps: 46
 webvid_dir_save: 'data/instructvideo/generated/reward_webvid_ani45_20_reg_vidldm_LoRA_TSNExp16Diffreward_Partial06_Trunc1_Check_ddim20_non-animals_0620000_4A_'
-infer_checkpoint: 'models/instructvideo-finetuned/reward.reward_webvid_ani45_20_reg_vidldm_LoRA_TSNExp16Diffreward_Partial06_Trunc1_Check_ddim20_1102-18-52_non_ema_0620000.pth'
+infer_checkpoint: 'models/instructvideo-finetuned/ddim20_1102-18-52_non_ema_0620000.pth'
 
 suffix: ''
 seed: 8888
