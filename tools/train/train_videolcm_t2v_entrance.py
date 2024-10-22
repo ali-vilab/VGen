@@ -698,6 +698,7 @@ def worker(gpu, cfg):
             for k, v in ema.items():
                 v.copy_(temp_state_dict[k].lerp(v, cfg.ema_decay))
 
+        update_ema(target_unet.parameters(), model.parameters(), 0.95)
         all_reduce(loss)
         loss = loss / cfg.world_size
         
