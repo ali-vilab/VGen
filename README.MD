@@ -27,6 +27,7 @@ VGen can produce high-quality videos from the input text, images, desired motion
 ## 🔥News!!!
 
 
+- __[2025.01]__ We release the code for [metric calculation](./metric/README.MD) used in DreamVideo (**CLIP-T**, **CLIP-I**, **DINO-I**, and **Temporal Consistency**).
 - __[2024.06]__ We release the code and models of [InstructVideo](https://instructvideo.github.io/). InstructVideo enables the **LoRA** fine-tuning and inference in VGen. Feel free to use LoRA fine-tuning for other tasks.
 - __[2024.04]__ We release the models of [DreamVideo](https://dreamvideo-t2v.github.io) and ModelScopeT2V V1.5!!! ModelScopeT2V V1.5 is further fine-tuned on ModelScopeT2V for 365k iterations with more data.
 - __[2024.04]__ We release the code and models of [TF-T2V](https://tf-t2v.github.io)! 
@@ -532,6 +533,10 @@ python inference.py --cfg configs/dreamvideo/infer/examples/joint_wolf_plushie_p
 </center>
 </table>
 </center>
+
+#### Metric Calculation
+
+We provide code that includes the calculation of metrics for `CLIP-T`, `CLIP-I`, `DINO-I`, and `Temporal Consistency`. Please refer to [metric/README.MD](./metric/README.MD) for more details.
 
 
 ### (5) Run the TF-T2V (CVPR-2024) model
