@@ -811,7 +811,7 @@ If this repo is useful to you, please cite our corresponding technical paper.
   journal={arXiv preprint arXiv:2308.06571},
   year={2023}
 }
-@inproceedings{dreamvideo,
+@inproceedings{wei2023dreamvideo,
   title={DreamVideo: Composing Your Dream Videos with Customized Subject and Motion},
   author={Wei, Yujie and Zhang, Shiwei and Qing, Zhiwu and Yuan, Hangjie and Liu, Zhiheng and Liu, Yu and Zhang, Yingya and Zhou, Jingren and Shan, Hongming},
   booktitle={CVPR},
