@@ -128,7 +128,7 @@ def reduce_dict(input_dict, group=None, reduction='mean', **kwargs):
     
     # ensure that the orders of keys are consistent across processes
     if isinstance(input_dict, OrderedDict):
-        keys = list(input_dict.keys)
+        keys = list(input_dict.keys())
     else:
         keys = sorted(input_dict.keys())
     vals = [input_dict[key] for key in keys]
@@ -337,9 +337,9 @@ class DiffScatter(Function):
         return _split(input)
     
     @staticmethod
-    def symbolic(ctx, input):
+    def forward(ctx, input):
         return _split(input)
-    
+
     @staticmethod
     def backward(ctx, grad_output):
         return _all_gather(grad_output)

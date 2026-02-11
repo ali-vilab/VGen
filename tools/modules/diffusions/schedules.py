@@ -46,7 +46,7 @@ def sigma_schedule(schedule='cosine',
 def linear_schedule(num_timesteps, init_beta, last_beta,  **kwargs):
     scale = 1000.0 / num_timesteps
     init_beta = init_beta or scale * 0.0001
-    ast_beta = last_beta or scale * 0.02
+    last_beta = last_beta or scale * 0.02
     return torch.linspace(init_beta, last_beta, num_timesteps, dtype=torch.float64)
 
 def logsnr_cosine_interp_schedule(
