@@ -23,12 +23,18 @@ def calculate_metric(videos_path, prompt, target_img_files, clip_model, clip_pre
 
     video_capture = cv2.VideoCapture(videos_path)
     video_data_all = []
-    while(True):
-        ret, frame = video_capture.read()
-        if (not ret) or (frame is None): break
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        frame = torch.from_numpy(frame)
-        video_data_all.append(frame)
+    try:
+        while True:
+            ret, frame = video_capture.read()
+            if not ret or frame is None:
+                break
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            video_data_all.append(torch.from_numpy(frame))
+    finally:
+        video_capture.release()
+
+    if not video_data_all:
+        raise ValueError(f"No video frames could be decoded from {videos_path}")
     
     video_data_all = torch.stack(video_data_all)
     video_data_all = video_data_all.unsqueeze(0)
